@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A.B.C.D.E — Project Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--teal:#0e7c86;--teal-d:#0a5a62;--ink:#14302f;--muted:#6b8786;--bg:#f3f6f6;--card:#fff;--line:#e2eceb}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:'Outfit',system-ui,sans-serif;color:var(--ink);
+    background:radial-gradient(1200px 600px at 80% -10%,#e7f4f3 0%,var(--bg) 55%);-webkit-font-smoothing:antialiased}
+  .sitebar{display:flex;align-items:center;gap:6px;justify-content:center;flex-wrap:wrap;padding:10px 16px;background:#0a5a62}
+  .sitebar .brand{font-family:'Fraunces',serif;font-weight:700;color:#fff;text-decoration:none;font-size:15px;letter-spacing:.04em;margin-right:10px}
+  .sitebar a.link{color:rgba(255,255,255,.85);text-decoration:none;font-size:13px;font-weight:600;padding:7px 13px;border-radius:999px}
+  .sitebar a.link:hover{background:rgba(255,255,255,.16);color:#fff}
+  .sitebar a.link.active{background:#fff;color:#0a5a62}
+  .wrap{max-width:1040px;margin:0 auto;padding:54px 22px 90px}
+  header{text-align:center;margin-bottom:36px}
+  .eyebrow{font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--teal);font-weight:600}
+  h1{font-family:'Fraunces',serif;font-weight:600;font-size:clamp(30px,5.5vw,48px);margin:10px 0 12px;line-height:1.05}
+  .lead{color:var(--muted);font-size:16px;max-width:660px;margin:0 auto}
+  .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
+  @media(max-width:760px){.grid{grid-template-columns:1fr}}
+  a.card{display:block;text-decoration:none;color:inherit;background:var(--card);border:1px solid var(--line);border-radius:20px;
+    padding:24px 24px;box-shadow:0 14px 36px -26px rgba(14,124,134,.55);transition:.18s}
+  a.card:hover{transform:translateY(-3px);border-color:var(--teal);box-shadow:0 22px 46px -28px rgba(14,124,134,.6)}
+  .ic{width:46px;height:46px;border-radius:13px;display:grid;place-items:center;color:#fff;margin-bottom:14px;
+    background:linear-gradient(135deg,var(--teal),var(--teal-d))}
+  .ic svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2}
+  a.card h2{font-family:'Fraunces',serif;font-weight:600;font-size:21px;margin:0 0 6px}
+  a.card p{margin:0;color:var(--muted);font-size:13.5px;line-height:1.6}
+  a.card .go{margin-top:12px;font-size:12.5px;font-weight:700;color:var(--teal)}
+  .step{font-size:11px;font-weight:700;color:var(--teal);letter-spacing:.05em;text-transform:uppercase;margin-bottom:8px}
+  footer{text-align:center;color:var(--muted);font-size:12.5px;margin-top:44px;line-height:1.8}
+  footer a{color:var(--teal)}
+</style>
+</head>
+<body>
+<div class="sitebar">
+<a class="brand" href="index.html">A.B.C.D.E</a>
+<a class="link active" href="index.html">Home</a>
+<a class="link" href="SRS-requirements.html">SRS</a>
+<a class="link" href="user-mindmaps.html">Mindmap</a>
+<a class="link" href="system-architecture.html">Architecture</a>
+<a class="link" href="patient-stories-pcc.html">PCC · Stories</a>
+</div>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">A . B . C . D . E&nbsp; · &nbsp;Alamein Model Hospital</div>
+    <h1>Project Hub</h1>
+    <p class="lead">One place that ties together the requirements work for the A.B.C.D.E hospital system. Open any view — they all share the same model.</p>
+  </header>
+
+  <div class="grid">
+
+    <a class="card" href="SRS-requirements.html">
+      <div class="step">Requirements</div>
+      <div class="ic"><svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg></div>
+      <h2>SRS — System Requirements</h2>
+      <p>Functional requirements (verb statements) → low-level functions → a user story per actor, plus non-functional requirements and a services map (nouns).</p>
+      <div class="go">Open SRS →</div>
+    </a>
+
+    <a class="card" href="user-mindmaps.html">
+      <div class="step">Big picture</div>
+      <div class="ic"><svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h10M4 18h6M18 12l3 3-3 3"/></svg></div>
+      <h2>Architecture Mindmap</h2>
+      <p>System → apps (Landing / Mobile / Dashboard) → users → services → functions → Input/Output. Bilingual (AR/EN), with scenario maps showing how each user interacts.</p>
+      <div class="go">Open Mindmap →</div>
+    </a>
+
+    <a class="card" href="system-architecture.html">
+      <div class="step">Decomposition</div>
+      <div class="ic"><svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v3a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM15 13a1 1 0 011-1h3a1 1 0 011 1v6a1 1 0 01-1 1h-3a1 1 0 01-1-1v-6z"/></svg></div>
+      <h2>Subsystem Architecture</h2>
+      <p>17 subsystems → high-level → low-level functions, who uses each, and exactly what exists in the prototype vs. what is still to build.</p>
+      <div class="go">Open Architecture →</div>
+    </a>
+
+    <a class="card" href="patient-stories-pcc.html">
+      <div class="step">The goal</div>
+      <div class="ic"><svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg></div>
+      <h2>Patient-Centered Care</h2>
+      <p>The 8 PCC principles, personas (including patients who can't see / hear / speak, the elderly, and other-language patients), full user stories, an accessibility matrix, and the gaps to close.</p>
+      <div class="go">Open PCC · Stories →</div>
+    </a>
+
+    <a class="card" href="export.html" style="grid-column:1/-1;border-color:var(--teal);background:linear-gradient(135deg,#0e7c86,#0a5a62);color:#fff">
+      <div class="step" style="color:rgba(255,255,255,.8)">One document</div>
+      <div class="ic" style="background:rgba(255,255,255,.18)"><svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3M4 6a2 2 0 012-2h8l6 6v8a2 2 0 01-2 2H6a2 2 0 01-2-2V6z"/></svg></div>
+      <h2 style="color:#fff">Full Specification — Generate PDF</h2>
+      <p style="color:rgba(255,255,255,.88)">Everything combined into one document: customer requirements, full functional and non-functional requirements, services map, subsystem architecture, and the patient-centered-care analysis. One button to export the whole thing as a single PDF.</p>
+      <div class="go" style="color:#fff">Open combined document →</div>
+    </a>
+
+  </div>
+
+  <footer>
+    A.B.C.D.E System · Alamein Model Hospital<br>
+    The clickable prototype lives at <a href="../abcde-patient-app/index.html">../abcde-patient-app/index.html</a>
+  </footer>
+</div>
+</body>
+</html>

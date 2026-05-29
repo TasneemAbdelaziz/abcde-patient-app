@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A.B.C.D.E — Mindmap (AR/EN, full depth, linked to SRS)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Outfit:wght@400;500;600;700&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --teal:#0e7c86;--teal-d:#0a5a62;--ink:#14302f;--muted:#6b8786;--bg:#f3f6f6;--card:#fff;--line:#e2eceb;
+    --gp:#16895a;--gpb:#e7f6ee;--am:#b67b12;--amb:#fdf3e0;--rd:#c2453d;--rdb:#fdeceb;
+    --in:#3a6ea5;--inb:#e8eef7;--out:#2a8a7a;--outb:#e2f4f0;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:'Outfit','Tajawal',system-ui,sans-serif;color:var(--ink);
+    background:radial-gradient(1200px 600px at 80% -10%,#e7f4f3 0%,var(--bg) 55%);-webkit-font-smoothing:antialiased}
+  .sitebar{display:flex;align-items:center;gap:6px;justify-content:center;flex-wrap:wrap;padding:10px 16px;background:#0a5a62}
+  .sitebar .brand{font-family:'Fraunces',serif;font-weight:700;color:#fff;text-decoration:none;font-size:15px;letter-spacing:.04em;margin-right:10px}
+  .sitebar a.link{color:rgba(255,255,255,.85);text-decoration:none;font-size:13px;font-weight:600;padding:7px 13px;border-radius:999px;transition:.15s}
+  .sitebar a.link:hover{background:rgba(255,255,255,.16);color:#fff}
+  .sitebar a.link.active{background:#fff;color:#0a5a62}
+  .wrap{max-width:1700px;margin:0 auto;padding:40px 20px 70px}
+  header.hero{text-align:center;margin-bottom:16px}
+  .eyebrow{font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--teal);font-weight:600}
+  h1{font-family:'Fraunces',serif;font-weight:600;font-size:clamp(26px,5vw,40px);margin:8px 0 10px;line-height:1.05}
+  .lead{color:var(--muted);font-size:15px;max-width:780px;margin:0 auto}
+  .legend{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:16px}
+  .chip{font-size:12px;padding:6px 12px;border-radius:999px;background:#fff;border:1px solid var(--line);color:var(--muted);font-weight:600}
+  .chip.p{background:var(--gpb);color:var(--gp);border-color:var(--gpb)}
+  .chip.m{background:var(--amb);color:var(--am);border-color:var(--amb)}
+  .chip.x{background:var(--rdb);color:var(--rd);border-color:var(--rdb)}
+  .chip.in{background:var(--inb);color:var(--in);border-color:var(--inb)}
+  .chip.out{background:var(--outb);color:var(--out);border-color:var(--outb)}
+  .tools{display:flex;gap:8px;justify-content:center;margin-top:16px}
+  .tools button{font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;color:var(--teal);background:#eef6f5;border:1px solid var(--line);padding:9px 18px;border-radius:999px;transition:.15s}
+  .tools button:hover{background:var(--teal);color:#fff;border-color:var(--teal)}
+  .hint{text-align:center;color:var(--muted);font-size:12.5px;margin-top:10px}
+  section.map{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:18px;margin-top:18px;box-shadow:0 16px 44px -28px rgba(14,124,134,.6)}
+  .canvas{width:100%;overflow:auto}
+  .scen-intro{text-align:center;margin:46px 0 4px}
+  .scen-intro h2{font-family:'Fraunces',serif;font-weight:600;font-size:27px;margin:0 0 6px}
+  .scen-intro p{color:var(--muted);font-size:14px;max-width:760px;margin:0 auto}
+  .scen-head{display:flex;align-items:center;gap:12px;margin:2px 4px 4px}
+  .scen-head .dot{flex:none;width:34px;height:34px;border-radius:10px;display:grid;place-items:center;color:#fff;font-weight:700;font-size:14px;background:linear-gradient(135deg,var(--teal),var(--teal-d))}
+  .scen-head h3{font-family:'Fraunces',serif;font-weight:600;font-size:18px;margin:0}
+  .scen-head p{margin:1px 0 0;color:var(--muted);font-size:12.5px}
+  svg.mm{width:100%;height:auto;display:block;font-family:'Outfit','Tajawal',sans-serif}
+  svg.mm .node{cursor:pointer}
+  svg.mm .node.leaf{cursor:default}
+  svg.mm text{-webkit-user-select:none;user-select:none}
+  footer{text-align:center;color:var(--muted);font-size:12.5px;margin-top:30px}
+  @media print{.sitebar,.tools,.hint{display:none}body{background:#fff}}
+</style>
+</head>
+<body>
+<div class="sitebar">
+<a class="brand" href="index.html">A.B.C.D.E</a>
+<a class="link" href="SRS-requirements.html">SRS</a>
+<a class="link active" href="user-mindmaps.html">Mindmap</a>
+<a class="link" href="system-architecture.html">Architecture</a>
+<a class="link" href="patient-stories-pcc.html">PCC · Stories</a>
+</div>
+
+<div class="wrap">
+  <header class="hero">
+    <div class="eyebrow">A . B . C . D . E&nbsp; · &nbsp;Alamein Model Hospital</div>
+    <h1>System Mindmap · خريطة النظام</h1>
+    <p class="lead">Bilingual (EN / عربي). Every user is decomposed to the same depth: app → user → service → function → Input/Output. Each function is prefixed with its SRS requirement ID (e.g. 4.2.1) so the map and the SRS are one connected model. Colour = build status.</p>
+    <div class="legend">
+      <span class="chip p">● in prototype</span>
+      <span class="chip m">● partial</span>
+      <span class="chip x">● not built</span>
+      <span class="chip in">In · مدخل</span>
+      <span class="chip out">Out · مخرج</span>
+    </div>
+    <div class="tools"><button id="expandAll">Expand all · افتح الكل</button><button id="collapseAll">Collapse all · اقفل الكل</button><button id="pdfBtn" style="background:var(--teal);color:#fff;border-color:var(--teal)">📄 Generate PDF</button></div>
+    <div class="hint">Click a function to reveal In / Out. The number prefix (e.g. 1.1.1) is the matching SRS requirement.</div>
+  </header>
+
+  <section class="map"><div class="canvas"><svg class="mm" id="mm"></svg></div></section>
+
+  <div class="scen-intro">
+    <h2>Scenarios · سيناريوهات</h2>
+    <p>Each scenario: the situation in the centre, every user as a branch, each step as a function you can open to its In / Out. Covers the journey plus patients who can't see / hear / speak, the elderly, and other-language patients.</p>
+  </div>
+  <div id="scenarios"></div>
+
+  <footer>A.B.C.D.E System · Alamein Model Hospital · mindmap linked to the SRS</footer>
+</div>
+
+<script>
+const Lbl=(en,ar)=> ar?en+'\n'+ar:en;
+const T=(en,ar,...children)=>({label:Lbl(en,ar),children});
+const splitFields=s=>s.split(/,\s*/).map(f=>f.trim()).filter(Boolean);
+const IN=l=>(l==='—')?({label:'In · —',s:'i'}):({label:'In · مدخلات',s:'i',children:splitFields(l).map(f=>({label:f,s:'i2'}))});
+const OUT=l=>(l==='—')?({label:'Out · —',s:'o'}):({label:'Out · مخرجات',s:'o',children:splitFields(l).map(f=>({label:f,s:'o2'}))});
+const F=(en,ar,status,inp,out)=>({label:Lbl(en,ar),s:status,children:[IN(inp),OUT(out)]});
+
+/* ===== FULL MAP — every user to full depth, function IDs = SRS requirement IDs ===== */
+const ROOT=T('A.B.C.D.E System','نظام A.B.C.D.E',
+
+ T('Landing Page (public web)','صفحة عامة',
+   T('Guest / Visitor','زائر',
+     T('FR1 · Authentication','المصادقة',
+       F('1.1.3 Guest access','دخول كزائر','p','—','guest session')),
+     T('FR2 · Public Portal','البوابة العامة',
+       F('2.1.1 View hospital info','معلومات المستشفى','x','—','about, contacts, videos'),
+       F('2.2.1 Browse departments','تصفّح الأقسام','x','—','21 dept pages'),
+       F('2.2.2 Doctor directory','دليل الأطباء','x','dept filter','doctors[]'),
+       F('2.3.1 News and stories','أخبار وقصص','x','—','articles[]')),
+     T('FR3 · Appointments','المواعيد',
+       F('3.1.1 Request appointment','طلب موعد','m','name, phone, dept, complaint, time','requestId')),
+     T('FR15 · Navigation','الملاحة',
+       F('15.1.2 Visitor map','خريطة الزائر','x','destination','route')))),
+
+ T('Mobile App','تطبيق موبايل',
+   T('Patient','المريض',
+     T('FR1 · Authentication','المصادقة',
+       T('Authenticate users','مصادقة المستخدم',
+         F('1.1.1 Login (password)','دخول بكلمة سر','p','mobile|fileId, password','authToken, role'),
+         F('1.1.2 Login (QR)','دخول بـ QR','m','qrToken','authToken')),
+       T('Registration','التسجيل',
+         F('1.2.1 Register','تسجيل','m','name, nationalId, age, address, phone','patientId'),
+         F('1.2.2 Set preferences','التفضيلات','x','religion, language, contact','prefs saved'))),
+     T('FR3 · Appointments','المواعيد',
+       F('3.1.1 Request appointment','طلب موعد','m','dept, complaint, time','requestId'),
+       F('3.2.1 View appointments','عرض المواعيد','p','patientId','upcoming[]'),
+       F('3.2.2 Reschedule','تغيير الموعد','m','apptId, newTime','updated appt')),
+     T('FR4 · Care Journey','رحلة الرعاية',
+       F('4.1.1 Receive visit ticket','استلام التذكرة','m','patientId','ticketNo'),
+       F('4.3.1 View simplified status','الحالة المبسّطة','p','ticketNo','statusText')),
+     T('FR5 · Vitals','العلامات الحيوية',
+       F('5.4 View own vitals','عرض علاماتي','p','patientId','HR, BP, SpO2')),
+     T('FR6 · Medication','الأدوية',
+       F('6.2.1 Get reminders','تذكيرات','p','patientId','due doses'),
+       F('6.2.2 Mark dose taken','تأكيد جرعة','m','medItemId, time','adherence')),
+     T('FR7 · Reports','التقارير',
+       F('7.2.1 View / download reports','عرض التقارير','p','patientId, type','report doc')),
+     T('FR8 · AI Assistant','المساعد الذكي',
+       F('8.1.1 Ask advisor','اسأل المساعد','m','question, context','answer'),
+       F('8.1.2 Symptom triage','فرز الأعراض','x','symptoms','urgency, red-flag')),
+     T('FR9 · Documentation','التوثيق',
+       F('9.2.2 Get translated instructions','تعليمات مترجمة','x','text, lang','translated')),
+     T('FR10 · Feedback','التقييم',
+       F('10.1.1 Rate a stage','تقييم مرحلة','p','stageId, stars','ratingId, +20'),
+       F('10.1.2 Report an issue','إبلاغ مشكلة','p','stage, text','ticketId')),
+     T('FR11 · Family Access','وصول الأهل',
+       F('11.1.1 Add companion','إضافة مرافق','p','name|QR, relation','linked (max 1)'),
+       F('11.1.2 Set permissions','الصلاحيات','p','companionId, level','permission set')),
+     T('FR12 · Notifications','التنبيهات',
+       F('12.1.1 Receive alerts','استقبال التنبيهات','p','patientId','alerts[]'),
+       F('12.2.1 Trigger SOS','زر الطوارئ','p','patientId, location','emergency raised')),
+     T('FR13 · Billing','الفواتير',
+       F('13.1.1 View bill','عرض الفاتورة','p','patientId','bill, due'),
+       F('13.1.2 Pay','الدفع','m','amount, method','receipt')),
+     T('FR14 · Education','التثقيف',
+       F('14.1.1 Education videos','فيديوهات','p','condition','videos[]'),
+       F('14.1.2 Relax content','محتوى مهدّئ','p','—','content[]'),
+       F('14.2.1 Earn Care Points','نقاط الرعاية','p','ratingId','points')),
+     T('FR15 · Navigation','الملاحة',
+       F('15.1.1 Open map','الخريطة','x','floor','map'),
+       F('15.1.2 Search and navigate','بحث وتوجيه','x','room|doctor|dept','route')),
+     T('FR16 · Accessibility','إتاحة الوصول',
+       F('16.1.1 Vision / screen reader','إبصار / قارئ شاشة','x','profile','contrast, TTS'),
+       F('16.1.2 Voice and audio','صوت','x','voice command','action / audio'),
+       F('16.1.3 Hearing','سمع','x','event','captions, haptics'),
+       F('16.2.1 Non-verbal','غير ناطق','x','tap, message','request'),
+       F('16.2.2 Motor / elderly','حركة / كبار السن','x','profile','switch, simple mode'))),
+   T('Family Companion','المرافق',
+     T('FR1 · Authentication','المصادقة',
+       F('1.2.1 Register patient','تسجيل المريض','m','patient data|QR','linked')),
+     T('FR3 · Appointments','المواعيد',
+       F('3.1.1 Book on behalf','حجز بالنيابة','m','dept, time','requestId')),
+     T('FR4 · Care Journey','الرحلة',
+       F('4.3.1 View status','متابعة الحالة','m','ticketNo','stage, status, physician')),
+     T('FR7 · Reports','التقارير',
+       F('7.2.1 Blocked from results','محجوب عن النتائج','x','—','privacy enforced')),
+     T('FR8 · AI Assistant','المساعد',
+       F('8.1.1 Ask advisor','اسأل المساعد','m','question','answer')),
+     T('FR10 · Feedback','التقييم',
+       F('10.1.1 Rate on behalf','تقييم بالنيابة','p','stageId, stars','ratingId')),
+     T('FR11 · Family Access','الوصول',
+       F('11.1.1 Accept link','قبول الربط','p','inviteId','access (max 1)'),
+       F('11.2.1 Get notifications','تنبيهات','m','companionId','care-area / op alerts')),
+     T('FR12 · Emergency','الطوارئ',
+       F('12.2.1 Report emergency','إبلاغ طارئ','p','patientId','raised')),
+     T('FR13 · Billing','الفواتير',
+       F('13.1.2 Pay (full access)','الدفع','m','amount','receipt'))),
+   T('Staff on mobile','موظف (موبايل)',
+     T('FR1 · Authentication','المصادقة',
+       F('1.1.1 Login','تسجيل دخول','x','credentials','authToken')),
+     T('FR5 · Alerts','تنبيهات',
+       F('5.3.2 Receive critical alert','تنبيه حرج','x','riskLevel','alert')),
+     T('FR17 · Dashboard (lite)','لوحة مصغّرة',
+       F('View my patients','عرض مرضايا','x','staffId','patients[]'),
+       F('Quick note','ملاحظة سريعة','x','patientId, note','saved <= 15 min')))),
+
+ T('Dashboard (staff web)','لوحة الموظفين',
+   T('Doctor','طبيب',
+     T('FR4 · Care Journey','الرحلة',
+       F('4.2.1 Advance stages','تحريك المراحل','x','ticketNo, decision','new stage, owner'),
+       F('4.2.2 Alternative pathway','مسار بديل','x','ticketNo, finding','re-route')),
+     T('FR5 · Vitals','العلامات',
+       F('5.1.2 Assess pain / consciousness','تقييم الألم/الوعي','x','patientId, scale','saved'),
+       F('5.2.1 Set thresholds','ضبط الحدود','x','limits','ruleSet'),
+       F('5.3.2 Receive deterioration alert','تنبيه تدهور','x','riskLevel','alert')),
+     T('FR6 · Medication','الأدوية',
+       F('6.1.1 Prescribe medication','وصف الدواء','x','drug, dose, timing, route','medPlan')),
+     T('FR7 · Diagnostics','الفحوصات',
+       F('7.1.1 Order tests','طلب فحوصات','x','patientId, types[]','orderIds[]'),
+       F('7.2.2 Review history','السجل التاريخي','x','patientId','past visits')),
+     T('FR8 · AI Assistant','المساعد',
+       F('8.2.1 Receive escalation','استقبال تحويل','x','ticketNo','handoff')),
+     T('FR9 · AI Documentation','التوثيق',
+       F('9.1.1 Generate report draft','مسودة تقرير','x','EMR data, type','draft'),
+       F('9.1.2 Review and approve','مراجعة واعتماد','x','draftId, edits','final'),
+       F('9.2.1 Voice transcription','تفريغ صوتي','x','audio','note text'),
+       F('9.2.2 Translate','ترجمة','x','text, lang','translated')),
+     T('FR3 · Appointments','المواعيد',
+       F('3.2.1 View follow-ups','عرض المتابعات','x','doctorId','upcoming[]'))),
+   T('Nurse','ممرض',
+     T('FR4 · Care Journey','الرحلة',
+       F('4.1.1 Triage and route','فرز وتوجيه','x','ticketNo, assessment','destination'),
+       F('4.2.1 Advance triage','تحريك الفرز','x','ticketNo','next stage')),
+     T('FR5 · Vitals','العلامات',
+       F('5.1.1 Record vitals','تسجيل العلامات','x','BP, pulse, RR, SpO2','saved'),
+       F('5.1.2 Assess consciousness','تقييم الوعي','x','scale','saved'),
+       F('5.3.2 Deterioration alert','تنبيه تدهور','x','riskLevel','alert')),
+     T('FR6 · Medication','الأدوية',
+       F('6.2.2 Administer and log','إعطاء وتسجيل','x','medItemId, time','log')),
+     T('FR8 · AI Assistant','المساعد',
+       F('8.2.1 Receive escalation','استقبال تحويل','x','ticketNo','handoff')),
+     T('FR12 · Emergency','الطوارئ',
+       F('12.2.2 Activate Code Blue','تفعيل كود بلو','x','location','team paged'))),
+   T('Receptionist','استقبال',
+     T('FR1 · Authentication','المصادقة',
+       F('1.1.2 Issue QR','إصدار QR','x','patientId','qrToken'),
+       F('1.2.1 Register patient','تسجيل مريض','x','patient data','patientId')),
+     T('FR3 · Appointments','المواعيد',
+       F('3.1.2 Manage bookings','إدارة الحجوزات','x','—','slots[]'),
+       F('3.3.1 Assign to doctor','إسناد لطبيب','x','patientId, doctorId','assignment')),
+     T('FR4 · Care Journey','الرحلة',
+       F('4.1.1 Open ticket / file','فتح التذكرة','x','patientId','ticketNo, file'))),
+   T('Quality Manager','مدير الجودة',
+     T('FR10 · Feedback and Quality','التقييم والجودة',
+       F('10.2.1 Handle complaints (<=6h)','إدارة الشكاوى','x','complaintId','response / escalate'),
+       F('10.2.2 Analyze and report','تحليل وتقارير','x','ratings, comments','sentiment, themes')),
+     T('FR17 · Reporting','التقارير',
+       F('17.2.1 Read quality reports','قراءة التقارير','x','range','reports'))),
+   T('Hospital Director','مدير المستشفى',
+     T('FR3 · Appointments','المواعيد',
+       F('3.3.1 Assign to doctor','إسناد لطبيب','x','patientId, doctorId','assignment')),
+     T('FR10 · Quality','الجودة',
+       F('10.2.2 Receive quality reports','استلام التقارير','x','range','reports')),
+     T('FR17 · Reporting','الإدارة',
+       F('17.2.1 Management reports','تقارير الإدارة','x','range, filters','KPIs, comparisons'))),
+   T('System Admin','مدير النظام',
+     T('FR1 · Access','الصلاحيات',
+       F('1.3.1 Define roles','تعريف الأدوار','x','user, role','permissions'),
+       F('1.3.2 Edit-window rule','نافذة التعديل','x','record','enforced')),
+     T('FR17 · Administration','الإدارة',
+       F('17.1.1 Manage accounts','إدارة الحسابات','x','user, role','account'),
+       F('17.1.2 Configure system','إعدادات النظام','x','stages, roles, alarms, langs','config'),
+       F('17.1.3 Integrate DMS/HMIS','تكامل','x','external data','synced'),
+       F('17.2.2 Audit / protect data','تدقيق وحماية','x','record','log, access control')))),
+
+ T('Services (shared backend)','خدمات مشتركة',
+   F('FR1 Authentication and Access','المصادقة والصلاحيات','x','credentials / token','session, role'),
+   F('FR2 Public Portal','البوابة العامة','x','—','pages, doctors, news'),
+   F('FR3 Appointments','المواعيد','x','request','appointment, slots'),
+   F('FR4 Care Journey','تنسيق الرحلة','x','ticket events','stage state'),
+   F('FR5 Vitals and Risk','العلامات والخطورة','x','vitals stream','score, alerts'),
+   F('FR6 Medication','الأدوية','x','prescription','plan, reminders'),
+   F('FR7 Diagnostics and EMR','الفحوصات والسجل','x','orders / DMS','results, records'),
+   F('FR8 AI Assistant','المساعد الذكي','m','question','answer, triage'),
+   F('FR9 Clinical Documentation','التوثيق','x','data / audio','draft, transcript, translation'),
+   F('FR10 Feedback and Quality','التقييم والجودة','x','ratings','reports'),
+   F('FR11 Family Access','وصول الأهل','x','link, permissions','access'),
+   F('FR12 Notifications and Emergency','التنبيهات والطوارئ','x','event','alerts, Code Blue'),
+   F('FR13 Billing','الفوترة','x','charges','bill, payment'),
+   F('FR14 Education','التثقيف','x','condition','content, points'),
+   F('FR15 Navigation','الملاحة','x','destination','route'),
+   F('FR16 Accessibility','الإتاحة','x','profile','adaptations'),
+   F('FR17 Administration','الإدارة والتقارير','x','config / data','accounts, reports, integration'))
+);
+
+const DEFAULT_COLLAPSE_FROM=2;
+
+/* ===== SCENARIOS ===== */
+const SCENARIOS=[
+  {sub:'Ambulance arrival → fast registration & triage · وصول طارئ',
+   root:T('Emergency Arrival','وصول طارئ',
+     T('Receptionist','استقبال',F('1.2.1 Register patient','تسجيل المريض','m','name, nationalId, phone','patientId, file'),F('1.1.2 Issue QR','إصدار QR','x','patientId','qrToken'),F('4.1.1 Open file','فتح الملف','x','patientId','file opened')),
+     T('Triage Nurse','ممرض الفرز',F('5.1.1 Record vitals','تسجيل العلامات','x','BP, pulse, RR, SpO2','vitals, flagged?'),F('4.1.1 Route patient','توجيه المريض','x','assessment','destination = ER')),
+     T('ER Doctor','طبيب الطوارئ',F('7.1.1 Order tests','طلب فحوصات','x','symptoms','orderIds[]'),F('8.2.1 Call cardiologist','استدعاء طبيب القلب','x','ticketNo','notified')),
+     T('Patient','المريض',F('4.3.1 See status','عرض الحالة','p','ticketNo','"Under exam"')),
+     T('Family','الأهل',F('4.3.1 See general status','الحالة العامة','m','ticketNo','stage, status')))},
+
+  {sub:'Awaiting test results — keep anxiety low · انتظار النتيجة',
+   root:T('Waiting for Results','انتظار النتيجة',
+     T('Patient','المريض',F('4.3.1 See "awaiting result"','حالة الانتظار','p','ticketNo','statusText'),F('12.1.1 Reassurance message','رسالة طمأنة','m','stage','calming message'),F('14.1.2 Relax content','محتوى مهدّئ','p','—','calm content')),
+     T('Family','الأهل',F('4.3.1 See general status','الحالة العامة','m','ticketNo','status')),
+     T('AI Advisor','المساعد الذكي',F('8.1.1 Answer "is this normal?"','رد مطمئن','m','question','educational answer')))},
+
+  {sub:'Patient unable to consent → decision-maker · الموافقة',
+   root:T('Consent for Catheterization','الموافقة على القسطرة',
+     T('Cardiologist','طبيب القلب',F('Request consent','طلب موافقة','x','ticketNo, procedure, decisionMaker','consent request')),
+     T('Decision-maker / Family','المخوّل / الأهل',F('Approve in app','موافقة بالتطبيق','x','requestId','consentId'),F('Approve by phone','موافقة بالهاتف','x','call','recorded')),
+     T('System','النظام',F('Record consent','تسجيل الموافقة','x','consentId, ticketNo','stored')))},
+
+  {sub:'Live updates while in the cath lab · أثناء العملية',
+   root:T('During the Operation','أثناء العملية',
+     T('Room Nurse','ممرض الغرفة',F('Update operation status','تحديث الحالة','x','ticketNo, status','family notified')),
+     T('Family','الأهل',F('11.2.1 See live status','الحالة اللحظية','m','ticketNo','in progress / finished'),F('12.1.1 Get notification','إشعار','m','—','push / haptic')),
+     T('Patient','المريض',F('Under anesthesia','تحت التخدير','x','—','—')))},
+
+  {sub:'Vitals worsen → staff alerted early · تدهور الحالة',
+   root:T('Deterioration in Recovery','تدهور أثناء التعافي',
+     T('Nurse','ممرض',F('5.1.1 Record vitals','تسجيل العلامات','x','patientId, vitals','saved')),
+     T('AI Risk Engine','محرك الخطورة',F('5.3.1 Compute risk score','حساب الخطورة','x','vitals, labs','NEWS2/MEWS'),F('5.3.2 Raise alert','إطلاق إنذار','x','riskLevel','alert')),
+     T('Doctor','طبيب',F('5.3.2 Get critical alert','تنبيه حرج','x','—','received'),F('Intervene','تدخّل','x','patientId','action')),
+     T('Patient','المريض',F('5.4 View own vitals','عرض علاماته','p','patientId','HR, BP, SpO2')))},
+
+  {sub:'Comfort: pain controlled, meds on time · الألم والدواء',
+   root:T('Pain & Medication','الألم والدواء',
+     T('Doctor + Pharmacist','طبيب + صيدلي',F('6.1.1 Set medication schedule','جدولة الدواء','x','drug, dose, timing, route','medPlan')),
+     T('Nurse','ممرض',F('5.1.2 Assess pain (0-10)','تقييم الألم','x','patientId, scale','painScore'),F('6.2.2 Administer & log','إعطاء وتسجيل','x','medItemId, time','log')),
+     T('Patient','المريض',F('6.2.1 Get reminders','تذكيرات','p','patientId','due doses'),F('6.2.2 Mark dose taken','تأكيد الجرعة','m','medItemId','adherence')))},
+
+  {sub:'Safe transition home with a follow-up · الخروج والمتابعة',
+   root:T('Discharge & Follow-up','الخروج والمتابعة',
+     T('Consultant','الاستشاري',F('4.2.1 Discharge decision','قرار الخروج','x','ticketNo, vitalsStable','approved, checklist')),
+     T('AI','الذكاء الاصطناعي',F('9.1.1 Draft discharge summary','تقرير خروج مبدئي','x','EMR data','draft')),
+     T('Doctor','طبيب',F('9.1.2 Review & approve','مراجعة واعتماد','x','draftId, edits','final report')),
+     T('Patient','المريض',F('7.2.1 Get discharge pack','حزمة الخروج','m','patientId','prescription, report, instructions'),F('3.2.1 Auto follow-up','متابعة بعد أسبوع','x','patientId','appointment')))},
+
+  {sub:'A blind patient uses the app independently · مريض كفيف',
+   root:T('Blind Patient','مريض كفيف',
+     T('Patient','المريض',F('16.1.1 Screen reader','قارئ الشاشة','x','UI','spoken labels'),F('16.1.2 Voice commands','أوامر صوتية','x','voice','spoken answer'),F('16.1.2 Voice SOS','طوارئ صوتية','x','"send emergency"','raised'),F('16.1.1 Audio navigation','ملاحة صوتية','x','destination','audio + haptics')))},
+
+  {sub:'A deaf patient communicates with the team · مريض أصمّ',
+   root:T('Deaf Patient','مريض أصمّ',
+     T('Patient','المريض',F('16.1.3 Captions','ترجمة نصية','x','video','captions'),F('16.1.3 Visual + haptic alerts','تنبيهات بصرية','x','event','visual + vibration'),F('16.1.3 Sign-language card','بطاقة لغة إشارة','x','—','shown to staff'),F('16.2.1 Text-to-nurse','مراسلة الممرض','x','message','sent')),
+     T('Nurse','ممرض',F('16.2.1 Receive & reply','رد نصي','x','message','reply')))},
+
+  {sub:'A non-verbal patient expresses needs · مريض غير ناطق',
+   root:T('Non-verbal Patient','مريض غير ناطق',
+     T('Patient','المريض',F('16.2.1 Quick-need buttons','أزرار الاحتياجات','x','tap','request'),F('16.2.1 Text-to-nurse','مراسلة الممرض','x','message','sent'),F('12.2.1 Visual SOS','طوارئ بصرية','x','tap','raised')),
+     T('Nurse','ممرض',F('Receive request','استقبال الطلب','x','—','request + room')))},
+
+  {sub:'Elderly patient helped by the companion · مريض كبير السن',
+   root:T('Elderly + Companion','كبير السن + مرافق',
+     T('Patient','المريض',F('16.2.2 Simple mode','وضع مبسّط','x','profile','large text'),F('16.1.2 Voice interface','واجهة صوتية','x','voice','action')),
+     T('Family (son)','الأهل (الابن)',F('3.1.1 Act on behalf','التصرّف بالنيابة','p','patientId','book, manage'),F('12.1.1 Get alerts','تنبيهات','p','companionId','alerts'),F('10.1.1 Rate service','تقييم الخدمة','p','stageId, stars','ratingId')))},
+
+  {sub:'Russian-speaking international patient · مريض بلغة أخرى',
+   root:T('Other-language Patient','مريض بلغة أخرى',
+     T('Patient','المريض',F('1.2.2 UI in Russian','الواجهة بالروسية','x','lang = RU','localized UI'),F('9.2.2 Russian instructions','تعليمات بالروسية','x','content','translated')),
+     T('Doctor','طبيب',F('9.2.2 Translation to communicate','ترجمة للتواصل','x','AR/EN/RU','translated message')))},
+
+  {sub:'Feedback turns into real improvement · التقييم والجودة',
+   root:T('Feedback → Quality','التقييم ← الجودة',
+     T('Patient / Family','المريض / الأهل',F('10.1.1 Rate stage','تقييم المرحلة','p','stageId, stars','ratingId'),F('10.1.2 Report issue','إبلاغ مشكلة','p','stage, text','ticketId')),
+     T('Quality Manager','مدير الجودة',F('10.2.2 Analyze (AI sentiment)','تحليل','x','ratings, comments','sentiment, themes'),F('10.2.1 Respond <= 6h','رد خلال 6 ساعات','x','complaintId','response / escalate')),
+     T('Hospital Director','مدير المستشفى',F('17.2.1 Receive reports','استلام التقارير','x','range','report')))},
+];
+
+/* ---------- layout / render ---------- */
+const SVGNS='http://www.w3.org/2000/svg';
+const PALETTE=['#3aa0d1','#3fb27f','#e8554e','#9b5de5','#f2a93b','#e06c9f','#48b1a5','#6c8cd5','#d98b3a','#cf5fa0','#5bb85b','#e07b3a'];
+const ROOT_FILL='#0e7c86';
+const STC={p:'#16895a',m:'#b67b12',x:'#c2453d',i:'#3a6ea5',o:'#2a8a7a',i2:'#5a82b5',o2:'#3a9b8a'};
+const STB={p:'#e7f6ee',m:'#fdf3e0',x:'#fdeceb',i:'#e8eef7',o:'#e2f4f0',i2:'#f2f6fc',o2:'#eef8f5'};
+const LINE_H=15,PAD_X=20,PAD_Y=10,V_GAP=14,COL_GAP=210,MAX_LINE_W=172;
+const AR_RE=/[؀-ۿ]/;
+const mctx=document.createElement('canvas').getContext('2d');
+
+function sizeFor(d){return d===0?15:d===1?14:d===2?13:d===3?12.5:d===4?12:11.5;}
+function font(d){const fam="Outfit, Tajawal";return '600 '+sizeFor(d)+'px '+fam;}
+function wrapSeg(seg){const words=seg.split(' ');const lines=[];let cur='';
+  for(const w of words){const t=cur?cur+' '+w:w;if(mctx.measureText(t).width>MAX_LINE_W&&cur){lines.push(cur);cur=w;}else cur=t;}
+  if(cur)lines.push(cur);return lines.length?lines:[''];}
+function wrap(label,d){mctx.font=font(d);let out=[];label.split('\n').forEach(seg=>out=out.concat(wrapSeg(seg)));
+  if(out.length>4)out=out.slice(0,4);let w=0;for(const l of out)w=Math.max(w,mctx.measureText(l).width);return {lines:out,w};}
+const visKids=n=>n.collapsed?[]:(n.children||[]);
+const hasKids=n=>n.children&&n.children.length;
+
+function measure(node,depth){const {lines,w}=wrap(node.label,depth);
+  node.lines=lines;node.w=Math.round(w)+PAD_X*2;node.h=lines.length*LINE_H+PAD_Y*2;node.depth=depth;
+  const kids=visKids(node);
+  if(!kids.length){node.span=node.h+V_GAP;}
+  else{let s=0;for(const c of kids)s+=measure(c,depth+1);node.span=Math.max(node.h+V_GAP,s);}return node.span;}
+function place(node,depth,side,top,rootX){node.x=rootX+side*depth*COL_GAP;node.side=side;
+  const kids=visKids(node);
+  if(!kids.length){node.cy=top+node.span/2;}
+  else{let c=top;for(const ch of kids){place(ch,depth+1,side,c,rootX);c+=ch.span;}node.cy=(kids[0].cy+kids[kids.length-1].cy)/2;}}
+function branchW(d){return ({1:15,2:10,3:6,4:4,5:3})[d]||2.6;}
+function ribbon(x1,y1,x2,y2,w1,w2){const mx=(x1+x2)/2;
+  return `M${x1},${y1-w1/2} C${mx},${y1-w1/2} ${mx},${y2-w2/2} ${x2},${y2-w2/2} L${x2},${y2+w2/2} C${mx},${y2+w2/2} ${mx},${y1+w1/2} ${x1},${y1+w1/2} Z`;}
+function el(tag,a){const e=document.createElementNS(SVGNS,tag);for(const k in a)e.setAttribute(k,a[k]);return e;}
+
+const registry=new Map();
+
+function renderMap(svg,root){
+  measure(root,0);
+  const kids=visKids(root);const half=Math.ceil(kids.length/2);
+  const right=kids.slice(0,half),left=kids.slice(half);
+  const span=a=>a.reduce((s,n)=>s+n.span,0);
+  let top=-span(right)/2;for(const n of right){place(n,1,+1,top,0);top+=n.span;}
+  top=-span(left)/2;for(const n of left){place(n,1,-1,top,0);top+=n.span;}
+  root.x=0;root.cy=0;root.side=0;root.depth=0;
+  (root.children||[]).forEach((n,i)=>n._color=PALETTE[i%PALETTE.length]);
+  while(svg.firstChild)svg.removeChild(svg.firstChild);
+  const gE=el('g',{}),gN=el('g',{});
+  (function edges(node,color){const col=node.depth===1?node._color:color;
+    for(const c of visKids(node)){
+      const pEdge=node.depth===0?node.x+c.side*(node.w/2):node.x+node.side*(node.w/2);
+      const cEdge=c.x-c.side*(c.w/2);const w1=node.depth===0?17:branchW(node.depth);
+      gE.appendChild(el('path',{d:ribbon(pEdge,node.cy,cEdge,c.cy,w1,branchW(c.depth)),fill:col,'fill-opacity':'.92'}));
+      edges(c,col);}})(root,ROOT_FILL);
+  (function nodes(node,color){const col=node.depth===1?node._color:color;drawNode(svg,gN,node,col);
+    for(const c of visKids(node))nodes(c,col);})(root,ROOT_FILL);
+  svg.appendChild(gE);svg.appendChild(gN);
+  let minX=1e9,maxX=-1e9,minY=1e9,maxY=-1e9;
+  (function b(n){minX=Math.min(minX,n.x-n.w/2);maxX=Math.max(maxX,n.x+n.w/2);
+    minY=Math.min(minY,n.cy-n.h/2);maxY=Math.max(maxY,n.cy+n.h/2);for(const c of visKids(n))b(c);})(root);
+  const pad=34;svg.setAttribute('viewBox',`${minX-pad} ${minY-pad} ${(maxX-minX)+pad*2} ${(maxY-minY)+pad*2}`);}
+
+function drawNode(svg,g,node,color){
+  const d=node.depth,x=node.x,y=node.cy,w=node.w,h=node.h;
+  let fill,stroke,txt,sw,arFill;
+  if(node.s){fill=STB[node.s];stroke=STC[node.s];txt='#14302f';arFill='#46615f';sw=1.8;}
+  else if(d===0){fill=ROOT_FILL;stroke=ROOT_FILL;txt='#fff';arFill='rgba(255,255,255,.82)';sw=0;}
+  else if(d===1){fill=color;stroke=color;txt='#fff';arFill='rgba(255,255,255,.85)';sw=0;}
+  else{fill='#fff';stroke=color;txt='#14302f';arFill='#46615f';sw=1.6;}
+  const grp=el('g',{class:'node'+(hasKids(node)?'':' leaf')});
+  grp.appendChild(el('rect',{x:x-w/2,y:y-h/2,width:w,height:h,rx:Math.min(h/2,15),ry:Math.min(h/2,15),fill,stroke,'stroke-width':sw}));
+  const baseSize=sizeFor(d),isBranch=hasKids(node);
+  const t=el('text',{x,y,'text-anchor':'middle','dominant-baseline':'middle'});
+  const total=node.lines.length;
+  node.lines.forEach((ln,i)=>{const ar=AR_RE.test(ln);
+    const ts=el('tspan',{x,dy:i===0?-(total-1)*LINE_H/2:LINE_H,fill:ar?arFill:txt,'font-size':ar?(baseSize-0.5):baseSize,'font-weight':ar?'500':(isBranch?'600':'500')});
+    ts.textContent=ln;t.appendChild(ts);});
+  grp.appendChild(t);
+  if(hasKids(node)){
+    const tx=d===0?x+w/2:x+node.side*(w/2);const sc=node.s?STC[node.s]:(d===0?ROOT_FILL:color);
+    grp.appendChild(el('circle',{cx:tx,cy:y,r:9,fill:'#fff',stroke:sc,'stroke-width':2}));
+    const sign=el('text',{x:tx,y:y+0.5,fill:sc,'text-anchor':'middle','dominant-baseline':'middle','font-size':'14','font-weight':'700'});
+    sign.textContent=node.collapsed?'+':'–';grp.appendChild(sign);
+    grp.addEventListener('click',()=>{node.collapsed=!node.collapsed;renderMap(svg,registry.get(svg));});}
+  g.appendChild(grp);}
+
+function setCollapsed(node,depth,fromDepth,val){if(hasKids(node)&&depth>=fromDepth)node.collapsed=val;
+  (node.children||[]).forEach(c=>setCollapsed(c,depth+1,fromDepth,val));}
+
+const mmSvg=document.getElementById('mm');
+registry.set(mmSvg,ROOT);
+document.getElementById('expandAll').onclick=()=>{setCollapsed(ROOT,0,0,false);renderMap(mmSvg,ROOT);};
+document.getElementById('collapseAll').onclick=()=>{setCollapsed(ROOT,0,1,true);renderMap(mmSvg,ROOT);};
+document.getElementById('pdfBtn').onclick=()=>{registry.forEach((root,svg)=>{setCollapsed(root,0,0,false);renderMap(svg,root);});setTimeout(()=>window.print(),200);};
+
+function buildScenarios(){const host=document.getElementById('scenarios');
+  SCENARIOS.forEach((sc,i)=>{
+    const sec=document.createElement('section');sec.className='map';
+    const head=document.createElement('div');head.className='scen-head';
+    const en=sc.root.label.split('\n')[0],ar=sc.root.label.split('\n')[1]||'';
+    head.innerHTML=`<div class="dot">${i+1}</div><div><h3>${en} · ${ar}</h3><p>${sc.sub}</p></div>`;
+    const canvas=document.createElement('div');canvas.className='canvas';
+    const s=document.createElementNS(SVGNS,'svg');s.setAttribute('class','mm');
+    canvas.appendChild(s);sec.appendChild(head);sec.appendChild(canvas);host.appendChild(sec);
+    registry.set(s,sc.root);setCollapsed(sc.root,0,2,true);renderMap(s,sc.root);});}
+
+function start(){setCollapsed(ROOT,0,DEFAULT_COLLAPSE_FROM,true);renderMap(mmSvg,ROOT);buildScenarios();}
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(start);
+else window.addEventListener('load',start);
+</script>
+</body>
+</html>

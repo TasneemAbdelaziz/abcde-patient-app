@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A.B.C.D.E — Full Specification (combined)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--teal:#0e7c86;--teal-d:#0a5a62;--ink:#14302f;--muted:#6b8786;--bg:#f3f6f6;--card:#fff;--line:#e2eceb;--soft:#eef6f5;
+    --gp:#16895a;--gpb:#e7f6ee;--am:#b67b12;--amb:#fdf3e0;--rd:#c2453d;--rdb:#fdeceb;--in:#3a6ea5;--inb:#eef3fb;--out:#2a8a7a;--outb:#eaf6f3}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:'Outfit',system-ui,sans-serif;color:var(--ink);background:#fff;-webkit-font-smoothing:antialiased}
+  .bar{position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:12px;justify-content:center;padding:10px 16px;background:#0a5a62}
+  .bar .brand{font-family:'Fraunces',serif;font-weight:700;color:#fff;font-size:15px}
+  .bar a{color:rgba(255,255,255,.85);text-decoration:none;font-size:13px;font-weight:600}
+  .bar button{font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;color:#0a5a62;background:#fff;border:0;padding:8px 18px;border-radius:999px}
+  .wrap{max-width:1000px;margin:0 auto;padding:30px 26px 80px}
+  .cover{text-align:center;margin:14px 0 26px;padding-bottom:22px;border-bottom:2px solid var(--soft)}
+  .eyebrow{font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--teal);font-weight:600}
+  h1{font-family:'Fraunces',serif;font-weight:600;font-size:38px;margin:8px 0 8px}
+  .cover p{color:var(--muted);font-size:14px;max-width:640px;margin:0 auto}
+  .toc{background:var(--soft);border:1px solid var(--line);border-radius:14px;padding:14px 20px;margin:18px auto 0;max-width:560px;text-align:left;font-size:13.5px;color:#3d5654;line-height:1.9}
+  .toc b{color:var(--ink)}
+  h2.part{font-family:'Fraunces',serif;font-weight:700;font-size:27px;margin:40px 0 4px;padding-top:14px;border-top:2px solid var(--soft);page-break-before:always}
+  h2.part:first-of-type{page-break-before:avoid}
+  h3.sec{font-family:'Fraunces',serif;font-weight:600;font-size:20px;margin:24px 0 4px}
+  .sub{color:var(--muted);font-size:13px;margin-bottom:12px}
+  table{width:100%;border-collapse:collapse;font-size:12.7px;background:#fff;border:1px solid var(--line);border-radius:10px;overflow:hidden;margin-bottom:8px}
+  th,td{text-align:left;padding:8px 11px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{background:var(--soft);color:var(--teal);font-size:11px;letter-spacing:.04em;text-transform:uppercase;font-weight:700}
+  td.k{font-weight:700;white-space:nowrap;color:var(--ink)}
+  /* FR */
+  .fr{border:1px solid var(--line);border-radius:14px;margin-bottom:11px;padding:13px 15px;page-break-inside:avoid}
+  .fr-h{display:flex;gap:11px;align-items:flex-start}
+  .frn{flex:none;min-width:28px;height:28px;padding:0 7px;border-radius:8px;display:grid;place-items:center;color:#fff;font-weight:700;font-size:13px;background:linear-gradient(135deg,var(--teal),var(--teal-d))}
+  .fr-h h4{margin:0;font-size:15.5px;font-weight:700}
+  .shall{color:#3d5654;font-size:12.8px;margin:3px 0 0;line-height:1.5}
+  .tags{margin-top:6px;display:flex;gap:6px;flex-wrap:wrap}
+  .svc{font-size:10.5px;font-weight:700;color:var(--teal);background:var(--soft);border:1px solid var(--line);border-radius:999px;padding:3px 9px}
+  .pcc{font-size:10px;font-weight:700;color:#7a4fd0;background:#f3eefb;border-radius:999px;padding:3px 8px}
+  .hlf-h{font-weight:700;font-size:13px;margin:12px 0 6px;border-top:1px solid var(--line);padding-top:9px}
+  .hlf-h .hid{color:var(--teal)}
+  .llf{border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:0 0 8px 0;background:#fcfdfd;page-break-inside:avoid}
+  .llf-h{font-size:13px}.llf-h .lid{font-weight:700}
+  .io{display:flex;gap:7px;flex-wrap:wrap;margin:6px 0}
+  .io span{font-size:11px;font-weight:600;padding:3px 8px;border-radius:7px;line-height:1.4}
+  .io .i{background:var(--inb);color:var(--in)}.io .o{background:var(--outb);color:var(--out)}
+  .stories{margin:5px 0;padding:0;list-style:none}
+  .stories li{font-size:12px;color:#3d5654;line-height:1.5;padding:2px 0 2px 14px;position:relative}
+  .stories li:before{content:"▸";position:absolute;left:0;color:var(--teal)}
+  .stories b{color:var(--teal);font-weight:600}
+  .ac{font-size:11.8px;color:#3d5654;background:#f7faf9;border:1px solid var(--line);border-radius:7px;padding:6px 9px;margin:5px 0;line-height:1.5}
+  .ac b{color:var(--ink)}
+  .lmeta{display:flex;gap:6px;flex-wrap:wrap;margin-top:5px;font-size:10.5px}
+  .lmeta span{padding:3px 8px;border-radius:999px;font-weight:700}
+  .pri-High{background:#fdeceb;color:#c2453d}.pri-Medium{background:#fdf3e0;color:#b67b12}.pri-Low{background:#eef2f1;color:#6b8786}
+  .src{background:var(--soft);color:var(--teal)}
+  td.svcn{font-weight:700;white-space:nowrap;width:230px}td.fns{color:#3d5654;line-height:1.7}
+  /* architecture */
+  .ar{border:1px solid var(--line);border-radius:12px;padding:13px 15px;margin-bottom:10px;page-break-inside:avoid}
+  .ar-h{display:flex;gap:11px;align-items:flex-start}
+  .ar-code{flex:none;width:42px;height:42px;border-radius:11px;display:grid;place-items:center;color:#fff;font-weight:700;font-size:14px;background:linear-gradient(135deg,var(--teal),var(--teal-d))}
+  .ar-h h4{margin:0;font-size:15px}.ar-h .pp{color:var(--muted);font-size:12px;margin-top:2px}
+  .minibar{display:flex;gap:6px;margin-top:7px;flex-wrap:wrap}
+  .pill{font-size:10.5px;font-weight:700;padding:3px 8px;border-radius:999px}
+  .pill.p{background:var(--gpb);color:var(--gp)}.pill.m{background:var(--amb);color:var(--am)}.pill.x{background:var(--rdb);color:var(--rd)}
+  .ar-hl{font-weight:700;font-size:12.8px;margin:10px 0 4px;color:var(--ink)}
+  .ar-ul{list-style:none;margin:0 0 6px 0;padding:0}
+  .ar-ul li{display:flex;gap:8px;align-items:center;font-size:12.3px;padding:4px 0;border-top:1px dashed #eef3f2}
+  .ar-ul li:first-child{border-top:0}
+  .tag{flex:none;width:18px;height:18px;border-radius:5px;display:grid;place-items:center;font-size:11px;font-weight:700}
+  .tag.p{background:var(--gpb);color:var(--gp)}.tag.m{background:var(--amb);color:var(--am)}.tag.x{background:var(--rdb);color:var(--rd)}
+  .ar-users td.role{font-weight:600;white-space:nowrap}.ar-users td.does{color:#3d5654}
+  /* PCC */
+  .grid{display:grid;gap:12px}.g2{grid-template-columns:repeat(2,1fr)}.g3{grid-template-columns:repeat(3,1fr)}
+  @media(max-width:780px){.g2,.g3{grid-template-columns:1fr}}
+  .card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 16px;page-break-inside:avoid}
+  .pcard{display:flex;gap:12px}
+  .pnum{flex:none;width:34px;height:34px;border-radius:10px;display:grid;place-items:center;color:#fff;font-weight:700;font-size:14px;background:linear-gradient(135deg,var(--teal),var(--teal-d))}
+  .pcard h4{margin:0 0 2px;font-size:14.5px}.mean{color:var(--muted);font-size:12px;margin-bottom:6px;line-height:1.5}
+  .apply{margin:0;padding-left:15px;font-size:12.3px;color:#3d5654;line-height:1.6}
+  .stat{font-size:10px;font-weight:700;padding:3px 8px;border-radius:999px;margin-left:6px}
+  .stat.p{background:var(--gpb);color:var(--gp)}.stat.m{background:var(--amb);color:var(--am)}.stat.x{background:var(--rdb);color:var(--rd)}
+  .persona{border-left:4px solid var(--teal)}.persona.a{border-color:#9b5de5}
+  .persona .role{font-size:11px;color:var(--teal);font-weight:700;text-transform:uppercase}
+  .persona h4{margin:3px 0 5px;font-size:14px}.persona p{margin:0;font-size:12.3px;color:#3d5654;line-height:1.5}
+  .story{border:1px solid var(--line);border-radius:14px;padding:15px 17px;margin-bottom:11px;page-break-inside:avoid}
+  .story .sid{font-size:11px;font-weight:700;color:var(--teal)}
+  .story h4{font-family:'Fraunces',serif;font-weight:600;font-size:17px;margin:3px 0 6px}
+  .userline{font-size:12.8px;color:#3d5654;font-style:italic;background:var(--soft);border:1px solid var(--line);border-radius:9px;padding:8px 11px;margin-bottom:10px}
+  table.tp{font-size:12.3px}
+  table.tp td.u{font-weight:600;white-space:nowrap}
+  .chan{font-size:10.5px;font-weight:700;padding:2px 7px;border-radius:6px;white-space:nowrap}
+  .chan.mob{background:#e7eef9;color:#3a6ea5}.chan.dash{background:#fde7ef;color:#c24a78}.chan.land{background:#e7f6ee;color:#16895a}.chan.svc{background:#f0eafb;color:#7a4fd0}.chan.off{background:#eef2f1;color:#6b8786}
+  .meta{display:flex;gap:7px;flex-wrap:wrap;margin-top:6px}.pp2{font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:999px;background:#eaf5f4;color:var(--teal)}
+  .a11ynote{font-size:12px;color:#3d5654;background:#faf7ff;border:1px solid #efe7fb;border-radius:9px;padding:8px 11px;margin-top:7px;line-height:1.5}
+  .a11ynote b{color:#7a4fd0}
+  .gap{display:flex;gap:9px;align-items:flex-start;padding:8px 0;border-bottom:1px dashed #e6efee;font-size:12.8px}
+  .gap .gp{flex:none;font-size:10px;font-weight:700;padding:3px 8px;border-radius:999px;background:var(--rdb);color:var(--rd)}
+  .gap .gp.m{background:var(--amb);color:var(--am)}
+  footer{text-align:center;color:var(--muted);font-size:12px;margin-top:40px}
+  .mtree,.mtree ul{list-style:none;margin:0;padding-left:15px}
+  .mtree li{font-size:12.3px;line-height:1.7;padding:1px 0;border-left:1px solid #e6efee;padding-left:9px}
+  .men{font-weight:600}.mar{color:var(--muted);font-size:11px}
+  .mdot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px;vertical-align:middle}
+  .mdot.p{background:var(--gp)}.mdot.m{background:var(--am)}.mdot.x{background:var(--rd)}
+  .mdot.i,.mdot.i2{background:var(--in)}.mdot.o,.mdot.o2{background:var(--out)}
+  @media print{.bar{display:none}body{background:#fff}.wrap{max-width:none;padding:0 6mm}}
+</style>
+</head>
+<body>
+<div class="bar">
+  <span class="brand">A.B.C.D.E — Full Specification</span>
+  <a href="index.html">← Hub</a>
+  <button onclick="window.print()">📄 Generate PDF</button>
+</div>
+
+<div class="wrap">
+  <div class="cover">
+    <div class="eyebrow">A . B . C . D . E&nbsp; · &nbsp;Alamein Model Hospital</div>
+    <h1>Full System Specification</h1>
+    <p>Customer requirements, full system requirements (functional with Input/Output, user stories, acceptance criteria, priority, source, and PCC mapping; plus non-functional), the services map, the subsystem architecture, and the patient-centered-care analysis — combined into one document.</p>
+    <div class="toc">
+      <b>Contents</b><br>
+      Part 1 — Customer Requirements<br>
+      Part 2 — Functional Requirements (System)<br>
+      Part 3 — Non-Functional Requirements<br>
+      Part 4 — Services Map<br>
+      Part 5 — Subsystem Architecture (prototype vs to-build)<br>
+      Part 6 — Patient-Centered Care (8 principles, personas, user stories, accessibility, gaps)<br>
+      Part 7 — Mindmap outline (app → user → service → function → I/O) plus scenarios
+    </div>
+  </div>
+
+  <h2 class="part">Part 1 · Customer Requirements</h2>
+  <div class="sub">What the hospital and patients want, traced to the system requirements.</div>
+  <table><thead><tr><th style="width:60px">ID</th><th>Customer requirement</th><th style="width:120px">Met by</th></tr></thead><tbody id="crBody"></tbody></table>
+
+  <h2 class="part">Part 2 · Functional Requirements (System)</h2>
+  <div class="sub">Service → high-level → low-level. Each low-level function has Input/Output, a user story per actor, acceptance criteria, priority, source (requirements-doc question), and the PCC principle it serves.</div>
+  <div id="frList"></div>
+
+  <h2 class="part">Part 3 · Non-Functional Requirements</h2>
+  <table><thead><tr><th style="width:150px">ID · Attribute</th><th>Requirement</th><th style="width:80px">Priority</th></tr></thead><tbody id="nfrBody"></tbody></table>
+
+  <h2 class="part">Part 4 · Services Map (noun → low-level functions)</h2>
+  <table><thead><tr><th>Service</th><th>Low-level functions</th></tr></thead><tbody id="svcBody"></tbody></table>
+
+  <h2 class="part">Part 5 · Subsystem Architecture</h2>
+  <div class="sub">17 subsystems → high-level → low-level functions, who uses each, and build status. ✓ in prototype · ~ partial · ✗ not built.</div>
+  <div id="archList"></div>
+
+  <h2 class="part">Part 6 · Patient-Centered Care</h2>
+  <h3 class="sec">6.1 — The 8 PCC Principles</h3>
+  <div class="grid g2" id="pccGrid"></div>
+  <h3 class="sec">6.2 — Personas</h3>
+  <div class="grid g3" id="personaGrid"></div>
+  <h3 class="sec">6.3 — User Stories</h3>
+  <div id="storyList"></div>
+  <h3 class="sec">6.4 — Accessibility Coverage</h3>
+  <table id="a11yTable"></table>
+  <h3 class="sec">6.5 — Gaps to add</h3>
+  <div id="gapList"></div>
+
+  <h2 class="part">Part 7 · Mindmap (outline)</h2>
+  <div class="sub">The architecture mindmap as a printable outline — app → user → service → function → In/Out. The number prefix on each function is its SRS requirement. ● in prototype · ● partial · ● not built · ● input · ● output.</div>
+  <div id="mindOutline"></div>
+  <h3 class="sec">7.1 — Scenarios</h3>
+  <div id="scenOutline"></div>
+
+  <footer>A.B.C.D.E System · Alamein Model Hospital · combined specification (generated)</footer>
+</div>
+
+<script>
+/*__DATA__*/
+
+/* ---------- render: Customer Requirements ---------- */
+document.getElementById('crBody').innerHTML=CR.map(r=>
+  `<tr><td class="k">${r[0]}</td><td>${r[1]}</td><td style="color:var(--teal);font-weight:600">${r[2]}</td></tr>`).join('');
+
+/* ---------- render: Functional Requirements ---------- */
+function story(a){return `<li>As a <b>${a[0]}</b>, I ${a[1]}.</li>`;}
+function llfHtml(l){
+  return `<div class="llf">
+    <div class="llf-h"><span class="lid">${l.id}</span> ${l.s}</div>
+    <div class="io"><span class="i">In · ${l.in}</span><span class="o">Out · ${l.out}</span></div>
+    <ul class="stories">${l.a.map(story).join('')}</ul>
+    ${l.ac?`<div class="ac"><b>Acceptance:</b> ${l.ac.join(' · ')}</div>`:''}
+    <div class="lmeta"><span class="pri-${l.p}">${l.p}</span><span class="src">Src: ${l.src}</span>${(l.pcc||[]).map(n=>`<span class="pcc">PCC ${n}</span>`).join('')}</div>
+  </div>`;
+}
+document.getElementById('frList').innerHTML=FR.map(fr=>`
+  <div class="fr">
+    <div class="fr-h"><div class="frn">${fr.n}</div>
+      <div style="flex:1"><h4>${fr.title}</h4><div class="shall">${fr.shall}</div>
+        <div class="tags"><span class="svc">Service: ${fr.svc}</span>${fr.pcc.map(n=>`<span class="pcc">PCC ${n}</span>`).join('')}</div></div></div>
+    <div class="fr-body">${fr.hlf.map(h=>`<div class="hlf-h"><span class="hid">${h.id}</span> ${h.name}</div>${h.ll.map(llfHtml).join('')}`).join('')}</div>
+  </div>`).join('');
+
+/* ---------- render: Non-Functional ---------- */
+document.getElementById('nfrBody').innerHTML=NFR.map(r=>`<tr><td class="k">${r[0]}</td><td>${r[1]}</td><td><span class="lmeta"><span class="pri-${r[2]}">${r[2]}</span></span></td></tr>`).join('');
+
+/* ---------- render: Services Map ---------- */
+document.getElementById('svcBody').innerHTML=FR.map(fr=>{
+  const lls=fr.hlf.flatMap(h=>h.ll);
+  return `<tr><td class="svcn">${fr.n} · ${fr.svc}</td><td class="fns">${lls.map(l=>`<b>${l.id}</b> ${l.s}`).join('<br>')}</td></tr>`;}).join('');
+
+/* ---------- render: Subsystem Architecture ---------- */
+const SYM={p:'✓',m:'~',x:'✗'};
+document.getElementById('archList').innerHTML=SUBSYS.map(s=>{
+  const c={p:0,m:0,x:0}; s.hlf.forEach(h=>h.llf.forEach(l=>c[l[1]]++));
+  return `<div class="ar">
+    <div class="ar-h"><div class="ar-code">${s.code}</div>
+      <div><h4>${s.name}</h4><div class="pp">${s.purpose}</div>
+        <div class="minibar"><span class="pill p">✓ ${c.p}</span><span class="pill m">~ ${c.m}</span><span class="pill x">✗ ${c.x}</span></div></div></div>
+    ${s.hlf.map(h=>`<div class="ar-hl">${h.n}</div><ul class="ar-ul">${h.llf.map(l=>`<li><span class="tag ${l[1]}">${SYM[l[1]]}</span><span>${l[0]}</span></li>`).join('')}</ul>`).join('')}
+    <table class="ar-users"><thead><tr><th>Role</th><th>What they do here</th></tr></thead><tbody>${s.users.map(u=>`<tr><td class="role">${u[0]}</td><td class="does">${u[1]}</td></tr>`).join('')}</tbody></table>
+  </div>`;}).join('');
+
+/* ---------- render: PCC ---------- */
+const STl={p:'In prototype',m:'Partial',x:'Not built'};
+document.getElementById('pccGrid').innerHTML=PCC.map(p=>`
+  <div class="card pcard"><div class="pnum">${p.n}</div>
+    <div><h4>${p.t}<span class="stat ${p.st}">${STl[p.st]}</span></h4><div class="mean">${p.mean}</div>
+      <ul class="apply">${p.apply.map(a=>`<li>${a}</li>`).join('')}</ul></div></div>`).join('');
+document.getElementById('personaGrid').innerHTML=PERSONAS.map(p=>`
+  <div class="card persona ${p.a?'a':''}"><div class="role">${p.role}</div><h4>${p.n}</h4><p>${p.p}</p></div>`).join('');
+const CH={mob:['mob','Mobile'],dash:['dash','Dashboard'],land:['land','Landing'],svc:['svc','Service'],off:['off','Offline']};
+document.getElementById('storyList').innerHTML=STORIES.map(s=>`
+  <div class="story"><div class="sid">${s.id}<span class="stat ${s.st}" style="margin-left:8px">${STl[s.st]}</span></div>
+    <h4>${s.t}</h4><div class="userline">“${s.line}”</div>
+    <table class="tp"><thead><tr><th>User</th><th>Where</th><th>What they do</th></tr></thead><tbody>
+      ${s.tp.map(r=>`<tr><td class="u">${r.u}</td><td><span class="chan ${CH[r.c][0]}">${CH[r.c][1]}</span></td><td>${r.a}</td></tr>`).join('')}</tbody></table>
+    <div class="meta">${s.pcc.map(n=>`<span class="pp2">PCC ${n}</span>`).join('')}</div>
+    <div class="a11ynote">♿ ${s.a11y}</div></div>`).join('');
+document.getElementById('a11yTable').innerHTML=`<thead><tr><th>Need</th><th>Accommodations</th></tr></thead><tbody>`+
+  A11Y.map(r=>`<tr><td class="k">${r[0]}</td><td>${r[1]}</td></tr>`).join('')+`</tbody>`;
+document.getElementById('gapList').innerHTML=`<div class="card">`+GAPS.map(g=>`<div class="gap"><span class="gp ${g[0]}">${g[0]==='x'?'missing':'partial'}</span><span>${g[1]}</span></div>`).join('')+`</div>`;
+
+/* ---------- render: Mindmap outline ---------- */
+function outline(node){
+  const parts=(node.label||'').split('\n');const en=parts[0],ar=parts[1]||'';
+  const kids=node.children||[];
+  const dot=node.s?`<span class="mdot ${node.s}"></span>`:'';
+  const lab=`${dot}<span class="men">${en}</span>${ar?` <span class="mar">${ar}</span>`:''}`;
+  return `<li>${lab}${kids.length?`<ul>${kids.map(outline).join('')}</ul>`:''}</li>`;
+}
+if(typeof ROOT!=='undefined')
+  document.getElementById('mindOutline').innerHTML=`<ul class="mtree">${(ROOT.children||[]).map(outline).join('')}</ul>`;
+if(typeof SCENARIOS!=='undefined')
+  document.getElementById('scenOutline').innerHTML=SCENARIOS.map(sc=>{
+    const p=(sc.root.label||'').split('\n');
+    return `<div class="card" style="margin-bottom:8px;page-break-inside:avoid"><h4 style="margin:0 0 6px;font-size:14px">${p[0]}${p[1]?' · '+p[1]:''}</h4><ul class="mtree">${(sc.root.children||[]).map(outline).join('')}</ul></div>`;
+  }).join('');
+</script>
+</body>
+</html>

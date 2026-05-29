@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A.B.C.D.E — System Architecture & Functional Breakdown</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --teal:#0e7c86; --teal-d:#0a5a62; --ink:#14302f; --muted:#6b8786;
+    --bg:#f3f6f6; --card:#ffffff; --line:#e2eceb;
+    --gp:#16895a; --gpb:#e7f6ee; --am:#b67b12; --amb:#fdf3e0; --rd:#c2453d; --rdb:#fdeceb;
+  }
+  *{box-sizing:border-box}
+  body{margin:0; font-family:'Outfit',system-ui,sans-serif; color:var(--ink);
+    background:radial-gradient(1200px 600px at 80% -10%, #e7f4f3 0%, var(--bg) 55%); -webkit-font-smoothing:antialiased}
+  .wrap{max-width:1080px; margin:0 auto; padding:42px 20px 90px}
+  header.hero{text-align:center; margin-bottom:24px}
+  .eyebrow{font-size:12px; letter-spacing:.22em; text-transform:uppercase; color:var(--teal); font-weight:600}
+  h1{font-family:'Fraunces',serif; font-weight:600; font-size:clamp(27px,5vw,42px); margin:8px 0 10px; line-height:1.06}
+  .lead{color:var(--muted); font-size:15.5px; max-width:680px; margin:0 auto}
+
+  .summary{display:flex; gap:12px; flex-wrap:wrap; justify-content:center; margin:22px 0 6px}
+  .scard{background:#fff; border:1px solid var(--line); border-radius:16px; padding:14px 20px; text-align:center; min-width:120px}
+  .scard .big{font-family:'Fraunces',serif; font-size:30px; font-weight:700; line-height:1}
+  .scard .lbl{font-size:11.5px; color:var(--muted); margin-top:6px; text-transform:uppercase; letter-spacing:.05em}
+  .legend{display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-top:16px}
+  .lg{font-size:12.5px; padding:6px 12px; border-radius:999px; font-weight:600; display:inline-flex; gap:6px; align-items:center}
+  .lg.p{background:var(--gpb); color:var(--gp)} .lg.m{background:var(--amb); color:var(--am)} .lg.x{background:var(--rdb); color:var(--rd)}
+
+  nav.tabs{position:sticky; top:0; z-index:10; display:flex; gap:6px; flex-wrap:wrap; justify-content:center;
+    padding:12px 0; margin:22px 0 8px; background:rgba(243,246,246,.92); backdrop-filter:blur(8px); border-bottom:1px solid var(--line)}
+  nav.tabs button{font-family:inherit; font-size:12px; font-weight:700; cursor:pointer; padding:7px 11px; border-radius:9px;
+    border:1px solid var(--line); background:#fff; color:var(--teal); transition:.15s}
+  nav.tabs button:hover{background:var(--teal); color:#fff; border-color:var(--teal)}
+  .toolbar{text-align:center; margin:6px 0 0}
+  .toolbar button{font-family:inherit; font-size:12.5px; font-weight:600; cursor:pointer; color:var(--teal);
+    background:#eef6f5; border:1px solid var(--line); padding:8px 16px; border-radius:999px; margin:0 4px}
+  .toolbar button:hover{background:var(--teal); color:#fff}
+
+  section.sub{background:var(--card); border:1px solid var(--line); border-radius:20px; padding:22px 22px 18px; margin-top:22px;
+    scroll-margin-top:74px; box-shadow:0 12px 34px -26px rgba(14,124,134,.5)}
+  .sub-head{display:flex; align-items:flex-start; gap:14px}
+  .code{flex:none; width:50px; height:50px; border-radius:13px; display:grid; place-items:center; color:#fff; font-weight:700;
+    font-size:16px; background:linear-gradient(135deg,var(--teal),var(--teal-d))}
+  .sub-head h2{font-family:'Fraunces',serif; font-weight:600; font-size:21px; margin:0 0 3px}
+  .sub-head .purpose{color:var(--muted); font-size:13.5px; line-height:1.5}
+  .minibar{display:flex; gap:6px; margin-top:9px; flex-wrap:wrap}
+  .pill{font-size:11px; font-weight:700; padding:4px 9px; border-radius:999px}
+  .pill.p{background:var(--gpb); color:var(--gp)} .pill.m{background:var(--amb); color:var(--am)} .pill.x{background:var(--rdb); color:var(--rd)}
+
+  .block-title{font-size:11.5px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--teal);
+    margin:20px 0 8px; border-bottom:1px solid var(--line); padding-bottom:6px}
+  .hlf{border:1px solid var(--line); border-radius:13px; margin-bottom:9px; overflow:hidden; background:#fcfdfd}
+  .hlf > .hh{display:flex; align-items:center; gap:10px; padding:12px 14px; cursor:pointer; user-select:none}
+  .hlf > .hh:hover{background:#f4faf9}
+  .hlf .caret{transition:.2s; color:var(--muted); font-size:12px}
+  .hlf.open .caret{transform:rotate(90deg)}
+  .hlf .hname{font-weight:600; font-size:14.5px; flex:1}
+  .hlf .hcount{font-size:11px; color:var(--muted); font-weight:600}
+  .llf{display:none; padding:2px 14px 12px 36px}
+  .hlf.open .llf{display:block}
+  .llf li{list-style:none; display:flex; align-items:center; gap:9px; padding:6px 0; font-size:13.5px; border-top:1px dashed #eef3f2}
+  .llf li:first-child{border-top:none}
+  .tag{flex:none; width:20px; height:20px; border-radius:6px; display:grid; place-items:center; font-size:12px; font-weight:700}
+  .tag.p{background:var(--gpb); color:var(--gp)} .tag.m{background:var(--amb); color:var(--am)} .tag.x{background:var(--rdb); color:var(--rd)}
+
+  table.users{width:100%; border-collapse:collapse; font-size:13.3px; margin-top:4px}
+  table.users th,table.users td{text-align:left; padding:9px 12px; border-bottom:1px solid var(--line); vertical-align:top}
+  table.users th{font-size:11px; letter-spacing:.05em; text-transform:uppercase; color:var(--teal); font-weight:700}
+  table.users td.role{font-weight:600; white-space:nowrap; color:var(--ink)}
+  table.users td.does{color:#3d5654}
+  footer{text-align:center; color:var(--muted); font-size:12.5px; margin-top:40px; line-height:1.7}
+  .sitebar{display:flex;align-items:center;gap:6px;justify-content:center;flex-wrap:wrap;padding:10px 16px;background:#0a5a62}
+  .sitebar .brand{font-family:'Fraunces',serif;font-weight:700;color:#fff;text-decoration:none;font-size:15px;letter-spacing:.04em;margin-right:10px}
+  .sitebar a.link{color:rgba(255,255,255,.85);text-decoration:none;font-size:13px;font-weight:600;padding:7px 13px;border-radius:999px;transition:.15s}
+  .sitebar a.link:hover{background:rgba(255,255,255,.16);color:#fff}
+  .sitebar a.link.active{background:#fff;color:#0a5a62}
+  @media print{.sitebar,nav.tabs,.toolbar{display:none}.llf{display:block!important}.hlf .caret{display:none}body{background:#fff}}
+</style>
+</head>
+<body>
+<div class="sitebar">
+<a class="brand" href="index.html">A.B.C.D.E</a>
+<a class="link" href="SRS-requirements.html">SRS</a>
+<a class="link" href="user-mindmaps.html">Mindmap</a>
+<a class="link active" href="system-architecture.html">Architecture</a>
+<a class="link" href="patient-stories-pcc.html">PCC · Stories</a>
+</div>
+<div class="wrap">
+
+  <header class="hero">
+    <div class="eyebrow">A . B . C . D . E&nbsp; · &nbsp;Alamein Model Hospital</div>
+    <h1>System Architecture &amp;<br>Functional Breakdown</h1>
+    <p class="lead">The system decomposed into subsystems → high-level functions → low-level functions, with exactly which user role uses each subsystem, and what exists in the prototype vs. what is still to be built.</p>
+    <div class="summary" id="summary"></div>
+    <div class="legend">
+      <span class="lg p">✓ In prototype (UI mockup)</span>
+      <span class="lg m">~ Partial / mocked</span>
+      <span class="lg x">✗ Not built yet</span>
+    </div>
+  </header>
+
+  <nav class="tabs" id="tabs"></nav>
+  <div class="toolbar"><button id="expandAll">Expand all functions</button><button id="collapseAll">Collapse all functions</button><button id="pdfBtn" style="background:var(--teal);color:#fff;border-color:var(--teal)">📄 Generate PDF</button></div>
+
+  <div id="root"></div>
+
+  <footer>
+    A.B.C.D.E System · Alamein Model Hospital<br>
+    Prototype = the patient-app clickable mockup (UI only — no real backend, authentication, AI, or hospital integration).<br>
+    Staff dashboards, AI engines, indoor navigation, accessibility, and DMS/HMIS integration are not yet built.
+  </footer>
+</div>
+
+<script>
+/* status: p = in prototype, m = partial/mocked, x = not built */
+const SUBSYS = [
+ {code:'S1', name:'Identity, Access & Onboarding',
+  purpose:'Who can enter the system, how they authenticate, and what each role is allowed to see and do.',
+  hlf:[
+    {n:'Authentication', llf:[['Standard login (mobile / file ID + password)','p'],['QR-code login (scan)','m'],['Guest-mode entry','p'],['Session handling & logout','x'],['Password reset / OTP','x']]},
+    {n:'Patient Registration', llf:[['Register (name, national ID, age, address, phone)','m'],['Register via reception-issued QR','x'],['Preferences (religion, language, contact channel)','x'],['Decision-maker / proxy record (name, relation, phone)','x']]},
+    {n:'Roles & Permissions', llf:[['8 role definitions','x'],['Per-role view permissions','x'],['Per-role edit permissions + 15-min edit window','x'],['Sensitive-data restriction (perf. evals, visitor data)','x']]},
+    {n:'Account Provisioning', llf:[['Create / disable accounts (IT / sys admin)','x'],['Assign role & permission set','x']]},
+    {n:'Localization', llf:[['Language switch — Arabic / English / Russian','x'],['Prototype currently English only','m']]},
+  ],
+  users:[['Guest','Enters guest mode and browses public info only.'],['Patient','Logs in (password or QR), sets language & preferences.'],['Family companion','Registers and links the patient account (one only).'],['Receptionist','Issues QR codes and registers patients.'],['System Admin','Creates accounts, assigns roles/permissions, configures languages.'],['All staff','Authenticate; access is scoped by their role.']]},
+
+ {code:'S2', name:'Public Portal & Discovery',
+  purpose:'The pre-login informational website browsable without an account.',
+  hlf:[
+    {n:'Hospital Profile', llf:[['About / history / mission','x'],['Contact & location','x'],['Intro & awareness videos','m']]},
+    {n:'Departments & Services (21 units)', llf:[['A page per department / unit','x'],['Services listed per department','x'],['Working hours per department','x']]},
+    {n:'Doctor Directory', llf:[['Doctor list per department + specialty','x'],['Doctor profile (photo + 3-line bio, optional)','x']]},
+    {n:'News & Success Stories', llf:[['Hospital news feed','x'],['Highlighted success cases','x']]},
+  ],
+  users:[['Guest','Browses departments, clinic times, doctors, news, success stories; requests an appointment — no medical data.'],['Patient / Family','Same content, plus their logged-in context.']]},
+
+ {code:'S3', name:'Appointments & Scheduling',
+  purpose:'Booking and managing visits and follow-ups.',
+  hlf:[
+    {n:'Book Appointment', llf:[['Booking form (name, phone, dept, complaint, desired time)','m'],['Slot generation (15-min, dept hours, ER 24/7)','x'],['Department & day selection','p']]},
+    {n:'Manage Appointments', llf:[['View upcoming list','p'],['Appointment detail (doctor, room, slot)','p'],['Add to calendar','m'],['Reschedule (allowed up to 12h before)','m']]},
+    {n:'Follow-up Appointments', llf:[['Auto-suggest first follow-up (after 1 week)','x'],['Fields: date, doctor, dept, patient, diagnosis, condition','x']]},
+    {n:'Assignment', llf:[['Assign patient to a doctor','x']]},
+  ],
+  users:[['Guest','Requests an appointment via the public form.'],['Patient','Views, books, and reschedules appointments.'],['Family companion','Books on the patient’s behalf.'],['Receptionist','Manages bookings; assigns patient to a doctor.'],['Hospital Director','Can also assign patients to doctors.'],['Doctor','Sees scheduled follow-ups for assigned patients.']]},
+
+ {code:'S4', name:'Patient Journey & Care Coordination',
+  purpose:'A single visit ticket that tracks the patient through every stage from arrival to discharge.',
+  hlf:[
+    {n:'Visit Ticket', llf:[['Unique ticket # / anonymized code','m'],['Consolidated timeline the whole team shares','p']]},
+    {n:'Stage Engine', llf:[['Stage set (Reception/ER, Triage, Diagnosis, Cath, Post-cath bed, Cardiac care, Discharge)','p'],['Stage status (done / now / upcoming)','p'],['Stage-owner assignment','x'],['Transition control (who advances the patient)','x'],['Alternative pathway (non-cardiac → internal medicine / home)','x']]},
+    {n:'Patient Status Display', llf:[['Simplified status text per stage','p'],['"Happening now" indicator','p']]},
+    {n:'Care Plan', llf:[['Treatment-plan record','x'],['Today’s goals','m']]},
+  ],
+  users:[['Patient','Views the journey, current stage, and simplified status.'],['Family companion','Sees current stage + general status only.'],['Triage Nurse','Records triage and decides routing; advances the triage stage.'],['Doctor','Writes diagnosis, advances stages, makes the discharge decision.'],['Nurse','Updates stage data for assigned patients.'],['Reception / Admission','Opens the medical file at intake.']]},
+
+ {code:'S5', name:'Vitals Monitoring & Early Warning',
+  purpose:'Capture vital signs and detect deterioration before it becomes critical.',
+  hlf:[
+    {n:'Vitals Capture', llf:[['Record BP, pulse, respiratory rate, SpO₂ (over 24h)','x'],['Display vitals to the patient','p'],['Recording frequency per stage','x']]},
+    {n:'Pain & Consciousness', llf:[['Pain scale recorded by doctor / nurse','x'],['Consciousness assessment','x']]},
+    {n:'Alarm Rules', llf:[['Per-case thresholds set by the physician','x'],['Threshold-breach detection','x']]},
+    {n:'AI Risk Scoring  [AI]', llf:[['NEWS2 / MEWS computation','x'],['Deterioration detection (SpO₂, HR, RR)','x'],['Alert staff before condition turns critical','x']]},
+  ],
+  users:[['Patient','Views own vital signs.'],['Nurse','Records vitals, pain, and consciousness.'],['Doctor','Sets alarm thresholds, reads risk scores, receives critical alerts.'],['Family companion','No access — vitals are hidden by default.']]},
+
+ {code:'S6', name:'Medication Management',
+  purpose:'Prescribe, schedule, remind, and log medications.',
+  hlf:[
+    {n:'Medication Plan', llf:[['Define drug (name, dose, timing, route) — doctor + pharmacist','x'],['Medication list display','p']]},
+    {n:'Reminders & Adherence', llf:[['Patient dose reminders','p'],['Mark as taken / snooze','m'],['Adherence log','m']]},
+    {n:'Administration (inpatient)', llf:[['Nurse administers and logs the dose','x'],['Due-dose alerts to nursing','x']]},
+  ],
+  users:[['Patient','Sees the schedule, gets reminders, marks doses taken.'],['Doctor','Prescribes and sets the medication schedule.'],['Clinical Pharmacist','Defines the drug fields together with the doctor.'],['Nurse','Administers and logs doses; gets due-dose alerts.']]},
+
+ {code:'S7', name:'Diagnostics, Reports & Records',
+  purpose:'Order tests, route results, and hold the medical record.',
+  hlf:[
+    {n:'Test Orders', llf:[['Order tests (enzymes, coagulation, CBC, ECG, echo, kidney, liver)','x'],['Route results to the treating physician','x']]},
+    {n:'Results & Reports', llf:[['Health reports (cath, labs, ECG, echo, care summary)','p'],['Report viewer + download / share','p']]},
+    {n:'Medical Record', llf:[['Patient history / past visits (doctor view)','x'],['EMR via DMS / HMIS integration','x']]},
+  ],
+  users:[['Patient','Views and downloads own reports.'],['Family companion','No access to detailed results.'],['Doctor','Orders tests, reads results, reviews patient history.'],['Nurse','Sees results relevant to assigned tasks.'],['System Admin','Maintains the DMS / HMIS integration.']]},
+
+ {code:'S8', name:'AI Smart Healthcare Assistant  [AI]',
+  purpose:'A chatbot that educates the patient, triages symptoms, and escalates emergencies.',
+  hlf:[
+    {n:'Healthcare Advisor (RAG)', llf:[['Chat interface','p'],['RAG over hospital-approved content (post-op, meds, diet, procedures)','x'],['Quick-question chips','p'],['Voice input / output','x']]},
+    {n:'Symptom Triage', llf:[['Symptom analysis','x'],['Red-flag detection / urgency classification','x'],['Rule-based emergency engine','x']]},
+    {n:'Escalation', llf:[['Handoff to the human care team','m'],['Nurse / doctor notification','x']]},
+  ],
+  users:[['Patient','Asks questions and describes symptoms.'],['Family companion','Can use the advisor for general guidance.'],['Nurse / Doctor','Receive escalations when clinical judgement is needed.']]},
+
+ {code:'S9', name:'AI Clinical Documentation  [AI]',
+  purpose:'Reduce clinician paperwork with AI-drafted reports, dictation, and translation.',
+  hlf:[
+    {n:'Report Generation', llf:[['Draft visit / follow-up / progress / discharge reports','x'],['Pull structured data from the EMR','x'],['Doctor reviews & approves before saving','x']]},
+    {n:'Voice Transcription', llf:[['Speech → note (Arabic / English, Whisper)','x'],['Real-time transcription','x']]},
+    {n:'Translation', llf:[['Arabic ↔ English (+ Russian)','x'],['Translate patient instructions','x']]},
+  ],
+  users:[['Doctor','Generates and approves report drafts, dictates notes, uses translation.'],['Patient / Family','Receive translated instructions.']]},
+
+ {code:'S10', name:'Feedback & Quality Management',
+  purpose:'Capture patient ratings and complaints and turn them into quality insight.',
+  hlf:[
+    {n:'Service Rating', llf:[['Per-stage rating (1–5 stars + optional comment)','p'],['Dimensions (reception speed, nursing, satisfaction, team)','m'],['Auto post-stage rating nudge','p'],['Proxy rating by family if patient is unable','x']]},
+    {n:'Issues & Complaints', llf:[['Report an issue (ticket linked to the stage)','p'],['Route negative rating to dept + hospital admin','x'],['Complaint response ≤ 6h, else escalate to director','x']]},
+    {n:'AI Feedback Reports  [AI]', llf:[['Sentiment analysis','x'],['Complaint categorization / theme extraction','x'],['AI-generated summaries','x']]},
+    {n:'Quality Dashboard', llf:[['Average rating, lowest points, open complaints','x'],['Replaces the paper discharge survey','x']]},
+  ],
+  users:[['Patient','Rates each stage, reports issues, suggests enhancements.'],['Family companion','Rates on the patient’s behalf when needed.'],['Quality Manager','Uses the dashboard, manages complaints, reads AI reports.'],['Hospital Director','Receives reports and oversees escalations.'],['Department heads','Receive negative ratings for their department.']]},
+
+ {code:'S11', name:'Family & Caregiver Access',
+  purpose:'Link one trusted companion and control exactly what they see and do.',
+  hlf:[
+    {n:'Linking (one companion)', llf:[['Add via QR / manual','p'],['Invite flow','m'],['Register the patient on their behalf','x']]},
+    {n:'Privacy & Permissions', llf:[['Visibility toggles (vitals, meds, labs, journey)','p'],['Permission level (Full Access / View Only)','p'],['5 per-member toggles (status, alerts, book, rate, emergency)','p']]},
+    {n:'Family Dashboard', llf:[['See stage, general status, treating physician, surgery-needed flag','m'],['Hide precise medical details & results','x']]},
+    {n:'Family Notifications', llf:[['Moved to a new care area / entered operations','m']]},
+  ],
+  users:[['Patient','Owns access and grants / revokes permissions.'],['Family companion','Views permitted info and acts within granted permissions.']]},
+
+ {code:'S12', name:'Notifications, Alerts & Emergency',
+  purpose:'Deliver reminders and updates, and run the emergency escalation chain.',
+  hlf:[
+    {n:'Notifications', llf:[['Med reminders, rate prompts, stage updates','p'],['Appointment-set & family-joined notices','p'],['Multi-channel delivery (SMS)','x']]},
+    {n:'Emergency SOS', llf:[['SOS button + pre-alert sheet','p'],['Escalation order: physician → nursing → family → care center','p']]},
+    {n:'Code Blue / Critical', llf:[['Activate a code by type','x'],['Call the Code Blue team (PA / operator)','x'],['Escalation timers','x']]},
+    {n:'Event Classification', llf:[['Distinguish emergency vs. normal alert','x']]},
+  ],
+  users:[['Patient','Receives alerts and can trigger SOS.'],['Family companion','Receives emergency notifications.'],['Nurse / Doctor','Receive critical alerts; request Code Blue activation.'],['PA Operator','Activates the code over the announcement system.']]},
+
+ {code:'S13', name:'Billing & Financial',
+  purpose:'Show the bill, insurance coverage, and let the patient pay.',
+  hlf:[
+    {n:'Bill Summary', llf:[['Itemized current-visit bill','p'],['Insurance coverage + amount due','p']]},
+    {n:'Payment', llf:[['Pay now','m'],['Payment history','p']]},
+    {n:'Statements', llf:[['Itemized invoice','p'],['Insurance claim statement','p']]},
+  ],
+  users:[['Patient','Views the bill, pays, views statements.'],['Family (full access)','Can view and pay on the patient’s behalf.'],['Finance / Admin','Back-office billing — not yet built.']]},
+
+ {code:'S14', name:'Education, Engagement & Loyalty',
+  purpose:'Help patients understand their care, relax, and earn rewards.',
+  hlf:[
+    {n:'Education Library', llf:[['Videos by topic (procedure, life after, med safety)','p'],['Content linked to the patient’s condition','x'],['Content approved by the treating physician','x']]},
+    {n:'Relax / Entertainment', llf:[['Calm sounds, games, short films','p']]},
+    {n:'Loyalty (Care Points)', llf:[['Points balance + progress bar','p'],['Earn points per completed rating (+20)','p'],['Rewards (e.g. priority booking)','m']]},
+  ],
+  users:[['Patient','Watches, learns, relaxes, and earns Care Points.'],['Family companion','Accesses education & entertainment during the stay.'],['PR Department','Provides the entertainment content.'],['Treating physician','Approves educational medical content.']]},
+
+ {code:'S15', name:'Indoor Navigation & Hospital Map  [New]',
+  purpose:'Help patients and visitors find their way inside the hospital.',
+  hlf:[
+    {n:'Interactive Map', llf:[['Floor-by-floor map + floor selector','x'],['Color-coded zones','x'],['Zoom / pinch','x'],['Live location (BLE / Wi-Fi)','x']]},
+    {n:'Search & Find', llf:[['Search room / doctor / dept / service','x'],['Auto-suggest + distance & walking time','x']]},
+    {n:'Turn-by-turn Navigation', llf:[['Route line + step directions','x'],['Accessible route (avoids stairs)','x'],['Real-time ETA','x']]},
+    {n:'POI Layer', llf:[['Restrooms, prayer rooms, cafeteria, pharmacy, ATM, parking','x']]},
+    {n:'Deep Links', llf:[['From appointment / journey / doctor / home','x']]},
+    {n:'Family / Visitor Map Mode', llf:[['Guest map without login','x'],['Patient location only if permitted','x']]},
+  ],
+  users:[['Patient','Navigates to rooms, clinics, and departments.'],['Family / Guest','Uses visitor map mode to find wards & waiting areas.']]},
+
+ {code:'S16', name:'Accessibility  [New]',
+  purpose:'Make the whole app usable for vision, hearing, and motor impairments.',
+  hlf:[
+    {n:'Vision', llf:[['High contrast, font scaler, bold, reduced motion','x'],['Screen reader (VoiceOver / TalkBack) + labels + focus order','x']]},
+    {n:'Voice & Audio', llf:[['Voice commands + text-to-speech','x'],['Audio alerts','x'],['Voice-triggered SOS','x']]},
+    {n:'Accessible Navigation', llf:[['Audio turn-by-turn + haptic cues + "Guide Me"','x'],['BLE location announcements','x']]},
+    {n:'Hearing', llf:[['Captions, visual + haptic alerts, sign-language card, text-to-nurse','x']]},
+    {n:'Motor', llf:[['Switch access, large targets, one-hand mode, gesture alternatives','x']]},
+    {n:'Accessibility Hub', llf:[['Profiles (Default / Low Vision / Blind / Deaf / Motor)','x'],['Preferences synced to the account','x']]},
+  ],
+  users:[['Patient','Uses any accessibility feature they need.'],['Care team','Reads the sign-language assistance card.']]},
+
+ {code:'S17', name:'Administration, Reporting & Integration',
+  purpose:'Staff dashboards, management reporting, configuration, and external integration.',
+  hlf:[
+    {n:'Staff Dashboards', llf:[['Doctor dashboard (patient list + critical flags)','x'],['Nurse dashboard (department patients + tasks)','x'],['Receptionist dashboard','x']]},
+    {n:'Management Reporting', llf:[['KPIs (patients/dept, bookings, performance eval)','x'],['Quality report (avg, lowest, dept comparison)','x'],['Custom date range + period / dept comparison','x'],['Recipients: hospital admin, quality manager, IT','x']]},
+    {n:'System Configuration', llf:[['Configure stages, roles, alarm rules, languages','x']]},
+    {n:'Integration', llf:[['DMS / HMIS (patient, lab, pharmacy)','x']]},
+    {n:'Audit & Governance', llf:[['Enforce 15-min edit window','x'],['Sensitive-data access control','x'],['Hospital-trial approval workflow','x']]},
+  ],
+  users:[['Doctor / Nurse / Receptionist','Use their respective operational dashboards.'],['Quality Manager','Reads quality reports and comparisons.'],['Hospital Director','Uses the management dashboard and approves the trial.'],['System Admin','Configures the system, manages integration, accounts, and audit.']]},
+];
+
+/* ---------- render ---------- */
+const ST={p:{c:'#16895a',sym:'✓'},m:{c:'#b67b12',sym:'~'},x:{c:'#c2453d',sym:'✗'}};
+const root=document.getElementById('root');
+let totals={p:0,m:0,x:0};
+
+SUBSYS.forEach(s=>{
+  const counts={p:0,m:0,x:0};
+  s.hlf.forEach(h=>h.llf.forEach(l=>{counts[l[1]]++; totals[l[1]]++;}));
+  const sec=document.createElement('section');
+  sec.className='sub'; sec.id=s.code;
+  let html = `<div class="sub-head"><div class="code">${s.code}</div>
+    <div><h2>${s.name}</h2><div class="purpose">${s.purpose}</div>
+    <div class="minibar">
+      <span class="pill p">✓ ${counts.p} in prototype</span>
+      <span class="pill m">~ ${counts.m} partial</span>
+      <span class="pill x">✗ ${counts.x} to build</span>
+    </div></div></div>`;
+
+  html += `<div class="block-title">High-level → low-level functions</div>`;
+  s.hlf.forEach((h,i)=>{
+    const tot=h.llf.length;
+    let items='';
+    h.llf.forEach(l=>{ const st=ST[l[1]];
+      items+=`<li><span class="tag ${l[1]}">${st.sym}</span><span>${l[0]}</span></li>`; });
+    html += `<div class="hlf open"><div class="hh"><span class="caret">▶</span>
+      <span class="hname">${h.n}</span><span class="hcount">${tot} function${tot>1?'s':''}</span></div>
+      <ul class="llf" style="margin:0;padding-left:36px">${items}</ul></div>`;
+  });
+
+  html += `<div class="block-title">Who uses this subsystem — and how</div>
+    <table class="users"><thead><tr><th>Role</th><th>What they do here</th></tr></thead><tbody>`;
+  s.users.forEach(u=> html += `<tr><td class="role">${u[0]}</td><td class="does">${u[1]}</td></tr>`);
+  html += `</tbody></table>`;
+
+  sec.innerHTML=html;
+  root.appendChild(sec);
+});
+
+/* summary cards */
+const totalLLF=totals.p+totals.m+totals.x;
+document.getElementById('summary').innerHTML=`
+  <div class="scard"><div class="big">${SUBSYS.length}</div><div class="lbl">Subsystems</div></div>
+  <div class="scard"><div class="big">${totalLLF}</div><div class="lbl">Functions</div></div>
+  <div class="scard"><div class="big" style="color:var(--gp)">${totals.p}</div><div class="lbl">In prototype</div></div>
+  <div class="scard"><div class="big" style="color:var(--am)">${totals.m}</div><div class="lbl">Partial</div></div>
+  <div class="scard"><div class="big" style="color:var(--rd)">${totals.x}</div><div class="lbl">To build</div></div>`;
+
+/* nav */
+const tabs=document.getElementById('tabs');
+SUBSYS.forEach(s=>{ const b=document.createElement('button'); b.textContent=s.code;
+  b.title=s.name; b.onclick=()=>document.getElementById(s.code).scrollIntoView({behavior:'smooth',block:'start'});
+  tabs.appendChild(b); });
+
+/* collapse toggles */
+document.addEventListener('click',e=>{ const hh=e.target.closest('.hh'); if(hh) hh.parentElement.classList.toggle('open'); });
+document.getElementById('expandAll').onclick=()=>document.querySelectorAll('.hlf').forEach(h=>h.classList.add('open'));
+document.getElementById('collapseAll').onclick=()=>document.querySelectorAll('.hlf').forEach(h=>h.classList.remove('open'));
+document.getElementById('pdfBtn').onclick=()=>{document.querySelectorAll('.hlf').forEach(h=>h.classList.add('open'));setTimeout(()=>window.print(),120);};
+</script>
+</body>
+</html>

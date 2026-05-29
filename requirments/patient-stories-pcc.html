@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A.B.C.D.E — User Stories & Patient-Centered Care (8 Principles)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --teal:#0e7c86; --teal-d:#0a5a62; --ink:#14302f; --muted:#6b8786;
+    --bg:#f3f6f6; --card:#ffffff; --line:#e2eceb;
+    --gp:#16895a; --gpb:#e7f6ee; --am:#b67b12; --amb:#fdf3e0; --rd:#c2453d; --rdb:#fdeceb;
+  }
+  *{box-sizing:border-box}
+  body{margin:0; font-family:'Outfit',system-ui,sans-serif; color:var(--ink);
+    background:radial-gradient(1200px 600px at 80% -10%, #e7f4f3 0%, var(--bg) 55%); -webkit-font-smoothing:antialiased}
+  .wrap{max-width:1080px; margin:0 auto; padding:42px 20px 90px}
+  header.hero{text-align:center; margin-bottom:22px}
+  .eyebrow{font-size:12px; letter-spacing:.22em; text-transform:uppercase; color:var(--teal); font-weight:600}
+  h1{font-family:'Fraunces',serif; font-weight:600; font-size:clamp(27px,5vw,42px); margin:8px 0 10px; line-height:1.06}
+  .lead{color:var(--muted); font-size:15.5px; max-width:700px; margin:0 auto}
+  nav.tabs{position:sticky; top:0; z-index:10; display:flex; gap:7px; flex-wrap:wrap; justify-content:center;
+    padding:13px 0; margin:22px 0 4px; background:rgba(243,246,246,.92); backdrop-filter:blur(8px); border-bottom:1px solid var(--line)}
+  nav.tabs button{font-family:inherit; font-size:13px; font-weight:600; cursor:pointer; padding:8px 14px; border-radius:999px;
+    border:1px solid var(--line); background:#fff; color:var(--ink); transition:.15s}
+  nav.tabs button:hover{border-color:var(--teal); color:var(--teal)}
+  h2.sec{font-family:'Fraunces',serif; font-weight:600; font-size:25px; margin:38px 0 4px; scroll-margin-top:74px}
+  .sub{color:var(--muted); font-size:14px; margin-bottom:14px}
+
+  .grid{display:grid; gap:14px}
+  .g2{grid-template-columns:repeat(2,1fr)} .g3{grid-template-columns:repeat(3,1fr)}
+  @media(max-width:820px){.g2,.g3{grid-template-columns:1fr}}
+  .card{background:var(--card); border:1px solid var(--line); border-radius:16px; padding:16px 18px;
+    box-shadow:0 10px 28px -24px rgba(14,124,134,.5)}
+  .pcard{display:flex; gap:13px}
+  .pnum{flex:none; width:38px; height:38px; border-radius:11px; display:grid; place-items:center; color:#fff; font-weight:700;
+    font-size:15px; background:linear-gradient(135deg,var(--teal),var(--teal-d))}
+  .pcard h3{margin:0 0 2px; font-size:15.5px} .pcard .mean{color:var(--muted); font-size:12.5px; margin-bottom:7px; line-height:1.5}
+  .apply{margin:0; padding-left:16px; font-size:12.8px; color:#3d5654; line-height:1.65}
+  .stat{font-size:10.5px; font-weight:700; padding:3px 8px; border-radius:999px; margin-left:6px; vertical-align:middle}
+  .stat.p{background:var(--gpb); color:var(--gp)} .stat.m{background:var(--amb); color:var(--am)} .stat.x{background:var(--rdb); color:var(--rd)}
+
+  .persona{border-left:4px solid var(--teal)}
+  .persona.a{border-color:#9b5de5} .persona .role{font-size:11.5px; color:var(--teal); font-weight:700; text-transform:uppercase; letter-spacing:.05em}
+  .persona h3{margin:3px 0 5px; font-size:15px} .persona p{margin:0; font-size:12.8px; color:#3d5654; line-height:1.55}
+
+  .story{border:1px solid var(--line); border-radius:16px; padding:18px 20px; margin-bottom:14px; background:#fff;
+    box-shadow:0 10px 28px -24px rgba(14,124,134,.5)}
+  .story .sid{font-size:11.5px; font-weight:700; color:var(--teal); letter-spacing:.06em}
+  .story h3{font-family:'Fraunces',serif; font-weight:600; font-size:19px; margin:3px 0 6px}
+  .story .userline{font-size:13.5px; color:#3d5654; font-style:italic; background:#f0f7f6; border:1px solid var(--line);
+    border-radius:10px; padding:9px 12px; margin-bottom:12px}
+  table.tp{width:100%; border-collapse:collapse; font-size:13px; margin:6px 0 10px}
+  table.tp th,table.tp td{text-align:left; padding:8px 10px; border-bottom:1px solid var(--line); vertical-align:top}
+  table.tp th{font-size:10.5px; letter-spacing:.05em; text-transform:uppercase; color:var(--teal); font-weight:700}
+  table.tp td.u{font-weight:600; white-space:nowrap}
+  .chan{font-size:11px; font-weight:700; padding:2px 8px; border-radius:6px; white-space:nowrap}
+  .chan.mob{background:#e7eef9; color:#3a6ea5} .chan.dash{background:#fde7ef; color:#c24a78}
+  .chan.land{background:#e7f6ee; color:#16895a} .chan.svc{background:#f0eafb; color:#7a4fd0} .chan.off{background:#eef2f1; color:#6b8786}
+  .meta{display:flex; gap:8px; flex-wrap:wrap; align-items:center; font-size:12px; margin-top:6px}
+  .pp{font-size:11px; font-weight:700; padding:3px 9px; border-radius:999px; background:#eaf5f4; color:var(--teal)}
+  .a11y{font-size:12.5px; color:#3d5654; background:#faf7ff; border:1px solid #efe7fb; border-radius:10px; padding:9px 12px; margin-top:8px; line-height:1.55}
+  .a11y b{color:#7a4fd0}
+
+  table.mx{width:100%; border-collapse:collapse; font-size:13px}
+  table.mx th,table.mx td{text-align:left; padding:10px 12px; border-bottom:1px solid var(--line); vertical-align:top}
+  table.mx th{font-size:11px; letter-spacing:.05em; text-transform:uppercase; color:var(--teal); font-weight:700}
+  table.mx td.k{font-weight:600; white-space:nowrap}
+  .gap{display:flex; gap:10px; align-items:flex-start; padding:10px 0; border-bottom:1px dashed #e6efee; font-size:13.5px}
+  .gap .pill{flex:none; font-size:10.5px; font-weight:700; padding:3px 8px; border-radius:999px; background:var(--rdb); color:var(--rd)}
+  .gap .pill.m{background:var(--amb); color:var(--am)}
+  footer{text-align:center; color:var(--muted); font-size:12.5px; margin-top:44px; line-height:1.7}
+  .sitebar{display:flex;align-items:center;gap:6px;justify-content:center;flex-wrap:wrap;padding:10px 16px;background:#0a5a62}
+  .sitebar .brand{font-family:'Fraunces',serif;font-weight:700;color:#fff;text-decoration:none;font-size:15px;letter-spacing:.04em;margin-right:10px}
+  .sitebar a.link{color:rgba(255,255,255,.85);text-decoration:none;font-size:13px;font-weight:600;padding:7px 13px;border-radius:999px;transition:.15s}
+  .sitebar a.link:hover{background:rgba(255,255,255,.16);color:#fff}
+  .sitebar a.link.active{background:#fff;color:#0a5a62}
+  @media print{.sitebar,nav.tabs,#pdfBtn{display:none}body{background:#fff}}
+</style>
+</head>
+<body>
+<div class="sitebar">
+<a class="brand" href="index.html">A.B.C.D.E</a>
+<a class="link" href="SRS-requirements.html">SRS</a>
+<a class="link" href="user-mindmaps.html">Mindmap</a>
+<a class="link" href="system-architecture.html">Architecture</a>
+<a class="link active" href="patient-stories-pcc.html">PCC · Stories</a>
+</div>
+<div class="wrap">
+
+  <header class="hero">
+    <div class="eyebrow">A . B . C . D . E&nbsp; · &nbsp;Alamein Model Hospital</div>
+    <h1>User Stories &amp;<br>Patient-Centered Care</h1>
+    <p class="lead">The whole system measured against the 8 principles of patient-centered care — with full user stories that cover every kind of patient: those who can't hear, can't see, can't speak, the elderly, and those who speak another language. Each story shows which user does what, and from where.</p>
+  </header>
+
+  <nav class="tabs" id="tabs">
+    <button data-t="pcc">8 PCC Principles</button>
+    <button data-t="personas">Personas</button>
+    <button data-t="stories">User Stories</button>
+    <button data-t="access">Accessibility</button>
+    <button data-t="gaps">Gaps to add</button>
+  </nav>
+  <div style="text-align:center;margin:8px 0 0"><button id="pdfBtn" style="font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;color:#fff;background:var(--teal);border:1px solid var(--teal);padding:9px 18px;border-radius:999px">📄 Generate PDF</button></div>
+
+  <h2 class="sec" id="pcc">The 8 Principles of Patient-Centered Care</h2>
+  <div class="sub">Picker / IOM dimensions — the project's core goal. Each card shows how A.B.C.D.E applies it and current build status.</div>
+  <div class="grid g2" id="pccGrid"></div>
+
+  <h2 class="sec" id="personas">Personas</h2>
+  <div class="sub">Who we design for — including patients with sensory, age, speech, and language needs.</div>
+  <div class="grid g3" id="personaGrid"></div>
+
+  <h2 class="sec" id="stories">User Stories</h2>
+  <div class="sub">Complete scenarios end-to-end. Channel: <span class="chan land">Landing</span> <span class="chan mob">Mobile</span> <span class="chan dash">Dashboard</span> <span class="chan svc">Service</span> <span class="chan off">Offline</span>. PCC tags map to the 8 principles.</div>
+  <div id="storyList"></div>
+
+  <h2 class="sec" id="access">Accessibility Coverage</h2>
+  <div class="sub">Every impairment type and the accommodations that keep care patient-centered. (All accessibility features are still to be built.)</div>
+  <div class="card"><table class="mx" id="a11yTable"></table></div>
+
+  <h2 class="sec" id="gaps">Gaps to add (for full PCC)</h2>
+  <div class="sub">Details from the requirements not yet reflected in the build — needed to satisfy all 8 principles.</div>
+  <div class="card" id="gapList"></div>
+
+  <footer>
+    A.B.C.D.E System · Alamein Model Hospital<br>
+    Status: <b>green</b> = in prototype · <b>amber</b> = partial / mocked · <b>red</b> = not built yet.
+  </footer>
+</div>
+
+<script>
+/* ---------- 8 PCC principles ---------- */
+const PCC=[
+ {n:1,t:'Respect for values, preferences & needs',mean:'Care shaped around who the patient is.',st:'m',
+  apply:['Register religion, language (AR/EN/RU) & preferred contact (SMS)','Record an authorized decision-maker (proxy) for consent','Patient privacy controls — patient decides what family sees','Flag dietary / cultural needs to the care team']},
+ {n:2,t:'Information, communication & education',mean:'The patient always understands what is happening.',st:'m',
+  apply:['Simplified status text at every stage','Education videos linked to the condition (physician-approved)','AI Health Advisor: post-op, meds, diet, procedures','Reports viewer with plain explanations','Captions for deaf · text-to-speech for blind · 3 languages']},
+ {n:3,t:'Access to care',mean:'Easy to reach the right service.',st:'m',
+  apply:['Guest browse + public appointment request','Register by mobile/file ID or QR','Reschedule (≥12h) + 24/7 hotline','Indoor navigation to find rooms & clinics','Accessibility so everyone can actually use it']},
+ {n:4,t:'Emotional support & relief of anxiety',mean:'Reassurance in the hard moments.',st:'m',
+  apply:['Reassurance messages during ER, awaiting results, operation & ICU','Live operation status to the family','Relax tab — calm sounds, games, short films','Advisor answers "is this normal?" gently']},
+ {n:5,t:'Involvement of family & friends',mean:'The companion is part of the care.',st:'m',
+  apply:['Link one companion with permission levels','Family sees stage, status, treating physician, surgery flag','Family can book, rate, report emergency, give consent','Notify family on care-area change / entering operations']},
+ {n:6,t:'Coordination & integration of care',mean:'One team, one shared picture.',st:'x',
+  apply:['Single visit ticket shared by the whole team','Stage engine with owners & safe transitions','Doctor & nurse dashboards','Risk alerts, escalation & Code Blue','Integration with the hospital DMS / HMIS']},
+ {n:7,t:'Physical comfort',mean:'Pain, vitals and basic needs managed.',st:'m',
+  apply:['Pain scale (0–10) recorded by doctor & nurse','Continuous vitals + AI deterioration alerts (NEWS2/MEWS)','Medication schedule & reminders','Comfort goals (light walking, low-salt diet)']},
+ {n:8,t:'Continuity & safe transition',mean:'Recovery continues safely after discharge.',st:'m',
+  apply:['Discharge pack: prescription, report, instructions, follow-up','Auto follow-up appointment (1 week) + reminders','Post-cath instructions in the app','Hotline + "come back if you feel unwell"','Share reports with another provider']},
+];
+
+/* ---------- personas ---------- */
+const PERSONAS=[
+ {a:0,role:'Index patient',n:'Karim — cardiac patient',p:'Admitted with a heart attack, undergoing catheterization. The journey the whole system is built around.'},
+ {a:0,role:'Caregiver',n:'Mahmoud — family companion (son)',p:'The one linked companion. Full access; can act on Karim\'s behalf, give surgical consent, and follow his care.'},
+ {a:1,role:'Accessibility',n:'Blind patient',p:'Cannot see the screen. Needs full screen-reader support, voice commands, audio navigation and voice-triggered SOS.'},
+ {a:1,role:'Accessibility',n:'Deaf / hard-of-hearing patient',p:'Cannot hear. Needs captions, visual + haptic alerts, a sign-language request card, and text-to-nurse messaging.'},
+ {a:1,role:'Accessibility',n:'Non-verbal patient',p:'Cannot speak. Needs quick-need buttons, text-to-nurse, and a visual SOS instead of a phone call.'},
+ {a:1,role:'Accessibility',n:'Elderly patient (low tech literacy)',p:'Struggles with small text and complex screens. Needs a simple mode, large fonts, voice, and a companion to help.'},
+ {a:1,role:'Language',n:'Russian-speaking patient',p:'International patient. Needs the whole UI, content and instructions in Russian, plus translation when talking to staff.'},
+ {a:0,role:'Staff',n:'Care team',p:'Doctor, nurse, receptionist, pharmacist — deliver and coordinate care through the staff dashboard.'},
+ {a:0,role:'Oversight',n:'Quality & Director',p:'Turn patient feedback into service improvement and oversee the whole operation.'},
+];
+
+/* ---------- user stories ---------- */
+const S=(u,c,a)=>({u,c,a}); // user, channel, action
+const STORIES=[
+ {id:'US-01',t:'Emergency arrival of a cardiac patient',
+  line:'As a patient arriving by ambulance with chest pain, I want to be registered and triaged fast, so treatment starts immediately.',
+  tp:[S('Receptionist','dash','Register patient, issue QR, open medical file'),
+      S('Triage Nurse','dash','Record vitals, route to ER'),
+      S('ER Doctor','dash','Assess, order tests, call cardiologist'),
+      S('Patient / Family','mob','See "Under exam" status')],
+  pcc:[3,6], st:'m',
+  a11y:'If the patient is unconscious → the <b>authorized decision-maker</b> is contacted. If non-verbal → triage relies on observed vitals.'},
+ {id:'US-02',t:'Waiting for test results',
+  line:'As a patient (and my family) waiting for results, I want reassuring updates, so I feel less anxious.',
+  tp:[S('Patient','mob','Sees "awaiting results" + a reassurance message + relax content'),
+      S('Family','mob','Sees the general status'),
+      S('AI Advisor','svc','Answers "is this normal?" calmly')],
+  pcc:[2,4], st:'m',
+  a11y:'Blind → status read aloud (TTS). Deaf → visual status + captioned reassurance video.'},
+ {id:'US-03',t:'Consent for catheterization (patient unable)',
+  line:'As a patient who may be unable to consent, I want my decision-maker involved, so care proceeds safely and ethically.',
+  tp:[S('Cardiologist','dash','Request consent for the procedure'),
+      S('Decision-maker / Family','mob','Receive request, approve consent'),
+      S('Family (no app)','off','Approve by phone — recorded by staff'),
+      S('System','svc','Store consent against the ticket')],
+  pcc:[1,5], st:'x',
+  a11y:'Consent request available in the decision-maker\'s language; phone fallback if they have no app.'},
+ {id:'US-04',t:'Family follows the operation live',
+  line:'As a family companion, I want live operation status, so I am not left in the dark.',
+  tp:[S('Room Nurse','dash','Set status: "in progress" → "finished"'),
+      S('Family','mob','Sees status + push notification'),
+      S('Patient','mob','—  (under anesthesia)')],
+  pcc:[4,5], st:'m',
+  a11y:'Deaf family → visual + haptic notification, no reliance on a phone call.'},
+ {id:'US-05',t:'Early deterioration during recovery',
+  line:'As a recovering patient, I want staff alerted if my vitals worsen, so they intervene early.',
+  tp:[S('Nurse','dash','Record vitals (BP, pulse, RR, SpO₂) + observations'),
+      S('Risk engine','svc','Compute NEWS2/MEWS, raise alert if high'),
+      S('Doctor','dash','Receive critical alert, intervene'),
+      S('Patient','mob','See own vitals')],
+  pcc:[6,7], st:'x',
+  a11y:'Thresholds set per case by the physician; alerts reach staff regardless of patient ability.'},
+ {id:'US-06',t:'Pain & medication management',
+  line:'As a patient in recovery, I want my pain managed and medications on time, so I am comfortable and safe.',
+  tp:[S('Nurse','dash','Assess pain (0–10), administer & log doses'),
+      S('Doctor + Pharmacist','dash','Define the medication schedule'),
+      S('Patient','mob','Get reminders, mark dose taken')],
+  pcc:[7], st:'m',
+  a11y:'Blind → spoken reminders. Non-verbal → tap to confirm pain level instead of describing it.'},
+ {id:'US-07',t:'Discharge & safe transition home',
+  line:'As a discharged patient, I want clear instructions and a follow-up, so my recovery continues safely.',
+  tp:[S('Consultant','dash','Discharge decision after vitals are stable'),
+      S('AI','svc','Draft the discharge summary'),
+      S('Doctor','dash','Review & approve the report'),
+      S('Patient','mob','Discharge pack: prescription, report, instructions, follow-up, hotline')],
+  pcc:[8,2], st:'m',
+  a11y:'Instructions available as audio (blind), captioned video (deaf), and in the patient\'s language.'},
+ {id:'US-08',t:'A blind patient uses the app independently',
+  line:'As a blind patient, I want to use the app by voice and screen reader, so I stay independent.',
+  tp:[S('Patient','mob','Screen-reader labels on everything; voice commands ("what\'s my next medication?")'),
+      S('Patient','mob','Text-to-speech replies; voice-triggered SOS'),
+      S('Patient','mob','Audio turn-by-turn indoor nav + haptic cues ("Guide Me")')],
+  pcc:[1,2,3], st:'x',
+  a11y:'<b>Full VoiceOver / TalkBack</b>, logical focus order, audio announcements of stage changes & alerts.'},
+ {id:'US-09',t:'A deaf patient communicates with the team',
+  line:'As a deaf patient, I want to communicate without speech or hearing, so nothing is lost.',
+  tp:[S('Patient','mob','Captions on all videos; visual + haptic alerts'),
+      S('Patient','mob','Show a sign-language request card to staff'),
+      S('Patient','mob','Text-to-nurse messaging'),
+      S('Nurse','dash','Receive & reply to text messages')],
+  pcc:[2], st:'x',
+  a11y:'<b>No audio-only information anywhere</b> — every alert has a visual + haptic equivalent.'},
+ {id:'US-10',t:'A non-verbal patient expresses needs',
+  line:'As a non-verbal patient, I want to express needs and call for help without speaking.',
+  tp:[S('Patient','mob','Quick-need buttons (pain, water, bathroom, nurse)'),
+      S('Patient','mob','Text-to-nurse + visual SOS'),
+      S('Nurse','dash','Receive the request with patient & room')],
+  pcc:[2,4], st:'x',
+  a11y:'Communication board / quick-need buttons replace any spoken interaction.'},
+ {id:'US-11',t:'Elderly patient + companion managing together',
+  line:'As an elderly patient, I want a simple interface and for my son to manage things, so I am not overwhelmed.',
+  tp:[S('Patient','mob','Simple mode: large text, high contrast, one-hand layout, voice'),
+      S('Family (son, full access)','mob','Books appointments, rates, gets alerts, acts on behalf')],
+  pcc:[1,5,3], st:'x',
+  a11y:'Accessibility profile "Low Vision / Senior" auto-applies font scaling & reduced motion.'},
+ {id:'US-12',t:'Russian-speaking international patient',
+  line:'As a Russian-speaking patient, I want everything in my language, so I understand my care.',
+  tp:[S('Patient','land','Browse & book in Russian'),
+      S('Patient','mob','Full UI, content & instructions in Russian'),
+      S('Doctor','dash','Use translation support to communicate')],
+  pcc:[1,2,3], st:'x',
+  a11y:'Arabic · English · Russian across all UI, notifications, and content.'},
+ {id:'US-13',t:'Feedback drives real quality improvement',
+  line:'As a patient, I want my ratings to actually improve service, so my voice matters.',
+  tp:[S('Patient / Family','mob','Rate each stage (1–5), suggest, report an issue'),
+      S('Quality Manager','dash','Dashboard + AI sentiment; respond ≤6h'),
+      S('Hospital Director','dash','Receive reports, handle escalations')],
+  pcc:[1], st:'m',
+  a11y:'Family can rate on behalf of a patient who is unable to.'},
+];
+
+/* ---------- accessibility matrix ---------- */
+const A11Y=[
+ ['Low vision','High-contrast mode · font scaler (S/M/L/XL) · bold text · reduced motion'],
+ ['Blind','Full screen reader (VoiceOver/TalkBack) · descriptive labels · voice commands · text-to-speech · audio nav + haptics · "Guide Me" · voice SOS'],
+ ['Deaf / hard-of-hearing','Captions on all videos · visual + haptic alternatives for every audio alert · sign-language request card · text-to-nurse'],
+ ['Non-verbal','Quick-need buttons · text-to-nurse · visual SOS · communication board'],
+ ['Motor / physical','Switch access · large tap targets (≥48dp) · one-hand mode · button alternative for every gesture'],
+ ['Elderly','Senior simple mode · large fonts · voice interface · companion management'],
+ ['Language','Arabic · English · Russian for all UI, notifications, content + medical translation'],
+];
+
+/* ---------- gaps ---------- */
+const GAPS=[
+ ['x','Authorized decision-maker + consent workflow (esp. when patient is incapacitated) — P1 & P5'],
+ ['x','Capture religious / dietary / cultural preferences and surface them to the care team — P1'],
+ ['x','Pain scale (0–10) capture by doctor & nurse — P7'],
+ ['m','Reassurance-message engine tied to high-anxiety stages (ER, awaiting result, operation, ICU) — P4'],
+ ['x','Full accessibility suite (vision, hearing, speech, motor, elderly) — all principles'],
+ ['x','Localization: Arabic · English · Russian across the whole app — P2 & P3'],
+ ['x','Staff dashboards + backend services + DMS/HMIS integration — P6'],
+ ['x','Simple "Senior" mode and alternative communication for non-verbal / deaf patients — P2'],
+ ['m','Proxy / on-behalf login so the companion can act for the patient — P5'],
+];
+
+/* ---------- render ---------- */
+const ST={p:'In prototype',m:'Partial',x:'Not built'};
+const q=s=>document.querySelector(s);
+
+q('#pccGrid').innerHTML = PCC.map(p=>`
+  <div class="card pcard">
+    <div class="pnum">${p.n}</div>
+    <div>
+      <h3>${p.t}<span class="stat ${p.st}">${ST[p.st]}</span></h3>
+      <div class="mean">${p.mean}</div>
+      <ul class="apply">${p.apply.map(a=>`<li>${a}</li>`).join('')}</ul>
+    </div>
+  </div>`).join('');
+
+q('#personaGrid').innerHTML = PERSONAS.map(p=>`
+  <div class="card persona ${p.a?'a':''}">
+    <div class="role">${p.role}</div>
+    <h3>${p.n}</h3>
+    <p>${p.p}</p>
+  </div>`).join('');
+
+const CH={mob:['mob','Mobile'],dash:['dash','Dashboard'],land:['land','Landing'],svc:['svc','Service'],off:['off','Offline']};
+q('#storyList').innerHTML = STORIES.map(s=>`
+  <div class="story">
+    <div class="sid">${s.id}<span class="stat ${s.st}" style="margin-left:8px">${ST[s.st]}</span></div>
+    <h3>${s.t}</h3>
+    <div class="userline">“${s.line}”</div>
+    <table class="tp"><thead><tr><th>User</th><th>Where</th><th>What they do</th></tr></thead><tbody>
+      ${s.tp.map(r=>`<tr><td class="u">${r.u}</td><td><span class="chan ${CH[r.c][0]}">${CH[r.c][1]}</span></td><td>${r.a}</td></tr>`).join('')}
+    </tbody></table>
+    <div class="meta">${s.pcc.map(n=>`<span class="pp">PCC ${n} · ${PCC[n-1].t.split(' ')[0]}…</span>`).join('')}</div>
+    <div class="a11y">♿ ${s.a11y}</div>
+  </div>`).join('');
+
+q('#a11yTable').innerHTML = `<thead><tr><th>Need</th><th>Accommodations</th></tr></thead><tbody>`+
+  A11Y.map(r=>`<tr><td class="k">${r[0]}</td><td>${r[1]}</td></tr>`).join('')+`</tbody>`;
+
+q('#gapList').innerHTML = GAPS.map(g=>`<div class="gap"><span class="pill ${g[0]}">${g[0]==='x'?'missing':'partial'}</span><span>${g[1]}</span></div>`).join('');
+
+/* nav */
+document.querySelectorAll('#tabs button').forEach(b=>b.onclick=()=>q('#'+b.dataset.t).scrollIntoView({behavior:'smooth',block:'start'}));
+document.getElementById('pdfBtn').onclick=()=>window.print();
+</script>
+</body>
+</html>

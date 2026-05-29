@@ -1,0 +1,1193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A.B.C.D.E — Full Specification (combined)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--teal:#0e7c86;--teal-d:#0a5a62;--ink:#14302f;--muted:#6b8786;--bg:#f3f6f6;--card:#fff;--line:#e2eceb;--soft:#eef6f5;
+    --gp:#16895a;--gpb:#e7f6ee;--am:#b67b12;--amb:#fdf3e0;--rd:#c2453d;--rdb:#fdeceb;--in:#3a6ea5;--inb:#eef3fb;--out:#2a8a7a;--outb:#eaf6f3}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:'Outfit',system-ui,sans-serif;color:var(--ink);background:#fff;-webkit-font-smoothing:antialiased}
+  .bar{position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:12px;justify-content:center;padding:10px 16px;background:#0a5a62}
+  .bar .brand{font-family:'Fraunces',serif;font-weight:700;color:#fff;font-size:15px}
+  .bar a{color:rgba(255,255,255,.85);text-decoration:none;font-size:13px;font-weight:600}
+  .bar button{font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;color:#0a5a62;background:#fff;border:0;padding:8px 18px;border-radius:999px}
+  .wrap{max-width:1000px;margin:0 auto;padding:30px 26px 80px}
+  .cover{text-align:center;margin:14px 0 26px;padding-bottom:22px;border-bottom:2px solid var(--soft)}
+  .eyebrow{font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--teal);font-weight:600}
+  h1{font-family:'Fraunces',serif;font-weight:600;font-size:38px;margin:8px 0 8px}
+  .cover p{color:var(--muted);font-size:14px;max-width:640px;margin:0 auto}
+  .toc{background:var(--soft);border:1px solid var(--line);border-radius:14px;padding:14px 20px;margin:18px auto 0;max-width:560px;text-align:left;font-size:13.5px;color:#3d5654;line-height:1.9}
+  .toc b{color:var(--ink)}
+  h2.part{font-family:'Fraunces',serif;font-weight:700;font-size:27px;margin:40px 0 4px;padding-top:14px;border-top:2px solid var(--soft);page-break-before:always}
+  h2.part:first-of-type{page-break-before:avoid}
+  h3.sec{font-family:'Fraunces',serif;font-weight:600;font-size:20px;margin:24px 0 4px}
+  .sub{color:var(--muted);font-size:13px;margin-bottom:12px}
+  table{width:100%;border-collapse:collapse;font-size:12.7px;background:#fff;border:1px solid var(--line);border-radius:10px;overflow:hidden;margin-bottom:8px}
+  th,td{text-align:left;padding:8px 11px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{background:var(--soft);color:var(--teal);font-size:11px;letter-spacing:.04em;text-transform:uppercase;font-weight:700}
+  td.k{font-weight:700;white-space:nowrap;color:var(--ink)}
+  /* FR */
+  .fr{border:1px solid var(--line);border-radius:14px;margin-bottom:11px;padding:13px 15px;page-break-inside:avoid}
+  .fr-h{display:flex;gap:11px;align-items:flex-start}
+  .frn{flex:none;min-width:28px;height:28px;padding:0 7px;border-radius:8px;display:grid;place-items:center;color:#fff;font-weight:700;font-size:13px;background:linear-gradient(135deg,var(--teal),var(--teal-d))}
+  .fr-h h4{margin:0;font-size:15.5px;font-weight:700}
+  .shall{color:#3d5654;font-size:12.8px;margin:3px 0 0;line-height:1.5}
+  .tags{margin-top:6px;display:flex;gap:6px;flex-wrap:wrap}
+  .svc{font-size:10.5px;font-weight:700;color:var(--teal);background:var(--soft);border:1px solid var(--line);border-radius:999px;padding:3px 9px}
+  .pcc{font-size:10px;font-weight:700;color:#7a4fd0;background:#f3eefb;border-radius:999px;padding:3px 8px}
+  .hlf-h{font-weight:700;font-size:13px;margin:12px 0 6px;border-top:1px solid var(--line);padding-top:9px}
+  .hlf-h .hid{color:var(--teal)}
+  .llf{border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:0 0 8px 0;background:#fcfdfd;page-break-inside:avoid}
+  .llf-h{font-size:13px}.llf-h .lid{font-weight:700}
+  .io{display:flex;gap:7px;flex-wrap:wrap;margin:6px 0}
+  .io span{font-size:11px;font-weight:600;padding:3px 8px;border-radius:7px;line-height:1.4}
+  .io .i{background:var(--inb);color:var(--in)}.io .o{background:var(--outb);color:var(--out)}
+  .stories{margin:5px 0;padding:0;list-style:none}
+  .stories li{font-size:12px;color:#3d5654;line-height:1.5;padding:2px 0 2px 14px;position:relative}
+  .stories li:before{content:"▸";position:absolute;left:0;color:var(--teal)}
+  .stories b{color:var(--teal);font-weight:600}
+  .ac{font-size:11.8px;color:#3d5654;background:#f7faf9;border:1px solid var(--line);border-radius:7px;padding:6px 9px;margin:5px 0;line-height:1.5}
+  .ac b{color:var(--ink)}
+  .lmeta{display:flex;gap:6px;flex-wrap:wrap;margin-top:5px;font-size:10.5px}
+  .lmeta span{padding:3px 8px;border-radius:999px;font-weight:700}
+  .pri-High{background:#fdeceb;color:#c2453d}.pri-Medium{background:#fdf3e0;color:#b67b12}.pri-Low{background:#eef2f1;color:#6b8786}
+  .src{background:var(--soft);color:var(--teal)}
+  td.svcn{font-weight:700;white-space:nowrap;width:230px}td.fns{color:#3d5654;line-height:1.7}
+  /* architecture */
+  .ar{border:1px solid var(--line);border-radius:12px;padding:13px 15px;margin-bottom:10px;page-break-inside:avoid}
+  .ar-h{display:flex;gap:11px;align-items:flex-start}
+  .ar-code{flex:none;width:42px;height:42px;border-radius:11px;display:grid;place-items:center;color:#fff;font-weight:700;font-size:14px;background:linear-gradient(135deg,var(--teal),var(--teal-d))}
+  .ar-h h4{margin:0;font-size:15px}.ar-h .pp{color:var(--muted);font-size:12px;margin-top:2px}
+  .minibar{display:flex;gap:6px;margin-top:7px;flex-wrap:wrap}
+  .pill{font-size:10.5px;font-weight:700;padding:3px 8px;border-radius:999px}
+  .pill.p{background:var(--gpb);color:var(--gp)}.pill.m{background:var(--amb);color:var(--am)}.pill.x{background:var(--rdb);color:var(--rd)}
+  .ar-hl{font-weight:700;font-size:12.8px;margin:10px 0 4px;color:var(--ink)}
+  .ar-ul{list-style:none;margin:0 0 6px 0;padding:0}
+  .ar-ul li{display:flex;gap:8px;align-items:center;font-size:12.3px;padding:4px 0;border-top:1px dashed #eef3f2}
+  .ar-ul li:first-child{border-top:0}
+  .tag{flex:none;width:18px;height:18px;border-radius:5px;display:grid;place-items:center;font-size:11px;font-weight:700}
+  .tag.p{background:var(--gpb);color:var(--gp)}.tag.m{background:var(--amb);color:var(--am)}.tag.x{background:var(--rdb);color:var(--rd)}
+  .ar-users td.role{font-weight:600;white-space:nowrap}.ar-users td.does{color:#3d5654}
+  /* PCC */
+  .grid{display:grid;gap:12px}.g2{grid-template-columns:repeat(2,1fr)}.g3{grid-template-columns:repeat(3,1fr)}
+  @media(max-width:780px){.g2,.g3{grid-template-columns:1fr}}
+  .card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 16px;page-break-inside:avoid}
+  .pcard{display:flex;gap:12px}
+  .pnum{flex:none;width:34px;height:34px;border-radius:10px;display:grid;place-items:center;color:#fff;font-weight:700;font-size:14px;background:linear-gradient(135deg,var(--teal),var(--teal-d))}
+  .pcard h4{margin:0 0 2px;font-size:14.5px}.mean{color:var(--muted);font-size:12px;margin-bottom:6px;line-height:1.5}
+  .apply{margin:0;padding-left:15px;font-size:12.3px;color:#3d5654;line-height:1.6}
+  .stat{font-size:10px;font-weight:700;padding:3px 8px;border-radius:999px;margin-left:6px}
+  .stat.p{background:var(--gpb);color:var(--gp)}.stat.m{background:var(--amb);color:var(--am)}.stat.x{background:var(--rdb);color:var(--rd)}
+  .persona{border-left:4px solid var(--teal)}.persona.a{border-color:#9b5de5}
+  .persona .role{font-size:11px;color:var(--teal);font-weight:700;text-transform:uppercase}
+  .persona h4{margin:3px 0 5px;font-size:14px}.persona p{margin:0;font-size:12.3px;color:#3d5654;line-height:1.5}
+  .story{border:1px solid var(--line);border-radius:14px;padding:15px 17px;margin-bottom:11px;page-break-inside:avoid}
+  .story .sid{font-size:11px;font-weight:700;color:var(--teal)}
+  .story h4{font-family:'Fraunces',serif;font-weight:600;font-size:17px;margin:3px 0 6px}
+  .userline{font-size:12.8px;color:#3d5654;font-style:italic;background:var(--soft);border:1px solid var(--line);border-radius:9px;padding:8px 11px;margin-bottom:10px}
+  table.tp{font-size:12.3px}
+  table.tp td.u{font-weight:600;white-space:nowrap}
+  .chan{font-size:10.5px;font-weight:700;padding:2px 7px;border-radius:6px;white-space:nowrap}
+  .chan.mob{background:#e7eef9;color:#3a6ea5}.chan.dash{background:#fde7ef;color:#c24a78}.chan.land{background:#e7f6ee;color:#16895a}.chan.svc{background:#f0eafb;color:#7a4fd0}.chan.off{background:#eef2f1;color:#6b8786}
+  .meta{display:flex;gap:7px;flex-wrap:wrap;margin-top:6px}.pp2{font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:999px;background:#eaf5f4;color:var(--teal)}
+  .a11ynote{font-size:12px;color:#3d5654;background:#faf7ff;border:1px solid #efe7fb;border-radius:9px;padding:8px 11px;margin-top:7px;line-height:1.5}
+  .a11ynote b{color:#7a4fd0}
+  .gap{display:flex;gap:9px;align-items:flex-start;padding:8px 0;border-bottom:1px dashed #e6efee;font-size:12.8px}
+  .gap .gp{flex:none;font-size:10px;font-weight:700;padding:3px 8px;border-radius:999px;background:var(--rdb);color:var(--rd)}
+  .gap .gp.m{background:var(--amb);color:var(--am)}
+  footer{text-align:center;color:var(--muted);font-size:12px;margin-top:40px}
+  .mtree,.mtree ul{list-style:none;margin:0;padding-left:15px}
+  .mtree li{font-size:12.3px;line-height:1.7;padding:1px 0;border-left:1px solid #e6efee;padding-left:9px}
+  .men{font-weight:600}.mar{color:var(--muted);font-size:11px}
+  .mdot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px;vertical-align:middle}
+  .mdot.p{background:var(--gp)}.mdot.m{background:var(--am)}.mdot.x{background:var(--rd)}
+  .mdot.i,.mdot.i2{background:var(--in)}.mdot.o,.mdot.o2{background:var(--out)}
+  @media print{.bar{display:none}body{background:#fff}.wrap{max-width:none;padding:0 6mm}}
+</style>
+</head>
+<body>
+<div class="bar">
+  <span class="brand">A.B.C.D.E — Full Specification</span>
+  <a href="index.html">← Hub</a>
+  <button onclick="window.print()">📄 Generate PDF</button>
+</div>
+
+<div class="wrap">
+  <div class="cover">
+    <div class="eyebrow">A . B . C . D . E&nbsp; · &nbsp;Alamein Model Hospital</div>
+    <h1>Full System Specification</h1>
+    <p>Customer requirements, full system requirements (functional with Input/Output, user stories, acceptance criteria, priority, source, and PCC mapping; plus non-functional), the services map, the subsystem architecture, and the patient-centered-care analysis — combined into one document.</p>
+    <div class="toc">
+      <b>Contents</b><br>
+      Part 1 — Customer Requirements<br>
+      Part 2 — Functional Requirements (System)<br>
+      Part 3 — Non-Functional Requirements<br>
+      Part 4 — Services Map<br>
+      Part 5 — Subsystem Architecture (prototype vs to-build)<br>
+      Part 6 — Patient-Centered Care (8 principles, personas, user stories, accessibility, gaps)<br>
+      Part 7 — Mindmap outline (app → user → service → function → I/O) plus scenarios
+    </div>
+  </div>
+
+  <h2 class="part">Part 1 · Customer Requirements</h2>
+  <div class="sub">What the hospital and patients want, traced to the system requirements.</div>
+  <table><thead><tr><th style="width:60px">ID</th><th>Customer requirement</th><th style="width:120px">Met by</th></tr></thead><tbody id="crBody"></tbody></table>
+
+  <h2 class="part">Part 2 · Functional Requirements (System)</h2>
+  <div class="sub">Service → high-level → low-level. Each low-level function has Input/Output, a user story per actor, acceptance criteria, priority, source (requirements-doc question), and the PCC principle it serves.</div>
+  <div id="frList"></div>
+
+  <h2 class="part">Part 3 · Non-Functional Requirements</h2>
+  <table><thead><tr><th style="width:150px">ID · Attribute</th><th>Requirement</th><th style="width:80px">Priority</th></tr></thead><tbody id="nfrBody"></tbody></table>
+
+  <h2 class="part">Part 4 · Services Map (noun → low-level functions)</h2>
+  <table><thead><tr><th>Service</th><th>Low-level functions</th></tr></thead><tbody id="svcBody"></tbody></table>
+
+  <h2 class="part">Part 5 · Subsystem Architecture</h2>
+  <div class="sub">17 subsystems → high-level → low-level functions, who uses each, and build status. ✓ in prototype · ~ partial · ✗ not built.</div>
+  <div id="archList"></div>
+
+  <h2 class="part">Part 6 · Patient-Centered Care</h2>
+  <h3 class="sec">6.1 — The 8 PCC Principles</h3>
+  <div class="grid g2" id="pccGrid"></div>
+  <h3 class="sec">6.2 — Personas</h3>
+  <div class="grid g3" id="personaGrid"></div>
+  <h3 class="sec">6.3 — User Stories</h3>
+  <div id="storyList"></div>
+  <h3 class="sec">6.4 — Accessibility Coverage</h3>
+  <table id="a11yTable"></table>
+  <h3 class="sec">6.5 — Gaps to add</h3>
+  <div id="gapList"></div>
+
+  <h2 class="part">Part 7 · Mindmap (outline)</h2>
+  <div class="sub">The architecture mindmap as a printable outline — app → user → service → function → In/Out. The number prefix on each function is its SRS requirement. ● in prototype · ● partial · ● not built · ● input · ● output.</div>
+  <div id="mindOutline"></div>
+  <h3 class="sec">7.1 — Scenarios</h3>
+  <div id="scenOutline"></div>
+
+  <footer>A.B.C.D.E System · Alamein Model Hospital · combined specification (generated)</footer>
+</div>
+
+<script>
+/* ===== data: SRS (CR, L, FR, NFR) ===== */
+
+const CR=[
+ ['CR-1','Patients can follow their entire hospital visit, stage by stage, from a mobile app.','FR 1, 4'],
+ ['CR-2','Patients can ask an AI health advisor about their condition, medication, and recovery and get trusted guidance.','FR 8'],
+ ['CR-3','The system warns the medical team early when a patient starts to deteriorate.','FR 5'],
+ ['CR-4','Doctors and nurses run their patients, documentation, and alerts from a dedicated dashboard.','FR 4, 5, 6, 7, 9'],
+ ['CR-5','Patients can request, view, and reschedule their appointments.','FR 3'],
+ ['CR-6','One trusted family companion can follow the patient and act for them, with permission.','FR 11'],
+ ['CR-7','Patients can see their bill and insurance and pay from the app.','FR 13'],
+ ['CR-8','Patients can rate every stage and report issues, and the hospital turns this into quality reports.','FR 10'],
+ ['CR-9','The medical team documents faster with AI drafts, voice notes, and translation, always approved by a doctor.','FR 9'],
+ ['CR-10','Every patient can use the app, including those who cannot see, hear, or speak, the elderly, and others.','FR 16'],
+ ['CR-11','The whole system works in Arabic, English, and Russian.','NFR-7'],
+ ['CR-12','Visitors can explore departments, doctors, and news and request an appointment without an account.','FR 2, 3'],
+ ['CR-13','Patients and visitors can find their way inside the hospital.','FR 15'],
+ ['CR-14','In an emergency the right people are alerted in the right order, including Code Blue.','FR 12'],
+ ['CR-15','The system works with the hospital existing DMS and HMIS instead of replacing it.','FR 7, 17 · NFR-8'],
+ ['CR-16','Patient data stays private, only authorized people and the chosen companion see sensitive details, and consent is respected.','FR 1, 11 · NFR-3, 4'],
+ ['CR-17','Management reads quality and performance reports and compares departments and periods.','FR 10, 17'],
+];
+
+/* low-level fn: {id, s(stmt), in, out, a:[[actor,phrase]], ac:[..], p, src, pcc:[..]} */
+const L=(id,s,inp,out,a,ac,p,src,pcc)=>({id,s,in:inp,out,a,ac,p,src,pcc});
+const FR=[
+ {n:1,title:'Manage Authentication and Access',svc:'Authentication and Access Service',shall:'The system shall authenticate every user, establish a session, and enforce role-based permissions.',pcc:[1,3],
+  hlf:[
+   {id:'1.1',name:'Authenticate users',ll:[
+     L('1.1.1','Authenticate a user by mobile number or file ID and password.','mobile|fileId, password','authToken, role, session',
+       [['Patient','log in with my mobile and password so that I reach my own care'],['Staff member','log in with my credentials so that I open my dashboard']],
+       ['Valid credentials return a token and the correct role.','Five failed attempts lock the account for five minutes.'],'High','Q3, Q13',[3]),
+     L('1.1.2','Authenticate a user by scanning a QR code.','qrToken','authToken, role',
+       [['Patient','scan the reception QR so that I log in without typing'],['Receptionist','generate the QR so that the patient registers quickly']],
+       ['A valid, unexpired QR returns a session.','An expired or reused QR is rejected with a clear message.'],'Medium','Features doc',[3]),
+     L('1.1.3','Allow guest access without an account.','—','guest session (read-only)',
+       [['Guest','browse public information without signing in so that I explore first']],
+       ['Guest can open public pages only; personal pages prompt sign-in.'],'Medium','Q3',[3])]},
+   {id:'1.2',name:'Manage patient registration',ll:[
+     L('1.2.1','Register a new patient profile.','name, nationalId, age, address, phone','patientId, medical file',
+       [['Patient','register so that a medical file is created'],['Family companion','register the patient on their behalf so that care starts'],['Receptionist','register at the desk so that admission begins']],
+       ['All required fields validated before the profile is created.','A duplicate national ID is detected and blocked.'],'High','Q13',[1]),
+     L('1.2.2','Record patient preferences and a decision-maker.','religion, language, contact channel, decisionMaker (name, relation, phone)','prefs and proxy saved',
+       [['Patient','record my language and a decision-maker so that care respects my wishes']],
+       ['Preferred language drives all notifications.','A proxy can consent when the patient is unable.'],'High','Q14, Q15, Q16',[1,5])]},
+   {id:'1.3',name:'Manage roles and permissions',ll:[
+     L('1.3.1','Define roles and enforce view and edit permissions.','user, role, permission set','permissions applied',
+       [['System Admin','assign roles so that each user sees only what they should']],
+       ['Eight roles are supported.','Sensitive data (performance, visitor data) is limited to admin, director, quality.'],'High','Q47, Q48, Q49, Q50, Q51',[1]),
+     L('1.3.2','Enforce the self-edit window of fifteen minutes.','record, editorId, time','edit allowed or routed to admin',
+       [['Staff member','edit my own entry within fifteen minutes so that quick fixes are possible']],
+       ['Edits after fifteen minutes require the system admin.'],'Medium','Q49',[1])]}]},
+
+ {n:2,title:'Provide the Public Information Portal',svc:'Public Portal Service',shall:'The system shall present hospital information, departments, doctors, and news to visitors without an account.',pcc:[3,2],
+  hlf:[
+   {id:'2.1',name:'Present hospital information',ll:[
+     L('2.1.1','Display the hospital profile and contact information.','—','about, address, phone, email, videos',
+       [['Guest','read about the hospital so that I can decide to visit']],
+       ['Profile, contacts, and intro videos are shown.'],'Low','Q1, Q2',[2])]},
+   {id:'2.2',name:'Browse departments and doctors',ll:[
+     L('2.2.1','List the departments with services and working hours.','—','21 department pages',
+       [['Guest','see each department and its hours so that I know where to go']],
+       ['Each of the 21 units has a page with services and hours.'],'Medium','Q8, Q9, Q10',[3]),
+     L('2.2.2','Provide a searchable doctor directory.','dept filter, query','doctors[] (name, specialty, photo, bio)',
+       [['Guest','search doctors by specialty so that I can choose one']],
+       ['Doctor photo and three-line bio are optional per doctor.'],'Low','Q11, Q12',[3])]},
+   {id:'2.3',name:'Publish news',ll:[
+     L('2.3.1','Publish hospital news and success stories.','—','articles[]',
+       [['Guest','read news and success stories so that I trust the hospital']],
+       ['Published items appear newest first.'],'Low','Q3',[2])]}]},
+
+ {n:3,title:'Manage Appointments and Scheduling',svc:'Appointment Service',shall:'The system shall let patients request, view, and reschedule appointments within the scheduling rules.',pcc:[3],
+  hlf:[
+   {id:'3.1',name:'Book an appointment',ll:[
+     L('3.1.1','Submit an appointment request.','name, phone, department, complaint, desired time','requestId, status = pending',
+       [['Guest','request an appointment so that I can be seen'],['Patient','request a new appointment so that I follow up'],['Family companion','book on the patient behalf so that the patient is scheduled']],
+       ['All five fields are required.','The request enters the pending queue for the department.'],'High','Q4',[3]),
+     L('3.1.2','Generate appointment slots from department hours.','department, working hours','available slots[]',
+       [['Receptionist','open valid slots so that bookings fit the schedule']],
+       ['Slots are fifteen minutes; emergency is 24/7; clinics follow posted hours.'],'Medium','Q10, Q22',[3])]},
+   {id:'3.2',name:'Manage appointments',ll:[
+     L('3.2.1','View upcoming appointments.','patientId','upcoming[]',
+       [['Patient','view my appointments so that I do not miss them'],['Doctor','view my follow-ups so that I prepare']],
+       ['Appointments show doctor, department, room, and time.'],'High','Q46',[8]),
+     L('3.2.2','Reschedule an appointment up to twelve hours before.','apptId, newTime','updated appointment',
+       [['Patient','reschedule in time so that care stays continuous']],
+       ['Reschedule is blocked within twelve hours of the slot.'],'Medium','Q23',[3])]},
+   {id:'3.3',name:'Assign care',ll:[
+     L('3.3.1','Assign a patient to a treating doctor.','patientId, doctorId','assignment',
+       [['Receptionist','assign the patient to a doctor so that responsibility is clear'],['Hospital Director','assign patients so that load is balanced']],
+       ['Each admitted patient has exactly one treating doctor at a time.'],'High','Time schedule',[6])]}]},
+
+ {n:4,title:'Coordinate the Patient Care Journey',svc:'Care Journey Service',shall:'The system shall track the patient through every stage of the visit on one shared ticket.',pcc:[6,2],
+  hlf:[
+   {id:'4.1',name:'Manage the visit ticket',ll:[
+     L('4.1.1','Open a visit ticket on arrival.','patientId, arrival channel','ticketNo, stage = Reception, anonymized code',
+       [['Receptionist','open the ticket and file so that the journey starts'],['Patient','receive a ticket so that I follow my journey']],
+       ['A unique ticket and anonymized code are issued.'],'High','Q21, Q82',[6])]},
+   {id:'4.2',name:'Run the stage engine',ll:[
+     L('4.2.1','Advance the patient through the care stages.','ticketNo, stage decision','new stage, owner, timestamp',
+       [['Triage Nurse','advance the triage stage so that the patient moves on'],['Doctor','advance clinical stages and decide discharge so that care progresses']],
+       ['Stages: Reception, Triage, Diagnosis, Catheterization, Post-cath, Cardiac care, Discharge.','Only the stage owner can advance it.'],'High','Q33, Q34, Q36',[6]),
+     L('4.2.2','Handle an alternative pathway when the case is not cardiac.','ticketNo, finding','re-route to internal medicine or discharge',
+       [['Doctor','re-route the patient so that care stays correct']],
+       ['A non-cardiac case is referred or safely discharged.'],'Medium','Q37',[6])]},
+   {id:'4.3',name:'Show patient status',ll:[
+     L('4.3.1','Display a simplified status to the patient.','ticketNo','statusText (Under exam, Awaiting result, In operation, Stable)',
+       [['Patient','see a simple status so that I understand what is happening'],['Family companion','see the general status so that I stay informed']],
+       ['Status text is plain and non-clinical.'],'High','Q17, Q18',[2,4])]}]},
+
+ {n:5,title:'Monitor Vital Signs and Detect Deterioration',svc:'Vitals and Early-Warning Service',shall:'The system shall record vital signs, score clinical risk, and alert staff before deterioration.',pcc:[7,6],
+  hlf:[
+   {id:'5.1',name:'Capture vital signs',ll:[
+     L('5.1.1','Record vital signs at defined intervals.','ticketNo, BP, pulse, respiratory rate, SpO2','vitals series, timestamp',
+       [['Nurse','record vitals so that trends are captured']],
+       ['The four vitals are recorded over twenty-four hours at the set interval.'],'High','Q38',[7]),
+     L('5.1.2','Record pain and consciousness.','patientId, pain (0-10), consciousness scale','assessment saved',
+       [['Nurse','record pain and consciousness so that comfort is tracked'],['Doctor','review pain so that I adjust treatment']],
+       ['Pain uses a zero-to-ten scale.'],'Medium','Q41, Q58',[7])]},
+   {id:'5.2',name:'Configure alarms',ll:[
+     L('5.2.1','Set alarm thresholds per patient.','ticketNo, per-vital limits','active rule set',
+       [['Doctor','set thresholds per case so that alerts fit the patient']],
+       ['Thresholds are set by the treating physician per case.'],'High','Q39',[7])]},
+   {id:'5.3',name:'Score risk and alert',ll:[
+     L('5.3.1','Compute a clinical risk score using NEWS2 or MEWS.','vitals, labs, observations','risk score, risk level',
+       [['Risk engine','score risk so that deterioration is quantified']],
+       ['The first version uses NEWS2 or MEWS, not a custom model.'],'High','Features doc',[7]),
+     L('5.3.2','Raise a clinical alert on deterioration.','risk level > threshold','alert to staff, escalation',
+       [['Doctor','receive a critical alert so that I intervene early'],['Nurse','receive a deterioration alert so that I respond quickly']],
+       ['Alerts are delivered within seconds and are never silently dropped.'],'High','Features doc',[7,6])]}]},
+
+ {n:6,title:'Manage Medication',svc:'Medication Service',shall:'The system shall define medication plans, remind patients, and log administration.',pcc:[7],
+  hlf:[
+   {id:'6.1',name:'Define the plan',ll:[
+     L('6.1.1','Define a medication plan.','drug, dose, timing, route','medication plan',
+       [['Doctor','prescribe the plan so that treatment is clear'],['Pharmacist','review drug details so that the plan is safe']],
+       ['The treating physician and clinical pharmacist define each drug.'],'High','Q40',[7])]},
+   {id:'6.2',name:'Remind and log',ll:[
+     L('6.2.1','Remind the patient of due doses.','patientId','due doses, times',
+       [['Patient','get reminders so that I take medication on time']],
+       ['A reminder fires at each scheduled dose time.'],'High','Q59',[7]),
+     L('6.2.2','Record dose administration.','medItemId, time, givenBy','adherence log, next due',
+       [['Nurse','administer and log each dose so that adherence is tracked'],['Patient','mark a dose taken so that my log stays current']],
+       ['Each administration is timestamped and attributed.'],'Medium','Q58',[7])]}]},
+
+ {n:7,title:'Manage Diagnostics and Medical Records',svc:'Diagnostics and Records Service',shall:'The system shall order tests, route results to the treating physician, and maintain the medical record.',pcc:[6,2],
+  hlf:[
+   {id:'7.1',name:'Order and route tests',ll:[
+     L('7.1.1','Order diagnostic tests and route results.','patientId, types[]','orderIds[], result routed to physician',
+       [['Doctor','order tests and read results so that I diagnose'],['Lab system','return results so that decisions are timely']],
+       ['Cardiac set: enzymes, coagulation, CBC, ECG, echo, kidney, liver.','Results are delivered to the treating physician.'],'High','Q20',[6])]},
+   {id:'7.2',name:'Provide records',ll:[
+     L('7.2.1','Provide medical reports to the patient.','patientId, type','report doc, download or share link',
+       [['Patient','view and download my reports so that I keep my records'],['Family companion','stay blocked from detailed results unless permitted so that privacy holds']],
+       ['Reports can be downloaded or shared with another provider.'],'Medium','Q62',[2]),
+     L('7.2.2','Maintain patient history through DMS and HMIS.','patientId, external data','synced history',
+       [['Doctor','review history so that care is informed'],['System Admin','maintain the integration so that records stay synced']],
+       ['Patient, lab, and pharmacy data sync with the existing DMS.'],'High','Q80, Q81',[6])]}]},
+
+ {n:8,title:'Provide the AI Healthcare Assistant',svc:'Healthcare Assistant Service',shall:'The system shall answer patient questions from approved content and triage symptoms, escalating when needed.',pcc:[2,4],
+  hlf:[
+   {id:'8.1',name:'Advise and triage',ll:[
+     L('8.1.1','Answer educational questions using retrieval over approved content.','question, patient context','educational answer',
+       [['Patient','ask about my care and get a trusted answer so that I understand'],['Family companion','ask general questions so that I support the patient']],
+       ['Answers come only from hospital-approved content.','The assistant never diagnoses.'],'High','Features doc',[2]),
+     L('8.1.2','Triage symptoms and classify urgency.','symptoms','urgency level, red-flag',
+       [['Patient','describe symptoms and learn the urgency so that I act appropriately']],
+       ['Red flags (chest pain, breathing difficulty) raise urgency.'],'High','Features doc',[4])]},
+   {id:'8.2',name:'Escalate',ll:[
+     L('8.2.1','Escalate a red-flag case to the care team.','ticketNo, reason','handoff to nurse or doctor',
+       [['Nurse','receive an escalation so that I take over urgent cases'],['Doctor','receive an escalation so that I give clinical judgement']],
+       ['Critical situations trigger a human handoff.'],'High','Features doc',[4,6])]}]},
+
+ {n:9,title:'Generate Clinical Documentation',svc:'Clinical Documentation Service',shall:'The system shall draft reports, transcribe dictation, and translate content for clinician review.',pcc:[2],
+  hlf:[
+   {id:'9.1',name:'Generate and approve reports',ll:[
+     L('9.1.1','Generate a report draft from structured data.','EMR data, type','draft report',
+       [['Doctor','get a draft so that I save documentation time']],
+       ['Supported: visit summary, follow-up, progress note, discharge.'],'High','Features doc',[2]),
+     L('9.1.2','Require doctor approval before saving.','draftId, edits','final report',
+       [['Doctor','review and approve every draft so that accuracy is guaranteed']],
+       ['No generated report is saved without doctor approval.'],'High','Features doc',[2])]},
+   {id:'9.2',name:'Transcribe and translate',ll:[
+     L('9.2.1','Transcribe doctor speech into notes.','audio (AR/EN)','note text',
+       [['Doctor','dictate notes so that typing is reduced']],
+       ['Arabic and English are supported in real time.'],'Medium','Features doc',[2]),
+     L('9.2.2','Translate clinical content.','text, target language','translated text',
+       [['Doctor','translate instructions so that I communicate clearly'],['Patient','receive instructions in my language so that I follow them']],
+       ['Arabic, English, and Russian are supported.'],'Medium','Features doc',[1,2])]}]},
+
+ {n:10,title:'Capture Feedback and Manage Quality',svc:'Feedback and Quality Service',shall:'The system shall collect stage ratings and complaints and turn them into quality reports.',pcc:[1],
+  hlf:[
+   {id:'10.1',name:'Collect feedback',ll:[
+     L('10.1.1','Rate a care stage on a one-to-five scale.','stageId, stars, comment?','ratingId, +20 points',
+       [['Patient','rate each stage so that my voice is heard'],['Family companion','rate on the patient behalf when needed so that feedback is not lost']],
+       ['Stars are one to five; comment is optional.','Rating dimensions: reception speed, nursing, satisfaction, team.'],'High','Q65, Q66, Q68',[1]),
+     L('10.1.2','Report an issue or suggestion.','stage, text','ticketId',
+       [['Patient','report a problem so that it can be fixed']],
+       ['The ticket is linked to the current stage and routed to the unit.'],'Medium','Q65',[1])]},
+   {id:'10.2',name:'Manage and report quality',ll:[
+     L('10.2.1','Route and resolve complaints within six hours.','complaintId','response or escalation',
+       [['Quality Manager','respond within six hours so that patients feel heard'],['Hospital Director','receive escalations so that serious complaints are handled']],
+       ['Negative ratings go to the department and administration.','Unresolved in six hours escalates to the director.'],'High','Q67, Q70',[1]),
+     L('10.2.2','Analyze feedback and generate quality reports.','ratings[], comments[]','sentiment, themes, summary',
+       [['Quality Manager','read sentiment and themes so that I find repeated issues'],['Hospital Director','receive reports so that I oversee quality']],
+       ['Reports support comparison by department and period.'],'High','Q69, Q73, Q76',[1])]}]},
+
+ {n:11,title:'Manage Family and Caregiver Access',svc:'Family Access Service',shall:'The system shall let a patient link one companion and control what that companion sees and does.',pcc:[5,1],
+  hlf:[
+   {id:'11.1',name:'Link and permit',ll:[
+     L('11.1.1','Link one family companion.','name|QR, relation','companion linked (max one)',
+       [['Patient','link one companion so that a trusted person follows my care'],['Family companion','accept the link so that I support the patient']],
+       ['Only one companion can be linked per patient.'],'High','Q29',[5]),
+     L('11.1.2','Set visibility and permission level.','fields, level (full|view)','permissions applied',
+       [['Patient','choose what the companion sees and can do so that I keep control']],
+       ['Companion sees stage, status, physician, surgery flag; detailed results are hidden.','Full access can act on the patient behalf.'],'High','Q30, Q31, Q61, Q62, Q63',[5,1])]},
+   {id:'11.2',name:'Notify',ll:[
+     L('11.2.1','Notify the companion of care-area changes and operations.','ticketNo, event','notification',
+       [['Family companion','get notified on a move or operation so that I am never in the dark']],
+       ['The companion is notified when the patient moves area or enters operations.'],'Medium','Q64, Q27',[4,5])]}]},
+
+ {n:12,title:'Deliver Notifications and Handle Emergencies',svc:'Notification and Emergency Service',shall:'The system shall deliver reminders and updates and run the emergency escalation chain.',pcc:[4,6],
+  hlf:[
+   {id:'12.1',name:'Notify',ll:[
+     L('12.1.1','Deliver reminders and stage notifications.','patientId, event','notification (in-app, SMS)',
+       [['Patient','receive reminders and updates so that I stay on track']],
+       ['Notifications follow the patient preferred channel.'],'High','Q14',[2])]},
+   {id:'12.2',name:'Handle emergencies',ll:[
+     L('12.2.1','Trigger an emergency alert.','patientId, location','emergency raised',
+       [['Patient','trigger an SOS so that help comes fast'],['Family companion','report an emergency so that the team responds']],
+       ['Escalation order: treating physician, nursing, family, care center.'],'High','Q77, Q26',[4]),
+     L('12.2.2','Run the escalation chain and activate Code Blue.','event type','code activated, team paged',
+       [['Nurse','request Code Blue so that the resuscitation team is called'],['PA Operator','activate the code so that the team is paged']],
+       ['CPR triggers Code Blue via the announcement operator.','Emergency requires immediate intervention; a routine alert does not.'],'High','Q78, Q79',[6])]}]},
+
+ {n:13,title:'Manage Billing and Payments',svc:'Billing Service',shall:'The system shall present the bill, apply insurance coverage, and accept payment.',pcc:[3],
+  hlf:[
+   {id:'13.1',name:'Bill and pay',ll:[
+     L('13.1.1','Present an itemized bill with insurance and amount due.','patientId','bill, insurance, amount due',
+       [['Patient','see my bill and coverage so that I know what I owe']],
+       ['Insurance coverage and the due amount are shown clearly.'],'Medium','derived',[3]),
+     L('13.1.2','Accept a payment and provide statements.','amount, method','receipt, invoice, claim',
+       [['Patient','pay the due amount so that my account is settled'],['Family companion','pay on the patient behalf when granted full access so that the bill is cleared']],
+       ['A receipt and downloadable statements are produced.'],'Low','derived',[3])]}]},
+
+ {n:14,title:'Provide Education and Engagement',svc:'Education and Engagement Service',shall:'The system shall offer condition education, relaxation content, and a loyalty program.',pcc:[2,4],
+  hlf:[
+   {id:'14.1',name:'Educate and relax',ll:[
+     L('14.1.1','Provide education videos linked to the condition.','condition','videos[]',
+       [['Patient','watch videos about my condition so that I understand my care'],['Physician','approve the medical content so that it is trustworthy']],
+       ['Content is approved by the treating physician before showing.'],'Medium','Q7, Q19',[2]),
+     L('14.1.2','Provide relaxation content.','—','calm sounds, games, short films',
+       [['Patient','use calm content so that I feel less stressed'],['Family companion','use content while waiting so that the wait is easier']],
+       ['Entertainment is supplied by the public-relations department.'],'Low','Q28',[4])]},
+   {id:'14.2',name:'Loyalty',ll:[
+     L('14.2.1','Award care points for completed ratings.','ratingId','points, progress',
+       [['Patient','earn points for feedback so that I am encouraged to engage']],
+       ['Twenty points are awarded per completed rating.'],'Low','derived',[1])]}]},
+
+ {n:15,title:'Provide Indoor Navigation',svc:'Indoor Navigation Service',shall:'The system shall guide patients and visitors to any location inside the hospital.',pcc:[3],
+  hlf:[
+   {id:'15.1',name:'Map and navigate',ll:[
+     L('15.1.1','Display an interactive floor map with live location.','floor','map, live position',
+       [['Patient','see where I am so that I orient myself']],
+       ['Live location uses indoor positioning (BLE or Wi-Fi).'],'Low','Features doc',[3]),
+     L('15.1.2','Search and give turn-by-turn directions.','room|doctor|department','route, ETA, accessible route',
+       [['Patient','follow directions so that I reach my destination'],['Guest','use the visitor map so that I navigate without an account']],
+       ['An accessible route option avoids stairs.'],'Low','Features doc',[3])]}]},
+
+ {n:16,title:'Provide Accessibility',svc:'Accessibility Service',shall:'The system shall stay usable by patients with visual, hearing, speech, motor, and age-related needs.',pcc:[1,2,3],
+  hlf:[
+   {id:'16.1',name:'Support sensory needs',ll:[
+     L('16.1.1','Support vision needs and screen reader.','profile','high-contrast, font scaling, spoken labels',
+       [['Patient (blind or low vision)','use a screen reader and large text so that I use the app independently']],
+       ['Full VoiceOver and TalkBack; logical focus order; reduced motion.'],'High','Features doc',[1,2]),
+     L('16.1.2','Support voice control and audio output.','voice command','action, audio reply',
+       [['Patient (blind)','give voice commands and hear replies so that I do not need the screen']],
+       ['Voice can open pages, read alerts, and trigger SOS.'],'Medium','Features doc',[2]),
+     L('16.1.3','Support hearing needs.','event','captions, visual and haptic alerts, sign-language card',
+       [['Patient (deaf)','read captions and show a sign-language card so that I communicate'],['Care team','read the sign-language card so that I assist the patient']],
+       ['No information is audio-only; every alert has a visual and haptic form.'],'High','Features doc',[2])]},
+   {id:'16.2',name:'Support speech and motor needs',ll:[
+     L('16.2.1','Support non-verbal communication.','tap, message','request to nurse',
+       [['Patient (non-verbal)','tap quick-need buttons and text the nurse so that I express needs']],
+       ['Quick-need buttons cover pain, water, bathroom, and nurse.'],'Medium','Features doc',[2,4]),
+     L('16.2.2','Support motor and age-related needs.','profile','switch access, large targets, one-hand, simple mode',
+       [['Patient (motor impairment)','use switch access and large buttons so that I can operate the app'],['Patient (elderly)','use a simple mode so that I am not overwhelmed']],
+       ['Targets are at least 48 dp; every gesture has a button alternative.'],'Medium','Features doc',[1,3])]}]},
+
+ {n:17,title:'Administer the System and Reporting',svc:'Administration and Reporting Service',shall:'The system shall let administrators configure the system, integrate external systems, and produce management reports.',pcc:[6],
+  hlf:[
+   {id:'17.1',name:'Administer',ll:[
+     L('17.1.1','Manage user accounts and permissions.','user, role','account, permissions',
+       [['System Admin','create accounts and set permissions so that access is controlled']],
+       ['Account creation is limited to the information-systems manager.'],'High','Q51',[1]),
+     L('17.1.2','Configure stages, roles, alarm rules, and languages.','config','configuration saved',
+       [['System Admin','configure the system so that it matches the hospital workflow']],
+       ['Arabic, English, and Russian are configurable everywhere.'],'Medium','Q5',[3]),
+     L('17.1.3','Integrate with the hospital DMS and HMIS.','external data','synced data',
+       [['System Admin','maintain the integration so that data stays consistent']],
+       ['Patient, lab, and pharmacy data sync with the existing DMS.'],'High','Q80, Q81',[6])]},
+   {id:'17.2',name:'Report and govern',ll:[
+     L('17.2.1','Produce management and comparison reports.','range, filters','KPIs, comparisons',
+       [['Hospital Director','read comparisons so that I make decisions'],['Quality Manager','read quality reports so that I track service']],
+       ['Reports cover patients per department, bookings, and performance.','Comparison by department and by period is supported.'],'High','Q72, Q73, Q74, Q75, Q76',[1]),
+     L('17.2.2','Enforce the edit window and protect sensitive data.','record','audit log, access control',
+       [['System Admin','enforce the fifteen-minute window and protect sensitive data so that integrity holds']],
+       ['Every change is logged; sensitive data is restricted to authorized roles.'],'High','Q49, Q50',[1])]}]},
+];
+
+const NFR=[
+ ['NFR-1 · Performance','The system shall respond to interactive actions within two seconds under normal load.','Medium'],
+ ['NFR-2 · Availability','The system shall remain available around the clock except during announced maintenance.','High'],
+ ['NFR-3 · Security','The system shall encrypt data in transit and at rest and apply role-based access control.','High'],
+ ['NFR-4 · Privacy','The system shall restrict medical details according to patient privacy settings and consent.','High'],
+ ['NFR-5 · Usability','The system shall offer a calm, mobile-first interface a first-time patient can use without training.','High'],
+ ['NFR-6 · Accessibility','The system shall meet WCAG 2.1 AA, including screen-reader and keyboard support.','High'],
+ ['NFR-7 · Localization','The system shall provide Arabic, English, and Russian across interface, content, and notifications.','High'],
+ ['NFR-8 · Interoperability','The system shall integrate with the existing DMS and HMIS for patient, lab, and pharmacy data.','High'],
+ ['NFR-9 · Auditability','The system shall log every change and allow self-editing only within fifteen minutes.','Medium'],
+ ['NFR-10 · Scalability','The system shall support concurrent use across all departments without degradation.','Medium'],
+ ['NFR-11 · Reliability','The system shall deliver critical alerts within seconds and never silently drop them.','High'],
+ ['NFR-12 · Compliance','The system shall follow hospital accreditation and patient-consent requirements.','High'],
+ ['NFR-13 · Maintainability','The system shall be built as independent services so each can evolve separately.','Medium'],
+ ['NFR-14 · Data retention','The system shall retain records per hospital policy and support export and sharing.','Low'],
+];
+
+/* ===== data: Architecture (SUBSYS) ===== */
+
+const SUBSYS = [
+ {code:'S1', name:'Identity, Access & Onboarding',
+  purpose:'Who can enter the system, how they authenticate, and what each role is allowed to see and do.',
+  hlf:[
+    {n:'Authentication', llf:[['Standard login (mobile / file ID + password)','p'],['QR-code login (scan)','m'],['Guest-mode entry','p'],['Session handling & logout','x'],['Password reset / OTP','x']]},
+    {n:'Patient Registration', llf:[['Register (name, national ID, age, address, phone)','m'],['Register via reception-issued QR','x'],['Preferences (religion, language, contact channel)','x'],['Decision-maker / proxy record (name, relation, phone)','x']]},
+    {n:'Roles & Permissions', llf:[['8 role definitions','x'],['Per-role view permissions','x'],['Per-role edit permissions + 15-min edit window','x'],['Sensitive-data restriction (perf. evals, visitor data)','x']]},
+    {n:'Account Provisioning', llf:[['Create / disable accounts (IT / sys admin)','x'],['Assign role & permission set','x']]},
+    {n:'Localization', llf:[['Language switch — Arabic / English / Russian','x'],['Prototype currently English only','m']]},
+  ],
+  users:[['Guest','Enters guest mode and browses public info only.'],['Patient','Logs in (password or QR), sets language & preferences.'],['Family companion','Registers and links the patient account (one only).'],['Receptionist','Issues QR codes and registers patients.'],['System Admin','Creates accounts, assigns roles/permissions, configures languages.'],['All staff','Authenticate; access is scoped by their role.']]},
+
+ {code:'S2', name:'Public Portal & Discovery',
+  purpose:'The pre-login informational website browsable without an account.',
+  hlf:[
+    {n:'Hospital Profile', llf:[['About / history / mission','x'],['Contact & location','x'],['Intro & awareness videos','m']]},
+    {n:'Departments & Services (21 units)', llf:[['A page per department / unit','x'],['Services listed per department','x'],['Working hours per department','x']]},
+    {n:'Doctor Directory', llf:[['Doctor list per department + specialty','x'],['Doctor profile (photo + 3-line bio, optional)','x']]},
+    {n:'News & Success Stories', llf:[['Hospital news feed','x'],['Highlighted success cases','x']]},
+  ],
+  users:[['Guest','Browses departments, clinic times, doctors, news, success stories; requests an appointment — no medical data.'],['Patient / Family','Same content, plus their logged-in context.']]},
+
+ {code:'S3', name:'Appointments & Scheduling',
+  purpose:'Booking and managing visits and follow-ups.',
+  hlf:[
+    {n:'Book Appointment', llf:[['Booking form (name, phone, dept, complaint, desired time)','m'],['Slot generation (15-min, dept hours, ER 24/7)','x'],['Department & day selection','p']]},
+    {n:'Manage Appointments', llf:[['View upcoming list','p'],['Appointment detail (doctor, room, slot)','p'],['Add to calendar','m'],['Reschedule (allowed up to 12h before)','m']]},
+    {n:'Follow-up Appointments', llf:[['Auto-suggest first follow-up (after 1 week)','x'],['Fields: date, doctor, dept, patient, diagnosis, condition','x']]},
+    {n:'Assignment', llf:[['Assign patient to a doctor','x']]},
+  ],
+  users:[['Guest','Requests an appointment via the public form.'],['Patient','Views, books, and reschedules appointments.'],['Family companion','Books on the patient’s behalf.'],['Receptionist','Manages bookings; assigns patient to a doctor.'],['Hospital Director','Can also assign patients to doctors.'],['Doctor','Sees scheduled follow-ups for assigned patients.']]},
+
+ {code:'S4', name:'Patient Journey & Care Coordination',
+  purpose:'A single visit ticket that tracks the patient through every stage from arrival to discharge.',
+  hlf:[
+    {n:'Visit Ticket', llf:[['Unique ticket # / anonymized code','m'],['Consolidated timeline the whole team shares','p']]},
+    {n:'Stage Engine', llf:[['Stage set (Reception/ER, Triage, Diagnosis, Cath, Post-cath bed, Cardiac care, Discharge)','p'],['Stage status (done / now / upcoming)','p'],['Stage-owner assignment','x'],['Transition control (who advances the patient)','x'],['Alternative pathway (non-cardiac → internal medicine / home)','x']]},
+    {n:'Patient Status Display', llf:[['Simplified status text per stage','p'],['"Happening now" indicator','p']]},
+    {n:'Care Plan', llf:[['Treatment-plan record','x'],['Today’s goals','m']]},
+  ],
+  users:[['Patient','Views the journey, current stage, and simplified status.'],['Family companion','Sees current stage + general status only.'],['Triage Nurse','Records triage and decides routing; advances the triage stage.'],['Doctor','Writes diagnosis, advances stages, makes the discharge decision.'],['Nurse','Updates stage data for assigned patients.'],['Reception / Admission','Opens the medical file at intake.']]},
+
+ {code:'S5', name:'Vitals Monitoring & Early Warning',
+  purpose:'Capture vital signs and detect deterioration before it becomes critical.',
+  hlf:[
+    {n:'Vitals Capture', llf:[['Record BP, pulse, respiratory rate, SpO₂ (over 24h)','x'],['Display vitals to the patient','p'],['Recording frequency per stage','x']]},
+    {n:'Pain & Consciousness', llf:[['Pain scale recorded by doctor / nurse','x'],['Consciousness assessment','x']]},
+    {n:'Alarm Rules', llf:[['Per-case thresholds set by the physician','x'],['Threshold-breach detection','x']]},
+    {n:'AI Risk Scoring  [AI]', llf:[['NEWS2 / MEWS computation','x'],['Deterioration detection (SpO₂, HR, RR)','x'],['Alert staff before condition turns critical','x']]},
+  ],
+  users:[['Patient','Views own vital signs.'],['Nurse','Records vitals, pain, and consciousness.'],['Doctor','Sets alarm thresholds, reads risk scores, receives critical alerts.'],['Family companion','No access — vitals are hidden by default.']]},
+
+ {code:'S6', name:'Medication Management',
+  purpose:'Prescribe, schedule, remind, and log medications.',
+  hlf:[
+    {n:'Medication Plan', llf:[['Define drug (name, dose, timing, route) — doctor + pharmacist','x'],['Medication list display','p']]},
+    {n:'Reminders & Adherence', llf:[['Patient dose reminders','p'],['Mark as taken / snooze','m'],['Adherence log','m']]},
+    {n:'Administration (inpatient)', llf:[['Nurse administers and logs the dose','x'],['Due-dose alerts to nursing','x']]},
+  ],
+  users:[['Patient','Sees the schedule, gets reminders, marks doses taken.'],['Doctor','Prescribes and sets the medication schedule.'],['Clinical Pharmacist','Defines the drug fields together with the doctor.'],['Nurse','Administers and logs doses; gets due-dose alerts.']]},
+
+ {code:'S7', name:'Diagnostics, Reports & Records',
+  purpose:'Order tests, route results, and hold the medical record.',
+  hlf:[
+    {n:'Test Orders', llf:[['Order tests (enzymes, coagulation, CBC, ECG, echo, kidney, liver)','x'],['Route results to the treating physician','x']]},
+    {n:'Results & Reports', llf:[['Health reports (cath, labs, ECG, echo, care summary)','p'],['Report viewer + download / share','p']]},
+    {n:'Medical Record', llf:[['Patient history / past visits (doctor view)','x'],['EMR via DMS / HMIS integration','x']]},
+  ],
+  users:[['Patient','Views and downloads own reports.'],['Family companion','No access to detailed results.'],['Doctor','Orders tests, reads results, reviews patient history.'],['Nurse','Sees results relevant to assigned tasks.'],['System Admin','Maintains the DMS / HMIS integration.']]},
+
+ {code:'S8', name:'AI Smart Healthcare Assistant  [AI]',
+  purpose:'A chatbot that educates the patient, triages symptoms, and escalates emergencies.',
+  hlf:[
+    {n:'Healthcare Advisor (RAG)', llf:[['Chat interface','p'],['RAG over hospital-approved content (post-op, meds, diet, procedures)','x'],['Quick-question chips','p'],['Voice input / output','x']]},
+    {n:'Symptom Triage', llf:[['Symptom analysis','x'],['Red-flag detection / urgency classification','x'],['Rule-based emergency engine','x']]},
+    {n:'Escalation', llf:[['Handoff to the human care team','m'],['Nurse / doctor notification','x']]},
+  ],
+  users:[['Patient','Asks questions and describes symptoms.'],['Family companion','Can use the advisor for general guidance.'],['Nurse / Doctor','Receive escalations when clinical judgement is needed.']]},
+
+ {code:'S9', name:'AI Clinical Documentation  [AI]',
+  purpose:'Reduce clinician paperwork with AI-drafted reports, dictation, and translation.',
+  hlf:[
+    {n:'Report Generation', llf:[['Draft visit / follow-up / progress / discharge reports','x'],['Pull structured data from the EMR','x'],['Doctor reviews & approves before saving','x']]},
+    {n:'Voice Transcription', llf:[['Speech → note (Arabic / English, Whisper)','x'],['Real-time transcription','x']]},
+    {n:'Translation', llf:[['Arabic ↔ English (+ Russian)','x'],['Translate patient instructions','x']]},
+  ],
+  users:[['Doctor','Generates and approves report drafts, dictates notes, uses translation.'],['Patient / Family','Receive translated instructions.']]},
+
+ {code:'S10', name:'Feedback & Quality Management',
+  purpose:'Capture patient ratings and complaints and turn them into quality insight.',
+  hlf:[
+    {n:'Service Rating', llf:[['Per-stage rating (1–5 stars + optional comment)','p'],['Dimensions (reception speed, nursing, satisfaction, team)','m'],['Auto post-stage rating nudge','p'],['Proxy rating by family if patient is unable','x']]},
+    {n:'Issues & Complaints', llf:[['Report an issue (ticket linked to the stage)','p'],['Route negative rating to dept + hospital admin','x'],['Complaint response ≤ 6h, else escalate to director','x']]},
+    {n:'AI Feedback Reports  [AI]', llf:[['Sentiment analysis','x'],['Complaint categorization / theme extraction','x'],['AI-generated summaries','x']]},
+    {n:'Quality Dashboard', llf:[['Average rating, lowest points, open complaints','x'],['Replaces the paper discharge survey','x']]},
+  ],
+  users:[['Patient','Rates each stage, reports issues, suggests enhancements.'],['Family companion','Rates on the patient’s behalf when needed.'],['Quality Manager','Uses the dashboard, manages complaints, reads AI reports.'],['Hospital Director','Receives reports and oversees escalations.'],['Department heads','Receive negative ratings for their department.']]},
+
+ {code:'S11', name:'Family & Caregiver Access',
+  purpose:'Link one trusted companion and control exactly what they see and do.',
+  hlf:[
+    {n:'Linking (one companion)', llf:[['Add via QR / manual','p'],['Invite flow','m'],['Register the patient on their behalf','x']]},
+    {n:'Privacy & Permissions', llf:[['Visibility toggles (vitals, meds, labs, journey)','p'],['Permission level (Full Access / View Only)','p'],['5 per-member toggles (status, alerts, book, rate, emergency)','p']]},
+    {n:'Family Dashboard', llf:[['See stage, general status, treating physician, surgery-needed flag','m'],['Hide precise medical details & results','x']]},
+    {n:'Family Notifications', llf:[['Moved to a new care area / entered operations','m']]},
+  ],
+  users:[['Patient','Owns access and grants / revokes permissions.'],['Family companion','Views permitted info and acts within granted permissions.']]},
+
+ {code:'S12', name:'Notifications, Alerts & Emergency',
+  purpose:'Deliver reminders and updates, and run the emergency escalation chain.',
+  hlf:[
+    {n:'Notifications', llf:[['Med reminders, rate prompts, stage updates','p'],['Appointment-set & family-joined notices','p'],['Multi-channel delivery (SMS)','x']]},
+    {n:'Emergency SOS', llf:[['SOS button + pre-alert sheet','p'],['Escalation order: physician → nursing → family → care center','p']]},
+    {n:'Code Blue / Critical', llf:[['Activate a code by type','x'],['Call the Code Blue team (PA / operator)','x'],['Escalation timers','x']]},
+    {n:'Event Classification', llf:[['Distinguish emergency vs. normal alert','x']]},
+  ],
+  users:[['Patient','Receives alerts and can trigger SOS.'],['Family companion','Receives emergency notifications.'],['Nurse / Doctor','Receive critical alerts; request Code Blue activation.'],['PA Operator','Activates the code over the announcement system.']]},
+
+ {code:'S13', name:'Billing & Financial',
+  purpose:'Show the bill, insurance coverage, and let the patient pay.',
+  hlf:[
+    {n:'Bill Summary', llf:[['Itemized current-visit bill','p'],['Insurance coverage + amount due','p']]},
+    {n:'Payment', llf:[['Pay now','m'],['Payment history','p']]},
+    {n:'Statements', llf:[['Itemized invoice','p'],['Insurance claim statement','p']]},
+  ],
+  users:[['Patient','Views the bill, pays, views statements.'],['Family (full access)','Can view and pay on the patient’s behalf.'],['Finance / Admin','Back-office billing — not yet built.']]},
+
+ {code:'S14', name:'Education, Engagement & Loyalty',
+  purpose:'Help patients understand their care, relax, and earn rewards.',
+  hlf:[
+    {n:'Education Library', llf:[['Videos by topic (procedure, life after, med safety)','p'],['Content linked to the patient’s condition','x'],['Content approved by the treating physician','x']]},
+    {n:'Relax / Entertainment', llf:[['Calm sounds, games, short films','p']]},
+    {n:'Loyalty (Care Points)', llf:[['Points balance + progress bar','p'],['Earn points per completed rating (+20)','p'],['Rewards (e.g. priority booking)','m']]},
+  ],
+  users:[['Patient','Watches, learns, relaxes, and earns Care Points.'],['Family companion','Accesses education & entertainment during the stay.'],['PR Department','Provides the entertainment content.'],['Treating physician','Approves educational medical content.']]},
+
+ {code:'S15', name:'Indoor Navigation & Hospital Map  [New]',
+  purpose:'Help patients and visitors find their way inside the hospital.',
+  hlf:[
+    {n:'Interactive Map', llf:[['Floor-by-floor map + floor selector','x'],['Color-coded zones','x'],['Zoom / pinch','x'],['Live location (BLE / Wi-Fi)','x']]},
+    {n:'Search & Find', llf:[['Search room / doctor / dept / service','x'],['Auto-suggest + distance & walking time','x']]},
+    {n:'Turn-by-turn Navigation', llf:[['Route line + step directions','x'],['Accessible route (avoids stairs)','x'],['Real-time ETA','x']]},
+    {n:'POI Layer', llf:[['Restrooms, prayer rooms, cafeteria, pharmacy, ATM, parking','x']]},
+    {n:'Deep Links', llf:[['From appointment / journey / doctor / home','x']]},
+    {n:'Family / Visitor Map Mode', llf:[['Guest map without login','x'],['Patient location only if permitted','x']]},
+  ],
+  users:[['Patient','Navigates to rooms, clinics, and departments.'],['Family / Guest','Uses visitor map mode to find wards & waiting areas.']]},
+
+ {code:'S16', name:'Accessibility  [New]',
+  purpose:'Make the whole app usable for vision, hearing, and motor impairments.',
+  hlf:[
+    {n:'Vision', llf:[['High contrast, font scaler, bold, reduced motion','x'],['Screen reader (VoiceOver / TalkBack) + labels + focus order','x']]},
+    {n:'Voice & Audio', llf:[['Voice commands + text-to-speech','x'],['Audio alerts','x'],['Voice-triggered SOS','x']]},
+    {n:'Accessible Navigation', llf:[['Audio turn-by-turn + haptic cues + "Guide Me"','x'],['BLE location announcements','x']]},
+    {n:'Hearing', llf:[['Captions, visual + haptic alerts, sign-language card, text-to-nurse','x']]},
+    {n:'Motor', llf:[['Switch access, large targets, one-hand mode, gesture alternatives','x']]},
+    {n:'Accessibility Hub', llf:[['Profiles (Default / Low Vision / Blind / Deaf / Motor)','x'],['Preferences synced to the account','x']]},
+  ],
+  users:[['Patient','Uses any accessibility feature they need.'],['Care team','Reads the sign-language assistance card.']]},
+
+ {code:'S17', name:'Administration, Reporting & Integration',
+  purpose:'Staff dashboards, management reporting, configuration, and external integration.',
+  hlf:[
+    {n:'Staff Dashboards', llf:[['Doctor dashboard (patient list + critical flags)','x'],['Nurse dashboard (department patients + tasks)','x'],['Receptionist dashboard','x']]},
+    {n:'Management Reporting', llf:[['KPIs (patients/dept, bookings, performance eval)','x'],['Quality report (avg, lowest, dept comparison)','x'],['Custom date range + period / dept comparison','x'],['Recipients: hospital admin, quality manager, IT','x']]},
+    {n:'System Configuration', llf:[['Configure stages, roles, alarm rules, languages','x']]},
+    {n:'Integration', llf:[['DMS / HMIS (patient, lab, pharmacy)','x']]},
+    {n:'Audit & Governance', llf:[['Enforce 15-min edit window','x'],['Sensitive-data access control','x'],['Hospital-trial approval workflow','x']]},
+  ],
+  users:[['Doctor / Nurse / Receptionist','Use their respective operational dashboards.'],['Quality Manager','Reads quality reports and comparisons.'],['Hospital Director','Uses the management dashboard and approves the trial.'],['System Admin','Configures the system, manages integration, accounts, and audit.']]},
+];
+
+/* ===== data: PCC (PCC, PERSONAS, S, STORIES, A11Y, GAPS) ===== */
+
+const PCC=[
+ {n:1,t:'Respect for values, preferences & needs',mean:'Care shaped around who the patient is.',st:'m',
+  apply:['Register religion, language (AR/EN/RU) & preferred contact (SMS)','Record an authorized decision-maker (proxy) for consent','Patient privacy controls — patient decides what family sees','Flag dietary / cultural needs to the care team']},
+ {n:2,t:'Information, communication & education',mean:'The patient always understands what is happening.',st:'m',
+  apply:['Simplified status text at every stage','Education videos linked to the condition (physician-approved)','AI Health Advisor: post-op, meds, diet, procedures','Reports viewer with plain explanations','Captions for deaf · text-to-speech for blind · 3 languages']},
+ {n:3,t:'Access to care',mean:'Easy to reach the right service.',st:'m',
+  apply:['Guest browse + public appointment request','Register by mobile/file ID or QR','Reschedule (≥12h) + 24/7 hotline','Indoor navigation to find rooms & clinics','Accessibility so everyone can actually use it']},
+ {n:4,t:'Emotional support & relief of anxiety',mean:'Reassurance in the hard moments.',st:'m',
+  apply:['Reassurance messages during ER, awaiting results, operation & ICU','Live operation status to the family','Relax tab — calm sounds, games, short films','Advisor answers "is this normal?" gently']},
+ {n:5,t:'Involvement of family & friends',mean:'The companion is part of the care.',st:'m',
+  apply:['Link one companion with permission levels','Family sees stage, status, treating physician, surgery flag','Family can book, rate, report emergency, give consent','Notify family on care-area change / entering operations']},
+ {n:6,t:'Coordination & integration of care',mean:'One team, one shared picture.',st:'x',
+  apply:['Single visit ticket shared by the whole team','Stage engine with owners & safe transitions','Doctor & nurse dashboards','Risk alerts, escalation & Code Blue','Integration with the hospital DMS / HMIS']},
+ {n:7,t:'Physical comfort',mean:'Pain, vitals and basic needs managed.',st:'m',
+  apply:['Pain scale (0–10) recorded by doctor & nurse','Continuous vitals + AI deterioration alerts (NEWS2/MEWS)','Medication schedule & reminders','Comfort goals (light walking, low-salt diet)']},
+ {n:8,t:'Continuity & safe transition',mean:'Recovery continues safely after discharge.',st:'m',
+  apply:['Discharge pack: prescription, report, instructions, follow-up','Auto follow-up appointment (1 week) + reminders','Post-cath instructions in the app','Hotline + "come back if you feel unwell"','Share reports with another provider']},
+];
+
+/* ---------- personas ---------- */
+const PERSONAS=[
+ {a:0,role:'Index patient',n:'Karim — cardiac patient',p:'Admitted with a heart attack, undergoing catheterization. The journey the whole system is built around.'},
+ {a:0,role:'Caregiver',n:'Mahmoud — family companion (son)',p:'The one linked companion. Full access; can act on Karim\'s behalf, give surgical consent, and follow his care.'},
+ {a:1,role:'Accessibility',n:'Blind patient',p:'Cannot see the screen. Needs full screen-reader support, voice commands, audio navigation and voice-triggered SOS.'},
+ {a:1,role:'Accessibility',n:'Deaf / hard-of-hearing patient',p:'Cannot hear. Needs captions, visual + haptic alerts, a sign-language request card, and text-to-nurse messaging.'},
+ {a:1,role:'Accessibility',n:'Non-verbal patient',p:'Cannot speak. Needs quick-need buttons, text-to-nurse, and a visual SOS instead of a phone call.'},
+ {a:1,role:'Accessibility',n:'Elderly patient (low tech literacy)',p:'Struggles with small text and complex screens. Needs a simple mode, large fonts, voice, and a companion to help.'},
+ {a:1,role:'Language',n:'Russian-speaking patient',p:'International patient. Needs the whole UI, content and instructions in Russian, plus translation when talking to staff.'},
+ {a:0,role:'Staff',n:'Care team',p:'Doctor, nurse, receptionist, pharmacist — deliver and coordinate care through the staff dashboard.'},
+ {a:0,role:'Oversight',n:'Quality & Director',p:'Turn patient feedback into service improvement and oversee the whole operation.'},
+];
+
+/* ---------- user stories ---------- */
+const S=(u,c,a)=>({u,c,a}); // user, channel, action
+const STORIES=[
+ {id:'US-01',t:'Emergency arrival of a cardiac patient',
+  line:'As a patient arriving by ambulance with chest pain, I want to be registered and triaged fast, so treatment starts immediately.',
+  tp:[S('Receptionist','dash','Register patient, issue QR, open medical file'),
+      S('Triage Nurse','dash','Record vitals, route to ER'),
+      S('ER Doctor','dash','Assess, order tests, call cardiologist'),
+      S('Patient / Family','mob','See "Under exam" status')],
+  pcc:[3,6], st:'m',
+  a11y:'If the patient is unconscious → the <b>authorized decision-maker</b> is contacted. If non-verbal → triage relies on observed vitals.'},
+ {id:'US-02',t:'Waiting for test results',
+  line:'As a patient (and my family) waiting for results, I want reassuring updates, so I feel less anxious.',
+  tp:[S('Patient','mob','Sees "awaiting results" + a reassurance message + relax content'),
+      S('Family','mob','Sees the general status'),
+      S('AI Advisor','svc','Answers "is this normal?" calmly')],
+  pcc:[2,4], st:'m',
+  a11y:'Blind → status read aloud (TTS). Deaf → visual status + captioned reassurance video.'},
+ {id:'US-03',t:'Consent for catheterization (patient unable)',
+  line:'As a patient who may be unable to consent, I want my decision-maker involved, so care proceeds safely and ethically.',
+  tp:[S('Cardiologist','dash','Request consent for the procedure'),
+      S('Decision-maker / Family','mob','Receive request, approve consent'),
+      S('Family (no app)','off','Approve by phone — recorded by staff'),
+      S('System','svc','Store consent against the ticket')],
+  pcc:[1,5], st:'x',
+  a11y:'Consent request available in the decision-maker\'s language; phone fallback if they have no app.'},
+ {id:'US-04',t:'Family follows the operation live',
+  line:'As a family companion, I want live operation status, so I am not left in the dark.',
+  tp:[S('Room Nurse','dash','Set status: "in progress" → "finished"'),
+      S('Family','mob','Sees status + push notification'),
+      S('Patient','mob','—  (under anesthesia)')],
+  pcc:[4,5], st:'m',
+  a11y:'Deaf family → visual + haptic notification, no reliance on a phone call.'},
+ {id:'US-05',t:'Early deterioration during recovery',
+  line:'As a recovering patient, I want staff alerted if my vitals worsen, so they intervene early.',
+  tp:[S('Nurse','dash','Record vitals (BP, pulse, RR, SpO₂) + observations'),
+      S('Risk engine','svc','Compute NEWS2/MEWS, raise alert if high'),
+      S('Doctor','dash','Receive critical alert, intervene'),
+      S('Patient','mob','See own vitals')],
+  pcc:[6,7], st:'x',
+  a11y:'Thresholds set per case by the physician; alerts reach staff regardless of patient ability.'},
+ {id:'US-06',t:'Pain & medication management',
+  line:'As a patient in recovery, I want my pain managed and medications on time, so I am comfortable and safe.',
+  tp:[S('Nurse','dash','Assess pain (0–10), administer & log doses'),
+      S('Doctor + Pharmacist','dash','Define the medication schedule'),
+      S('Patient','mob','Get reminders, mark dose taken')],
+  pcc:[7], st:'m',
+  a11y:'Blind → spoken reminders. Non-verbal → tap to confirm pain level instead of describing it.'},
+ {id:'US-07',t:'Discharge & safe transition home',
+  line:'As a discharged patient, I want clear instructions and a follow-up, so my recovery continues safely.',
+  tp:[S('Consultant','dash','Discharge decision after vitals are stable'),
+      S('AI','svc','Draft the discharge summary'),
+      S('Doctor','dash','Review & approve the report'),
+      S('Patient','mob','Discharge pack: prescription, report, instructions, follow-up, hotline')],
+  pcc:[8,2], st:'m',
+  a11y:'Instructions available as audio (blind), captioned video (deaf), and in the patient\'s language.'},
+ {id:'US-08',t:'A blind patient uses the app independently',
+  line:'As a blind patient, I want to use the app by voice and screen reader, so I stay independent.',
+  tp:[S('Patient','mob','Screen-reader labels on everything; voice commands ("what\'s my next medication?")'),
+      S('Patient','mob','Text-to-speech replies; voice-triggered SOS'),
+      S('Patient','mob','Audio turn-by-turn indoor nav + haptic cues ("Guide Me")')],
+  pcc:[1,2,3], st:'x',
+  a11y:'<b>Full VoiceOver / TalkBack</b>, logical focus order, audio announcements of stage changes & alerts.'},
+ {id:'US-09',t:'A deaf patient communicates with the team',
+  line:'As a deaf patient, I want to communicate without speech or hearing, so nothing is lost.',
+  tp:[S('Patient','mob','Captions on all videos; visual + haptic alerts'),
+      S('Patient','mob','Show a sign-language request card to staff'),
+      S('Patient','mob','Text-to-nurse messaging'),
+      S('Nurse','dash','Receive & reply to text messages')],
+  pcc:[2], st:'x',
+  a11y:'<b>No audio-only information anywhere</b> — every alert has a visual + haptic equivalent.'},
+ {id:'US-10',t:'A non-verbal patient expresses needs',
+  line:'As a non-verbal patient, I want to express needs and call for help without speaking.',
+  tp:[S('Patient','mob','Quick-need buttons (pain, water, bathroom, nurse)'),
+      S('Patient','mob','Text-to-nurse + visual SOS'),
+      S('Nurse','dash','Receive the request with patient & room')],
+  pcc:[2,4], st:'x',
+  a11y:'Communication board / quick-need buttons replace any spoken interaction.'},
+ {id:'US-11',t:'Elderly patient + companion managing together',
+  line:'As an elderly patient, I want a simple interface and for my son to manage things, so I am not overwhelmed.',
+  tp:[S('Patient','mob','Simple mode: large text, high contrast, one-hand layout, voice'),
+      S('Family (son, full access)','mob','Books appointments, rates, gets alerts, acts on behalf')],
+  pcc:[1,5,3], st:'x',
+  a11y:'Accessibility profile "Low Vision / Senior" auto-applies font scaling & reduced motion.'},
+ {id:'US-12',t:'Russian-speaking international patient',
+  line:'As a Russian-speaking patient, I want everything in my language, so I understand my care.',
+  tp:[S('Patient','land','Browse & book in Russian'),
+      S('Patient','mob','Full UI, content & instructions in Russian'),
+      S('Doctor','dash','Use translation support to communicate')],
+  pcc:[1,2,3], st:'x',
+  a11y:'Arabic · English · Russian across all UI, notifications, and content.'},
+ {id:'US-13',t:'Feedback drives real quality improvement',
+  line:'As a patient, I want my ratings to actually improve service, so my voice matters.',
+  tp:[S('Patient / Family','mob','Rate each stage (1–5), suggest, report an issue'),
+      S('Quality Manager','dash','Dashboard + AI sentiment; respond ≤6h'),
+      S('Hospital Director','dash','Receive reports, handle escalations')],
+  pcc:[1], st:'m',
+  a11y:'Family can rate on behalf of a patient who is unable to.'},
+];
+
+/* ---------- accessibility matrix ---------- */
+const A11Y=[
+ ['Low vision','High-contrast mode · font scaler (S/M/L/XL) · bold text · reduced motion'],
+ ['Blind','Full screen reader (VoiceOver/TalkBack) · descriptive labels · voice commands · text-to-speech · audio nav + haptics · "Guide Me" · voice SOS'],
+ ['Deaf / hard-of-hearing','Captions on all videos · visual + haptic alternatives for every audio alert · sign-language request card · text-to-nurse'],
+ ['Non-verbal','Quick-need buttons · text-to-nurse · visual SOS · communication board'],
+ ['Motor / physical','Switch access · large tap targets (≥48dp) · one-hand mode · button alternative for every gesture'],
+ ['Elderly','Senior simple mode · large fonts · voice interface · companion management'],
+ ['Language','Arabic · English · Russian for all UI, notifications, content + medical translation'],
+];
+
+/* ---------- gaps ---------- */
+const GAPS=[
+ ['x','Authorized decision-maker + consent workflow (esp. when patient is incapacitated) — P1 & P5'],
+ ['x','Capture religious / dietary / cultural preferences and surface them to the care team — P1'],
+ ['x','Pain scale (0–10) capture by doctor & nurse — P7'],
+ ['m','Reassurance-message engine tied to high-anxiety stages (ER, awaiting result, operation, ICU) — P4'],
+ ['x','Full accessibility suite (vision, hearing, speech, motor, elderly) — all principles'],
+ ['x','Localization: Arabic · English · Russian across the whole app — P2 & P3'],
+ ['x','Staff dashboards + backend services + DMS/HMIS integration — P6'],
+ ['x','Simple "Senior" mode and alternative communication for non-verbal / deaf patients — P2'],
+ ['m','Proxy / on-behalf login so the companion can act for the patient — P5'],
+];
+
+/* ===== data: Mindmap (Lbl, T, IN, OUT, F, ROOT, SCENARIOS) ===== */
+
+const Lbl=(en,ar)=> ar?en+'\n'+ar:en;
+const T=(en,ar,...children)=>({label:Lbl(en,ar),children});
+const splitFields=s=>s.split(/,\s*/).map(f=>f.trim()).filter(Boolean);
+const IN=l=>(l==='—')?({label:'In · —',s:'i'}):({label:'In · مدخلات',s:'i',children:splitFields(l).map(f=>({label:f,s:'i2'}))});
+const OUT=l=>(l==='—')?({label:'Out · —',s:'o'}):({label:'Out · مخرجات',s:'o',children:splitFields(l).map(f=>({label:f,s:'o2'}))});
+const F=(en,ar,status,inp,out)=>({label:Lbl(en,ar),s:status,children:[IN(inp),OUT(out)]});
+
+/* ===== FULL MAP — every user to full depth, function IDs = SRS requirement IDs ===== */
+const ROOT=T('A.B.C.D.E System','نظام A.B.C.D.E',
+
+ T('Landing Page (public web)','صفحة عامة',
+   T('Guest / Visitor','زائر',
+     T('FR1 · Authentication','المصادقة',
+       F('1.1.3 Guest access','دخول كزائر','p','—','guest session')),
+     T('FR2 · Public Portal','البوابة العامة',
+       F('2.1.1 View hospital info','معلومات المستشفى','x','—','about, contacts, videos'),
+       F('2.2.1 Browse departments','تصفّح الأقسام','x','—','21 dept pages'),
+       F('2.2.2 Doctor directory','دليل الأطباء','x','dept filter','doctors[]'),
+       F('2.3.1 News and stories','أخبار وقصص','x','—','articles[]')),
+     T('FR3 · Appointments','المواعيد',
+       F('3.1.1 Request appointment','طلب موعد','m','name, phone, dept, complaint, time','requestId')),
+     T('FR15 · Navigation','الملاحة',
+       F('15.1.2 Visitor map','خريطة الزائر','x','destination','route')))),
+
+ T('Mobile App','تطبيق موبايل',
+   T('Patient','المريض',
+     T('FR1 · Authentication','المصادقة',
+       T('Authenticate users','مصادقة المستخدم',
+         F('1.1.1 Login (password)','دخول بكلمة سر','p','mobile|fileId, password','authToken, role'),
+         F('1.1.2 Login (QR)','دخول بـ QR','m','qrToken','authToken')),
+       T('Registration','التسجيل',
+         F('1.2.1 Register','تسجيل','m','name, nationalId, age, address, phone','patientId'),
+         F('1.2.2 Set preferences','التفضيلات','x','religion, language, contact','prefs saved'))),
+     T('FR3 · Appointments','المواعيد',
+       F('3.1.1 Request appointment','طلب موعد','m','dept, complaint, time','requestId'),
+       F('3.2.1 View appointments','عرض المواعيد','p','patientId','upcoming[]'),
+       F('3.2.2 Reschedule','تغيير الموعد','m','apptId, newTime','updated appt')),
+     T('FR4 · Care Journey','رحلة الرعاية',
+       F('4.1.1 Receive visit ticket','استلام التذكرة','m','patientId','ticketNo'),
+       F('4.3.1 View simplified status','الحالة المبسّطة','p','ticketNo','statusText')),
+     T('FR5 · Vitals','العلامات الحيوية',
+       F('5.4 View own vitals','عرض علاماتي','p','patientId','HR, BP, SpO2')),
+     T('FR6 · Medication','الأدوية',
+       F('6.2.1 Get reminders','تذكيرات','p','patientId','due doses'),
+       F('6.2.2 Mark dose taken','تأكيد جرعة','m','medItemId, time','adherence')),
+     T('FR7 · Reports','التقارير',
+       F('7.2.1 View / download reports','عرض التقارير','p','patientId, type','report doc')),
+     T('FR8 · AI Assistant','المساعد الذكي',
+       F('8.1.1 Ask advisor','اسأل المساعد','m','question, context','answer'),
+       F('8.1.2 Symptom triage','فرز الأعراض','x','symptoms','urgency, red-flag')),
+     T('FR9 · Documentation','التوثيق',
+       F('9.2.2 Get translated instructions','تعليمات مترجمة','x','text, lang','translated')),
+     T('FR10 · Feedback','التقييم',
+       F('10.1.1 Rate a stage','تقييم مرحلة','p','stageId, stars','ratingId, +20'),
+       F('10.1.2 Report an issue','إبلاغ مشكلة','p','stage, text','ticketId')),
+     T('FR11 · Family Access','وصول الأهل',
+       F('11.1.1 Add companion','إضافة مرافق','p','name|QR, relation','linked (max 1)'),
+       F('11.1.2 Set permissions','الصلاحيات','p','companionId, level','permission set')),
+     T('FR12 · Notifications','التنبيهات',
+       F('12.1.1 Receive alerts','استقبال التنبيهات','p','patientId','alerts[]'),
+       F('12.2.1 Trigger SOS','زر الطوارئ','p','patientId, location','emergency raised')),
+     T('FR13 · Billing','الفواتير',
+       F('13.1.1 View bill','عرض الفاتورة','p','patientId','bill, due'),
+       F('13.1.2 Pay','الدفع','m','amount, method','receipt')),
+     T('FR14 · Education','التثقيف',
+       F('14.1.1 Education videos','فيديوهات','p','condition','videos[]'),
+       F('14.1.2 Relax content','محتوى مهدّئ','p','—','content[]'),
+       F('14.2.1 Earn Care Points','نقاط الرعاية','p','ratingId','points')),
+     T('FR15 · Navigation','الملاحة',
+       F('15.1.1 Open map','الخريطة','x','floor','map'),
+       F('15.1.2 Search and navigate','بحث وتوجيه','x','room|doctor|dept','route')),
+     T('FR16 · Accessibility','إتاحة الوصول',
+       F('16.1.1 Vision / screen reader','إبصار / قارئ شاشة','x','profile','contrast, TTS'),
+       F('16.1.2 Voice and audio','صوت','x','voice command','action / audio'),
+       F('16.1.3 Hearing','سمع','x','event','captions, haptics'),
+       F('16.2.1 Non-verbal','غير ناطق','x','tap, message','request'),
+       F('16.2.2 Motor / elderly','حركة / كبار السن','x','profile','switch, simple mode'))),
+   T('Family Companion','المرافق',
+     T('FR1 · Authentication','المصادقة',
+       F('1.2.1 Register patient','تسجيل المريض','m','patient data|QR','linked')),
+     T('FR3 · Appointments','المواعيد',
+       F('3.1.1 Book on behalf','حجز بالنيابة','m','dept, time','requestId')),
+     T('FR4 · Care Journey','الرحلة',
+       F('4.3.1 View status','متابعة الحالة','m','ticketNo','stage, status, physician')),
+     T('FR7 · Reports','التقارير',
+       F('7.2.1 Blocked from results','محجوب عن النتائج','x','—','privacy enforced')),
+     T('FR8 · AI Assistant','المساعد',
+       F('8.1.1 Ask advisor','اسأل المساعد','m','question','answer')),
+     T('FR10 · Feedback','التقييم',
+       F('10.1.1 Rate on behalf','تقييم بالنيابة','p','stageId, stars','ratingId')),
+     T('FR11 · Family Access','الوصول',
+       F('11.1.1 Accept link','قبول الربط','p','inviteId','access (max 1)'),
+       F('11.2.1 Get notifications','تنبيهات','m','companionId','care-area / op alerts')),
+     T('FR12 · Emergency','الطوارئ',
+       F('12.2.1 Report emergency','إبلاغ طارئ','p','patientId','raised')),
+     T('FR13 · Billing','الفواتير',
+       F('13.1.2 Pay (full access)','الدفع','m','amount','receipt'))),
+   T('Staff on mobile','موظف (موبايل)',
+     T('FR1 · Authentication','المصادقة',
+       F('1.1.1 Login','تسجيل دخول','x','credentials','authToken')),
+     T('FR5 · Alerts','تنبيهات',
+       F('5.3.2 Receive critical alert','تنبيه حرج','x','riskLevel','alert')),
+     T('FR17 · Dashboard (lite)','لوحة مصغّرة',
+       F('View my patients','عرض مرضايا','x','staffId','patients[]'),
+       F('Quick note','ملاحظة سريعة','x','patientId, note','saved <= 15 min')))),
+
+ T('Dashboard (staff web)','لوحة الموظفين',
+   T('Doctor','طبيب',
+     T('FR4 · Care Journey','الرحلة',
+       F('4.2.1 Advance stages','تحريك المراحل','x','ticketNo, decision','new stage, owner'),
+       F('4.2.2 Alternative pathway','مسار بديل','x','ticketNo, finding','re-route')),
+     T('FR5 · Vitals','العلامات',
+       F('5.1.2 Assess pain / consciousness','تقييم الألم/الوعي','x','patientId, scale','saved'),
+       F('5.2.1 Set thresholds','ضبط الحدود','x','limits','ruleSet'),
+       F('5.3.2 Receive deterioration alert','تنبيه تدهور','x','riskLevel','alert')),
+     T('FR6 · Medication','الأدوية',
+       F('6.1.1 Prescribe medication','وصف الدواء','x','drug, dose, timing, route','medPlan')),
+     T('FR7 · Diagnostics','الفحوصات',
+       F('7.1.1 Order tests','طلب فحوصات','x','patientId, types[]','orderIds[]'),
+       F('7.2.2 Review history','السجل التاريخي','x','patientId','past visits')),
+     T('FR8 · AI Assistant','المساعد',
+       F('8.2.1 Receive escalation','استقبال تحويل','x','ticketNo','handoff')),
+     T('FR9 · AI Documentation','التوثيق',
+       F('9.1.1 Generate report draft','مسودة تقرير','x','EMR data, type','draft'),
+       F('9.1.2 Review and approve','مراجعة واعتماد','x','draftId, edits','final'),
+       F('9.2.1 Voice transcription','تفريغ صوتي','x','audio','note text'),
+       F('9.2.2 Translate','ترجمة','x','text, lang','translated')),
+     T('FR3 · Appointments','المواعيد',
+       F('3.2.1 View follow-ups','عرض المتابعات','x','doctorId','upcoming[]'))),
+   T('Nurse','ممرض',
+     T('FR4 · Care Journey','الرحلة',
+       F('4.1.1 Triage and route','فرز وتوجيه','x','ticketNo, assessment','destination'),
+       F('4.2.1 Advance triage','تحريك الفرز','x','ticketNo','next stage')),
+     T('FR5 · Vitals','العلامات',
+       F('5.1.1 Record vitals','تسجيل العلامات','x','BP, pulse, RR, SpO2','saved'),
+       F('5.1.2 Assess consciousness','تقييم الوعي','x','scale','saved'),
+       F('5.3.2 Deterioration alert','تنبيه تدهور','x','riskLevel','alert')),
+     T('FR6 · Medication','الأدوية',
+       F('6.2.2 Administer and log','إعطاء وتسجيل','x','medItemId, time','log')),
+     T('FR8 · AI Assistant','المساعد',
+       F('8.2.1 Receive escalation','استقبال تحويل','x','ticketNo','handoff')),
+     T('FR12 · Emergency','الطوارئ',
+       F('12.2.2 Activate Code Blue','تفعيل كود بلو','x','location','team paged'))),
+   T('Receptionist','استقبال',
+     T('FR1 · Authentication','المصادقة',
+       F('1.1.2 Issue QR','إصدار QR','x','patientId','qrToken'),
+       F('1.2.1 Register patient','تسجيل مريض','x','patient data','patientId')),
+     T('FR3 · Appointments','المواعيد',
+       F('3.1.2 Manage bookings','إدارة الحجوزات','x','—','slots[]'),
+       F('3.3.1 Assign to doctor','إسناد لطبيب','x','patientId, doctorId','assignment')),
+     T('FR4 · Care Journey','الرحلة',
+       F('4.1.1 Open ticket / file','فتح التذكرة','x','patientId','ticketNo, file'))),
+   T('Quality Manager','مدير الجودة',
+     T('FR10 · Feedback and Quality','التقييم والجودة',
+       F('10.2.1 Handle complaints (<=6h)','إدارة الشكاوى','x','complaintId','response / escalate'),
+       F('10.2.2 Analyze and report','تحليل وتقارير','x','ratings, comments','sentiment, themes')),
+     T('FR17 · Reporting','التقارير',
+       F('17.2.1 Read quality reports','قراءة التقارير','x','range','reports'))),
+   T('Hospital Director','مدير المستشفى',
+     T('FR3 · Appointments','المواعيد',
+       F('3.3.1 Assign to doctor','إسناد لطبيب','x','patientId, doctorId','assignment')),
+     T('FR10 · Quality','الجودة',
+       F('10.2.2 Receive quality reports','استلام التقارير','x','range','reports')),
+     T('FR17 · Reporting','الإدارة',
+       F('17.2.1 Management reports','تقارير الإدارة','x','range, filters','KPIs, comparisons'))),
+   T('System Admin','مدير النظام',
+     T('FR1 · Access','الصلاحيات',
+       F('1.3.1 Define roles','تعريف الأدوار','x','user, role','permissions'),
+       F('1.3.2 Edit-window rule','نافذة التعديل','x','record','enforced')),
+     T('FR17 · Administration','الإدارة',
+       F('17.1.1 Manage accounts','إدارة الحسابات','x','user, role','account'),
+       F('17.1.2 Configure system','إعدادات النظام','x','stages, roles, alarms, langs','config'),
+       F('17.1.3 Integrate DMS/HMIS','تكامل','x','external data','synced'),
+       F('17.2.2 Audit / protect data','تدقيق وحماية','x','record','log, access control')))),
+
+ T('Services (shared backend)','خدمات مشتركة',
+   F('FR1 Authentication and Access','المصادقة والصلاحيات','x','credentials / token','session, role'),
+   F('FR2 Public Portal','البوابة العامة','x','—','pages, doctors, news'),
+   F('FR3 Appointments','المواعيد','x','request','appointment, slots'),
+   F('FR4 Care Journey','تنسيق الرحلة','x','ticket events','stage state'),
+   F('FR5 Vitals and Risk','العلامات والخطورة','x','vitals stream','score, alerts'),
+   F('FR6 Medication','الأدوية','x','prescription','plan, reminders'),
+   F('FR7 Diagnostics and EMR','الفحوصات والسجل','x','orders / DMS','results, records'),
+   F('FR8 AI Assistant','المساعد الذكي','m','question','answer, triage'),
+   F('FR9 Clinical Documentation','التوثيق','x','data / audio','draft, transcript, translation'),
+   F('FR10 Feedback and Quality','التقييم والجودة','x','ratings','reports'),
+   F('FR11 Family Access','وصول الأهل','x','link, permissions','access'),
+   F('FR12 Notifications and Emergency','التنبيهات والطوارئ','x','event','alerts, Code Blue'),
+   F('FR13 Billing','الفوترة','x','charges','bill, payment'),
+   F('FR14 Education','التثقيف','x','condition','content, points'),
+   F('FR15 Navigation','الملاحة','x','destination','route'),
+   F('FR16 Accessibility','الإتاحة','x','profile','adaptations'),
+   F('FR17 Administration','الإدارة والتقارير','x','config / data','accounts, reports, integration'))
+);
+
+const DEFAULT_COLLAPSE_FROM=2;
+
+/* ===== SCENARIOS ===== */
+const SCENARIOS=[
+  {sub:'Ambulance arrival → fast registration & triage · وصول طارئ',
+   root:T('Emergency Arrival','وصول طارئ',
+     T('Receptionist','استقبال',F('1.2.1 Register patient','تسجيل المريض','m','name, nationalId, phone','patientId, file'),F('1.1.2 Issue QR','إصدار QR','x','patientId','qrToken'),F('4.1.1 Open file','فتح الملف','x','patientId','file opened')),
+     T('Triage Nurse','ممرض الفرز',F('5.1.1 Record vitals','تسجيل العلامات','x','BP, pulse, RR, SpO2','vitals, flagged?'),F('4.1.1 Route patient','توجيه المريض','x','assessment','destination = ER')),
+     T('ER Doctor','طبيب الطوارئ',F('7.1.1 Order tests','طلب فحوصات','x','symptoms','orderIds[]'),F('8.2.1 Call cardiologist','استدعاء طبيب القلب','x','ticketNo','notified')),
+     T('Patient','المريض',F('4.3.1 See status','عرض الحالة','p','ticketNo','"Under exam"')),
+     T('Family','الأهل',F('4.3.1 See general status','الحالة العامة','m','ticketNo','stage, status')))},
+
+  {sub:'Awaiting test results — keep anxiety low · انتظار النتيجة',
+   root:T('Waiting for Results','انتظار النتيجة',
+     T('Patient','المريض',F('4.3.1 See "awaiting result"','حالة الانتظار','p','ticketNo','statusText'),F('12.1.1 Reassurance message','رسالة طمأنة','m','stage','calming message'),F('14.1.2 Relax content','محتوى مهدّئ','p','—','calm content')),
+     T('Family','الأهل',F('4.3.1 See general status','الحالة العامة','m','ticketNo','status')),
+     T('AI Advisor','المساعد الذكي',F('8.1.1 Answer "is this normal?"','رد مطمئن','m','question','educational answer')))},
+
+  {sub:'Patient unable to consent → decision-maker · الموافقة',
+   root:T('Consent for Catheterization','الموافقة على القسطرة',
+     T('Cardiologist','طبيب القلب',F('Request consent','طلب موافقة','x','ticketNo, procedure, decisionMaker','consent request')),
+     T('Decision-maker / Family','المخوّل / الأهل',F('Approve in app','موافقة بالتطبيق','x','requestId','consentId'),F('Approve by phone','موافقة بالهاتف','x','call','recorded')),
+     T('System','النظام',F('Record consent','تسجيل الموافقة','x','consentId, ticketNo','stored')))},
+
+  {sub:'Live updates while in the cath lab · أثناء العملية',
+   root:T('During the Operation','أثناء العملية',
+     T('Room Nurse','ممرض الغرفة',F('Update operation status','تحديث الحالة','x','ticketNo, status','family notified')),
+     T('Family','الأهل',F('11.2.1 See live status','الحالة اللحظية','m','ticketNo','in progress / finished'),F('12.1.1 Get notification','إشعار','m','—','push / haptic')),
+     T('Patient','المريض',F('Under anesthesia','تحت التخدير','x','—','—')))},
+
+  {sub:'Vitals worsen → staff alerted early · تدهور الحالة',
+   root:T('Deterioration in Recovery','تدهور أثناء التعافي',
+     T('Nurse','ممرض',F('5.1.1 Record vitals','تسجيل العلامات','x','patientId, vitals','saved')),
+     T('AI Risk Engine','محرك الخطورة',F('5.3.1 Compute risk score','حساب الخطورة','x','vitals, labs','NEWS2/MEWS'),F('5.3.2 Raise alert','إطلاق إنذار','x','riskLevel','alert')),
+     T('Doctor','طبيب',F('5.3.2 Get critical alert','تنبيه حرج','x','—','received'),F('Intervene','تدخّل','x','patientId','action')),
+     T('Patient','المريض',F('5.4 View own vitals','عرض علاماته','p','patientId','HR, BP, SpO2')))},
+
+  {sub:'Comfort: pain controlled, meds on time · الألم والدواء',
+   root:T('Pain & Medication','الألم والدواء',
+     T('Doctor + Pharmacist','طبيب + صيدلي',F('6.1.1 Set medication schedule','جدولة الدواء','x','drug, dose, timing, route','medPlan')),
+     T('Nurse','ممرض',F('5.1.2 Assess pain (0-10)','تقييم الألم','x','patientId, scale','painScore'),F('6.2.2 Administer & log','إعطاء وتسجيل','x','medItemId, time','log')),
+     T('Patient','المريض',F('6.2.1 Get reminders','تذكيرات','p','patientId','due doses'),F('6.2.2 Mark dose taken','تأكيد الجرعة','m','medItemId','adherence')))},
+
+  {sub:'Safe transition home with a follow-up · الخروج والمتابعة',
+   root:T('Discharge & Follow-up','الخروج والمتابعة',
+     T('Consultant','الاستشاري',F('4.2.1 Discharge decision','قرار الخروج','x','ticketNo, vitalsStable','approved, checklist')),
+     T('AI','الذكاء الاصطناعي',F('9.1.1 Draft discharge summary','تقرير خروج مبدئي','x','EMR data','draft')),
+     T('Doctor','طبيب',F('9.1.2 Review & approve','مراجعة واعتماد','x','draftId, edits','final report')),
+     T('Patient','المريض',F('7.2.1 Get discharge pack','حزمة الخروج','m','patientId','prescription, report, instructions'),F('3.2.1 Auto follow-up','متابعة بعد أسبوع','x','patientId','appointment')))},
+
+  {sub:'A blind patient uses the app independently · مريض كفيف',
+   root:T('Blind Patient','مريض كفيف',
+     T('Patient','المريض',F('16.1.1 Screen reader','قارئ الشاشة','x','UI','spoken labels'),F('16.1.2 Voice commands','أوامر صوتية','x','voice','spoken answer'),F('16.1.2 Voice SOS','طوارئ صوتية','x','"send emergency"','raised'),F('16.1.1 Audio navigation','ملاحة صوتية','x','destination','audio + haptics')))},
+
+  {sub:'A deaf patient communicates with the team · مريض أصمّ',
+   root:T('Deaf Patient','مريض أصمّ',
+     T('Patient','المريض',F('16.1.3 Captions','ترجمة نصية','x','video','captions'),F('16.1.3 Visual + haptic alerts','تنبيهات بصرية','x','event','visual + vibration'),F('16.1.3 Sign-language card','بطاقة لغة إشارة','x','—','shown to staff'),F('16.2.1 Text-to-nurse','مراسلة الممرض','x','message','sent')),
+     T('Nurse','ممرض',F('16.2.1 Receive & reply','رد نصي','x','message','reply')))},
+
+  {sub:'A non-verbal patient expresses needs · مريض غير ناطق',
+   root:T('Non-verbal Patient','مريض غير ناطق',
+     T('Patient','المريض',F('16.2.1 Quick-need buttons','أزرار الاحتياجات','x','tap','request'),F('16.2.1 Text-to-nurse','مراسلة الممرض','x','message','sent'),F('12.2.1 Visual SOS','طوارئ بصرية','x','tap','raised')),
+     T('Nurse','ممرض',F('Receive request','استقبال الطلب','x','—','request + room')))},
+
+  {sub:'Elderly patient helped by the companion · مريض كبير السن',
+   root:T('Elderly + Companion','كبير السن + مرافق',
+     T('Patient','المريض',F('16.2.2 Simple mode','وضع مبسّط','x','profile','large text'),F('16.1.2 Voice interface','واجهة صوتية','x','voice','action')),
+     T('Family (son)','الأهل (الابن)',F('3.1.1 Act on behalf','التصرّف بالنيابة','p','patientId','book, manage'),F('12.1.1 Get alerts','تنبيهات','p','companionId','alerts'),F('10.1.1 Rate service','تقييم الخدمة','p','stageId, stars','ratingId')))},
+
+  {sub:'Russian-speaking international patient · مريض بلغة أخرى',
+   root:T('Other-language Patient','مريض بلغة أخرى',
+     T('Patient','المريض',F('1.2.2 UI in Russian','الواجهة بالروسية','x','lang = RU','localized UI'),F('9.2.2 Russian instructions','تعليمات بالروسية','x','content','translated')),
+     T('Doctor','طبيب',F('9.2.2 Translation to communicate','ترجمة للتواصل','x','AR/EN/RU','translated message')))},
+
+  {sub:'Feedback turns into real improvement · التقييم والجودة',
+   root:T('Feedback → Quality','التقييم ← الجودة',
+     T('Patient / Family','المريض / الأهل',F('10.1.1 Rate stage','تقييم المرحلة','p','stageId, stars','ratingId'),F('10.1.2 Report issue','إبلاغ مشكلة','p','stage, text','ticketId')),
+     T('Quality Manager','مدير الجودة',F('10.2.2 Analyze (AI sentiment)','تحليل','x','ratings, comments','sentiment, themes'),F('10.2.1 Respond <= 6h','رد خلال 6 ساعات','x','complaintId','response / escalate')),
+     T('Hospital Director','مدير المستشفى',F('17.2.1 Receive reports','استلام التقارير','x','range','report')))},
+];
+
+/* ---------- render: Customer Requirements ---------- */
+document.getElementById('crBody').innerHTML=CR.map(r=>
+  `<tr><td class="k">${r[0]}</td><td>${r[1]}</td><td style="color:var(--teal);font-weight:600">${r[2]}</td></tr>`).join('');
+
+/* ---------- render: Functional Requirements ---------- */
+function story(a){return `<li>As a <b>${a[0]}</b>, I ${a[1]}.</li>`;}
+function llfHtml(l){
+  return `<div class="llf">
+    <div class="llf-h"><span class="lid">${l.id}</span> ${l.s}</div>
+    <div class="io"><span class="i">In · ${l.in}</span><span class="o">Out · ${l.out}</span></div>
+    <ul class="stories">${l.a.map(story).join('')}</ul>
+    ${l.ac?`<div class="ac"><b>Acceptance:</b> ${l.ac.join(' · ')}</div>`:''}
+    <div class="lmeta"><span class="pri-${l.p}">${l.p}</span><span class="src">Src: ${l.src}</span>${(l.pcc||[]).map(n=>`<span class="pcc">PCC ${n}</span>`).join('')}</div>
+  </div>`;
+}
+document.getElementById('frList').innerHTML=FR.map(fr=>`
+  <div class="fr">
+    <div class="fr-h"><div class="frn">${fr.n}</div>
+      <div style="flex:1"><h4>${fr.title}</h4><div class="shall">${fr.shall}</div>
+        <div class="tags"><span class="svc">Service: ${fr.svc}</span>${fr.pcc.map(n=>`<span class="pcc">PCC ${n}</span>`).join('')}</div></div></div>
+    <div class="fr-body">${fr.hlf.map(h=>`<div class="hlf-h"><span class="hid">${h.id}</span> ${h.name}</div>${h.ll.map(llfHtml).join('')}`).join('')}</div>
+  </div>`).join('');
+
+/* ---------- render: Non-Functional ---------- */
+document.getElementById('nfrBody').innerHTML=NFR.map(r=>`<tr><td class="k">${r[0]}</td><td>${r[1]}</td><td><span class="lmeta"><span class="pri-${r[2]}">${r[2]}</span></span></td></tr>`).join('');
+
+/* ---------- render: Services Map ---------- */
+document.getElementById('svcBody').innerHTML=FR.map(fr=>{
+  const lls=fr.hlf.flatMap(h=>h.ll);
+  return `<tr><td class="svcn">${fr.n} · ${fr.svc}</td><td class="fns">${lls.map(l=>`<b>${l.id}</b> ${l.s}`).join('<br>')}</td></tr>`;}).join('');
+
+/* ---------- render: Subsystem Architecture ---------- */
+const SYM={p:'✓',m:'~',x:'✗'};
+document.getElementById('archList').innerHTML=SUBSYS.map(s=>{
+  const c={p:0,m:0,x:0}; s.hlf.forEach(h=>h.llf.forEach(l=>c[l[1]]++));
+  return `<div class="ar">
+    <div class="ar-h"><div class="ar-code">${s.code}</div>
+      <div><h4>${s.name}</h4><div class="pp">${s.purpose}</div>
+        <div class="minibar"><span class="pill p">✓ ${c.p}</span><span class="pill m">~ ${c.m}</span><span class="pill x">✗ ${c.x}</span></div></div></div>
+    ${s.hlf.map(h=>`<div class="ar-hl">${h.n}</div><ul class="ar-ul">${h.llf.map(l=>`<li><span class="tag ${l[1]}">${SYM[l[1]]}</span><span>${l[0]}</span></li>`).join('')}</ul>`).join('')}
+    <table class="ar-users"><thead><tr><th>Role</th><th>What they do here</th></tr></thead><tbody>${s.users.map(u=>`<tr><td class="role">${u[0]}</td><td class="does">${u[1]}</td></tr>`).join('')}</tbody></table>
+  </div>`;}).join('');
+
+/* ---------- render: PCC ---------- */
+const STl={p:'In prototype',m:'Partial',x:'Not built'};
+document.getElementById('pccGrid').innerHTML=PCC.map(p=>`
+  <div class="card pcard"><div class="pnum">${p.n}</div>
+    <div><h4>${p.t}<span class="stat ${p.st}">${STl[p.st]}</span></h4><div class="mean">${p.mean}</div>
+      <ul class="apply">${p.apply.map(a=>`<li>${a}</li>`).join('')}</ul></div></div>`).join('');
+document.getElementById('personaGrid').innerHTML=PERSONAS.map(p=>`
+  <div class="card persona ${p.a?'a':''}"><div class="role">${p.role}</div><h4>${p.n}</h4><p>${p.p}</p></div>`).join('');
+const CH={mob:['mob','Mobile'],dash:['dash','Dashboard'],land:['land','Landing'],svc:['svc','Service'],off:['off','Offline']};
+document.getElementById('storyList').innerHTML=STORIES.map(s=>`
+  <div class="story"><div class="sid">${s.id}<span class="stat ${s.st}" style="margin-left:8px">${STl[s.st]}</span></div>
+    <h4>${s.t}</h4><div class="userline">“${s.line}”</div>
+    <table class="tp"><thead><tr><th>User</th><th>Where</th><th>What they do</th></tr></thead><tbody>
+      ${s.tp.map(r=>`<tr><td class="u">${r.u}</td><td><span class="chan ${CH[r.c][0]}">${CH[r.c][1]}</span></td><td>${r.a}</td></tr>`).join('')}</tbody></table>
+    <div class="meta">${s.pcc.map(n=>`<span class="pp2">PCC ${n}</span>`).join('')}</div>
+    <div class="a11ynote">♿ ${s.a11y}</div></div>`).join('');
+document.getElementById('a11yTable').innerHTML=`<thead><tr><th>Need</th><th>Accommodations</th></tr></thead><tbody>`+
+  A11Y.map(r=>`<tr><td class="k">${r[0]}</td><td>${r[1]}</td></tr>`).join('')+`</tbody>`;
+document.getElementById('gapList').innerHTML=`<div class="card">`+GAPS.map(g=>`<div class="gap"><span class="gp ${g[0]}">${g[0]==='x'?'missing':'partial'}</span><span>${g[1]}</span></div>`).join('')+`</div>`;
+
+/* ---------- render: Mindmap outline ---------- */
+function outline(node){
+  const parts=(node.label||'').split('\n');const en=parts[0],ar=parts[1]||'';
+  const kids=node.children||[];
+  const dot=node.s?`<span class="mdot ${node.s}"></span>`:'';
+  const lab=`${dot}<span class="men">${en}</span>${ar?` <span class="mar">${ar}</span>`:''}`;
+  return `<li>${lab}${kids.length?`<ul>${kids.map(outline).join('')}</ul>`:''}</li>`;
+}
+if(typeof ROOT!=='undefined')
+  document.getElementById('mindOutline').innerHTML=`<ul class="mtree">${(ROOT.children||[]).map(outline).join('')}</ul>`;
+if(typeof SCENARIOS!=='undefined')
+  document.getElementById('scenOutline').innerHTML=SCENARIOS.map(sc=>{
+    const p=(sc.root.label||'').split('\n');
+    return `<div class="card" style="margin-bottom:8px;page-break-inside:avoid"><h4 style="margin:0 0 6px;font-size:14px">${p[0]}${p[1]?' · '+p[1]:''}</h4><ul class="mtree">${(sc.root.children||[]).map(outline).join('')}</ul></div>`;
+  }).join('');
+</script>
+</body>
+</html>
