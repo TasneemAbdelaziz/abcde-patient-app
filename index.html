@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A.B.C.D.E — Patient App Prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="wrap">
+  <div class="topnote">A . B . C . D . E &nbsp;System &nbsp;·&nbsp; <b>Patient Mobile App</b> &nbsp;·&nbsp; Clickable Prototype</div>
+
+  <div class="phone">
+    <div class="notch"></div>
+    <div class="screen">
+
+      <!-- ============ INTRO ============ -->
+      <div class="intro" id="intro">
+        <div style="height:46px"></div>
+        <div class="slide on" id="slide-0">
+          <div class="slide-art sa1">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0H5m14 0h2M5 21H3m4-12h2m-2 4h2m6-4h2m-2 4h2M9 21v-4a2 2 0 012-2h2a2 2 0 012 2v4"/></svg>
+          </div>
+          <h2>Welcome to<br>Alamein Model Hospital</h2>
+          <p>A new standard of patient-centered care — bringing your whole hospital journey into one app.</p>
+        </div>
+        <div class="slide" id="slide-1">
+          <div class="slide-art sa2">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
+          </div>
+          <h2>Track Every Stage<br>of Your Visit</h2>
+          <p>From arrival to discharge, follow your care journey in real time and know exactly what comes next.</p>
+        </div>
+        <div class="slide" id="slide-2">
+          <div class="slide-art sa3">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.86 9.86 0 01-4-.8L3 20l1.3-3.9C3.5 15 3 13.6 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+          </div>
+          <h2>An AI Advisor &<br>Your Family, Connected</h2>
+          <p>Ask the Health Advisor anytime, and let trusted family members follow your care with your permission.</p>
+        </div>
+        <div class="slide" id="slide-3">
+          <div class="slide-art sa4">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.196-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118L2.05 9.801c-.783-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/></svg>
+          </div>
+          <h2>Your Voice<br>Shapes Our Care</h2>
+          <p>Rate every stage of your visit. Your feedback drives the hospital's quality improvement.</p>
+        </div>
+        <div class="dots-nav" id="introdots">
+          <i class="on"></i><i></i><i></i><i></i>
+        </div>
+        <div class="intro-foot">
+          <button class="btn-primary" style="margin-top:0" id="introNext" onclick="introNext()">Next</button>
+          <button class="guest-btn" onclick="skipIntro()">Skip</button>
+        </div>
+      </div>
+
+      <!-- ============ LOGIN ============ -->
+      <div class="login" id="login">
+        <div class="login-top">
+          <div class="login-logo">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+          </div>
+          <h2>Sign In</h2>
+          <p>Access your care at Alamein Model Hospital</p>
+        </div>
+        <div class="login-body">
+          <div class="field">
+            <label>Mobile number or File ID</label>
+            <div class="fakeinput">+20 1• ••• •••• </div>
+          </div>
+          <div class="field">
+            <label>Password</label>
+            <div class="fakeinput">••••••••</div>
+          </div>
+          <button class="btn-primary" onclick="enterApp()">Log In</button>
+          <div class="or">or</div>
+          <button class="qr-btn" onclick="openSheet('qrlogin')">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"/></svg>
+            Log in with QR Code
+          </button>
+          <button class="guest-btn" onclick="enterGuest()">Continue as Guest</button>
+        </div>
+      </div>
+
+      <div class="statusbar" id="statusbar">
+        <span>9:41</span>
+        <span class="dots">
+          <span class="sig"><i></i><i></i><i></i></span>
+          <span style="font-size:11px">5G</span>
+          <span class="batt"><i></i></span>
+        </span>
+      </div>
+
+      <div class="view" id="view">
+
+        <!-- ============ HOME ============ -->
+        <div class="page on" id="page-home">
+          <div class="pad">
+            <div class="band">
+              <div class="row">
+                <div class="lefttop">
+                  <div class="avatar" id="homeAvatar" onclick="go('family')" style="cursor:pointer">KH</div>
+                  <div>
+                    <div class="hi" id="homeHi">Good morning,</div>
+                    <div class="nm" id="homeName">Karim Hassan</div>
+                  </div>
+                </div>
+                <div class="bell" onclick="go('alerts')">
+                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+                  <span class="dot"></span>
+                </div>
+              </div>
+            </div>
+
+            <div id="guestNotice"></div>
+
+            <div class="pulldown">
+              <div class="card status-card">
+                <div class="lbl">Current Status</div>
+                <div class="state"><span class="blip"></span>Under Monitoring</div>
+                <div class="where">
+                  You are in the <b>Coronary Care Unit</b>. Your catheterization was completed successfully. The team is monitoring your recovery.
+                </div>
+              </div>
+            </div>
+
+            <div class="vitals">
+              <div class="vital"><div class="v">78</div><div class="k">Heart</div><div class="u">bpm</div></div>
+              <div class="vital"><div class="v">118/76</div><div class="k">Pressure</div><div class="u">mmHg</div></div>
+              <div class="vital"><div class="v">98<span style="font-size:12px">%</span></div><div class="k">SpO₂</div><div class="u">&nbsp;</div></div>
+            </div>
+
+            <div class="sec-title">Quick Actions</div>
+            <div class="quick">
+              <button class="qa" onclick="go('advisor')">
+                <div class="ic t1"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.86 9.86 0 01-4-.8L3 20l1.3-3.9C3.5 15 3 13.6 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg></div>
+                <div class="t">Health Advisor</div>
+                <div class="d">Ask the AI about your condition</div>
+              </button>
+              <button class="qa" onclick="go('journey')">
+                <div class="ic t3"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg></div>
+                <div class="t">My Journey</div>
+                <div class="d">Track every stage of your visit</div>
+              </button>
+              <button class="qa" onclick="go('care');setTimeout(function(){var b=document.querySelectorAll('#page-care .seg button')[2];if(b)b.click();},60)">
+                <div class="ic t2"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg></div>
+                <div class="t">Reports</div>
+                <div class="d">Health & financial records</div>
+              </button>
+              <button class="qa" onclick="openSheet('sos')">
+                <div class="ic t4"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01M5 19h14a2 2 0 001.84-2.75L13.74 4a2 2 0 00-3.48 0L3.16 16.25A2 2 0 005 19z"/></svg></div>
+                <div class="t">Emergency</div>
+                <div class="d">Call for immediate help</div>
+              </button>
+            </div>
+
+            <div class="sec-title">Understand Your Condition</div>
+            <div class="vid" onclick="openSheet('video')">
+              <div class="thumb">
+                <div class="play"><svg fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+                <span class="dur">3:24</span>
+              </div>
+              <div class="vinfo">
+                <div class="vt">What happened: Coronary Catheterization</div>
+                <div class="vd">A simple explanation of your procedure</div>
+              </div>
+            </div>
+
+            <div class="loyalty">
+              <div class="pl">Care Points</div>
+              <div class="pts" id="ptsHome">320</div>
+              <div class="barwrap"><i></i></div>
+              <div class="nxt">180 points to your next reward — priority booking</div>
+            </div>
+
+            <div class="note-strip">
+              Prototype note — this is a clickable UI mockup. Data is illustrative; no live backend, AI, or hospital integration is connected.
+            </div>
+          </div>
+        </div>
+
+        <!-- ============ JOURNEY ============ -->
+        <div class="page" id="page-journey">
+          <div class="pad">
+            <div style="padding-top:14px">
+              <div class="eyebrow">Visit Ticket · #ALM-20413</div>
+              <h1 class="big">Your Care Journey</h1>
+              <div class="sub">Cardiac stroke pathway · admitted today 08:12</div>
+            </div>
+            <div class="card" style="margin-top:18px">
+              <div class="track">
+                <div class="step done">
+                  <div class="dot">✓</div>
+                  <div class="body">
+                    <div class="nm">Arrival & Registration</div>
+                    <div class="meta">08:12 · Reception desk</div>
+                    <button class="rate-btn done"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg> Rated 5.0</button>
+                  </div>
+                </div>
+                <div class="step done">
+                  <div class="dot">✓</div>
+                  <div class="body">
+                    <div class="nm">Triage Assessment</div>
+                    <div class="meta">08:20 · Emergency nurse</div>
+                    <button class="rate-btn done"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg> Rated 4.0</button>
+                  </div>
+                </div>
+                <div class="step done">
+                  <div class="dot">✓</div>
+                  <div class="body">
+                    <div class="nm">Diagnosis</div>
+                    <div class="meta">08:45 · ECG & cardiac enzymes</div>
+                    <button class="rate-btn" id="rb-diag" onclick="openSheet('rate','Diagnosis')"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.196-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118L2.05 9.801c-.783-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/></svg> Rate this stage</button>
+                  </div>
+                </div>
+                <div class="step done">
+                  <div class="dot">✓</div>
+                  <div class="body">
+                    <div class="nm">Catheterization</div>
+                    <div class="meta">10:05 · Cath Lab 2</div>
+                    <button class="rate-btn" id="rb-cath" onclick="openSheet('rate','Catheterization')"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.196-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118L2.05 9.801c-.783-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/></svg> Rate this stage</button>
+                  </div>
+                </div>
+                <div class="step now">
+                  <div class="dot">5</div>
+                  <div class="body">
+                    <div class="nm">Recovery & Monitoring</div>
+                    <div class="meta">Coronary Care Unit · in progress</div>
+                    <span class="pill live">● Happening now</span>
+                  </div>
+                </div>
+                <div class="step">
+                  <div class="dot">6</div>
+                  <div class="body"><div class="nm">Ward Admission</div><div class="meta">Estimated this afternoon</div><span class="pill wait">Upcoming</span></div>
+                </div>
+                <div class="step">
+                  <div class="dot">7</div>
+                  <div class="body"><div class="nm">Discharge Planning</div><div class="meta">Pending</div><span class="pill wait">Upcoming</span></div>
+                </div>
+                <div class="step">
+                  <div class="dot">8</div>
+                  <div class="body"><div class="nm">Home Follow-up</div><div class="meta">Pending</div><span class="pill wait">Upcoming</span></div>
+                </div>
+              </div>
+            </div>
+            <div class="note-strip">Each completed stage opens a service rating. Your ratings feed the hospital's quality reports.</div>
+          </div>
+        </div>
+
+        <!-- ============ ADVISOR ============ -->
+        <div class="page" id="page-advisor">
+          <div class="pad">
+            <div style="padding-top:14px">
+              <div class="eyebrow">Component A</div>
+              <h1 class="big">Healthcare Advisor</h1>
+            </div>
+            <div class="advisor-head" style="margin-top:16px">
+              <div class="orb"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg></div>
+              <div>
+                <div style="font-weight:600;font-size:14px">AI Health Advisor</div>
+                <div style="font-size:11.5px;color:var(--muted)">Always available · not a substitute for your doctor</div>
+              </div>
+            </div>
+            <div class="chat" id="chatbox">
+              <div class="bub ai">Hello Karim. I'm here to help you understand your condition and recovery. What would you like to know?</div>
+              <div class="bub me">What does my catheterization result mean?</div>
+              <div class="bub ai">Your catheterization opened a narrowed coronary artery and restored blood flow to your heart. Recovery monitoring is routine — the team is watching your vitals to make sure everything is stable. Rest is the most important thing right now.</div>
+            </div>
+            <div class="chips" id="chips">
+              <button class="chip" onclick="askChip(this)">What can I eat?</button>
+              <button class="chip" onclick="askChip(this)">When can I walk?</button>
+              <button class="chip" onclick="askChip(this)">Is my pain normal?</button>
+              <button class="chip" onclick="askChip(this)">Talk to a nurse</button>
+            </div>
+            <div class="note-strip" style="margin-top:18px">The advisor escalates to the human care team whenever a question needs clinical judgement.</div>
+          </div>
+        </div>
+
+        <!-- ============ CARE ============ -->
+        <div class="page" id="page-care">
+          <div class="pad">
+            <div style="padding-top:14px">
+              <div class="eyebrow">Care Plan</div>
+              <h1 class="big">Care & Medication</h1>
+              <div class="sub">Dr. Amira Fouad · Cardiology</div>
+            </div>
+            <div class="seg">
+              <button class="on" onclick="segCare(this,'meds')">Medication</button>
+              <button onclick="segCare(this,'appts')">Appointments</button>
+              <button onclick="segCare(this,'reports')">Reports</button>
+            </div>
+            <div id="care-meds">
+              <div class="card">
+                <div class="row-item">
+                  <div class="ric"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/></svg></div>
+                  <div class="rt"><div class="a">Aspirin 81 mg</div><div class="b">Once daily · after breakfast</div></div>
+                  <span class="tag soon">2:00 PM</span>
+                </div>
+                <div class="row-item">
+                  <div class="ric"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/></svg></div>
+                  <div class="rt"><div class="a">Atorvastatin 40 mg</div><div class="b">Once daily · evening</div></div>
+                  <span class="tag soon">9:00 PM</span>
+                </div>
+                <div class="row-item">
+                  <div class="ric"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg></div>
+                  <div class="rt"><div class="a">Clopidogrel 75 mg</div><div class="b">Once daily · morning</div></div>
+                  <span class="tag ok">Taken</span>
+                </div>
+              </div>
+              <div class="sec-title">Today's Goals</div>
+              <div class="card">
+                <div class="row-item">
+                  <div class="ric"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg></div>
+                  <div class="rt"><div class="a">Light walking, 10 min</div><div class="b">Supervised by nursing</div></div>
+                  <span class="tag soon">Pending</span>
+                </div>
+                <div class="row-item">
+                  <div class="ric"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg></div>
+                  <div class="rt"><div class="a">Low-salt lunch</div><div class="b">Dietary plan</div></div>
+                  <span class="tag ok">Done</span>
+                </div>
+              </div>
+            </div>
+            <div id="care-appts" style="display:none">
+              <div class="card">
+                <div class="row-item" onclick="openSheet('appt')">
+                  <div class="ric"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg></div>
+                  <div class="rt"><div class="a">Cardiology follow-up</div><div class="b">Dr. Amira Fouad · in 7 days</div></div>
+                  <span class="chev"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg></span>
+                </div>
+                <div class="row-item" onclick="openSheet('appt')">
+                  <div class="ric"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg></div>
+                  <div class="rt"><div class="a">Echocardiogram</div><div class="b">Imaging dept · in 14 days</div></div>
+                  <span class="chev"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg></span>
+                </div>
+              </div>
+              <button class="btn-primary" onclick="openSheet('book')">+ Request New Appointment</button>
+            </div>
+            <div id="care-reports" style="display:none">
+              <div class="seg" style="margin-top:0">
+                <button class="on" onclick="segRep(this,'health')">Health</button>
+                <button onclick="segRep(this,'fin')">Financial</button>
+              </div>
+              <div id="rep-health">
+                <div class="rep-card" onclick="openSheet('repview','Catheterization Report')">
+                  <div class="rico health"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg></div>
+                  <div class="rinfo"><div class="rn">Catheterization Procedure Report</div><div class="rd">Cardiology · today 11:20</div></div>
+                  <span class="chev"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg></span>
+                </div>
+                <div class="rep-card" onclick="openSheet('repview','Lab Results')">
+                  <div class="rico health"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg></div>
+                  <div class="rinfo"><div class="rn">Cardiac Enzymes & Blood Panel</div><div class="rd">Laboratory · today 08:55</div></div>
+                  <span class="chev"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg></span>
+                </div>
+                <div class="rep-card" onclick="openSheet('repview','ECG Report')">
+                  <div class="rico health"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12h4l3 8 4-16 3 8h4"/></svg></div>
+                  <div class="rinfo"><div class="rn">ECG Report</div><div class="rd">Emergency · today 08:30</div></div>
+                  <span class="chev"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg></span>
+                </div>
+                <div class="rep-card" onclick="openSheet('repview','Care Summary')">
+                  <div class="rico health"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg></div>
+                  <div class="rinfo"><div class="rn">Visit Care Summary</div><div class="rd">Updated continuously</div></div>
+                  <span class="chev"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg></span>
+                </div>
+              </div>
+              <div id="rep-fin" style="display:none">
+                <div class="card" style="margin-bottom:12px">
+                  <div style="font-weight:600;font-size:14px;margin-bottom:8px">Current Visit — Bill Summary</div>
+                  <div class="bill"><span class="bl">Admission & room (CCU)</span><span class="bv">EGP 4,200</span></div>
+                  <div class="bill"><span class="bl">Catheterization procedure</span><span class="bv">EGP 18,500</span></div>
+                  <div class="bill"><span class="bl">Laboratory & imaging</span><span class="bv">EGP 2,150</span></div>
+                  <div class="bill"><span class="bl">Medication</span><span class="bv">EGP 980</span></div>
+                  <div class="bill"><span class="bl">Insurance coverage</span><span class="bv" style="color:var(--green)">− EGP 19,800</span></div>
+                  <div class="bill total"><span class="bl">Amount due</span><span class="bv">EGP 6,030</span></div>
+                </div>
+                <button class="btn-primary" style="margin-top:0" onclick="showToast('Payment screen — prototype only')">Pay Now</button>
+                <div class="sec-title">Statements & Invoices</div>
+                <div class="rep-card" onclick="openSheet('repview','Itemized Invoice')">
+                  <div class="rico fin"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 7h6m-6 4h6m-2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h10a2 2 0 012 2v14a2 2 0 01-2 2h-2m-4 0v-4a1 1 0 011-1h2a1 1 0 011 1v4m-4 0h4"/></svg></div>
+                  <div class="rinfo"><div class="rn">Itemized Invoice — Current Visit</div><div class="rd">Issued today</div></div>
+                  <span class="chev"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg></span>
+                </div>
+                <div class="rep-card" onclick="openSheet('repview','Insurance Claim')">
+                  <div class="rico fin"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg></div>
+                  <div class="rinfo"><div class="rn">Insurance Claim Statement</div><div class="rd">Approved · 77% covered</div></div>
+                  <span class="chev"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg></span>
+                </div>
+                <div class="rep-card" onclick="openSheet('repview','Payment History')">
+                  <div class="rico fin"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div>
+                  <div class="rinfo"><div class="rn">Payment History</div><div class="rd">All past transactions</div></div>
+                  <span class="chev"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg></span>
+                </div>
+              </div>
+              <div class="note-strip">All reports can be downloaded or shared with another provider. Prototype — document contents are illustrative.</div>
+            </div>
+            <div class="sec-title">Services</div>
+            <div class="card">
+              <div class="row-item" onclick="go('family')">
+                <div class="ric"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87m6-1.13a4 4 0 10-4-4 4 4 0 004 4zm6 0a3 3 0 10-2.83-4"/></svg></div>
+                <div class="rt"><div class="a">Family Access</div><div class="b">Linked relatives & privacy controls</div></div>
+                <span class="chev"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg></span>
+              </div>
+              <div class="row-item" onclick="openSheet('issue')">
+                <div class="ric"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg></div>
+                <div class="rt"><div class="a">Report an Issue</div><div class="b">Tell us about a problem</div></div>
+                <span class="chev"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg></span>
+              </div>
+              <div class="row-item" onclick="go('advisor')">
+                <div class="ric"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h6m-6 8l-3-3h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v14z"/></svg></div>
+                <div class="rt"><div class="a">Message Care Team</div><div class="b">Nurses respond within minutes</div></div>
+                <span class="chev"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ============ FAMILY ============ -->
+        <div class="page" id="page-family">
+          <div class="pad">
+            <div style="padding-top:14px">
+              <div class="eyebrow">Caregiver Access</div>
+              <h1 class="big">Family Members</h1>
+              <div class="sub">Manage who follows your care and what they see</div>
+            </div>
+            <div class="sec-title">Registered in the App</div>
+            <div class="card">
+              <div class="member">
+                <div class="mav c1">MI</div>
+                <div class="minfo"><div class="mn">Mahmoud Ibrahim</div><div class="mr">Son — Account Manager</div></div>
+                <span class="badge-active">Active</span>
+              </div>
+              <div class="member">
+                <div class="mav c2">SI</div>
+                <div class="minfo"><div class="mn">Samia Ibrahim</div><div class="mr">Spouse</div></div>
+                <span class="badge-active">Active</span>
+              </div>
+            </div>
+            <button class="invite" onclick="openSheet('addqr')">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"/></svg>
+              Add Family — Scan QR Code
+            </button>
+            <button class="invite" onclick="openSheet('invite')" style="margin-top:9px">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/></svg>
+              Add Manually by Details
+            </button>
+            <div class="sec-title">Privacy Controls</div>
+            <div class="card">
+              <div style="font-weight:600;font-size:14px;display:flex;align-items:center;gap:7px;margin-bottom:4px">
+                <svg fill="none" stroke="var(--teal)" stroke-width="2" viewBox="0 0 24 24" style="width:16px;height:16px"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                What family can see
+              </div>
+              <div class="toggle-row"><span class="tlbl">Vital signs</span><button class="switch on" onclick="this.classList.toggle('on')"></button></div>
+              <div class="toggle-row"><span class="tlbl">Medication schedule</span><button class="switch on" onclick="this.classList.toggle('on')"></button></div>
+              <div class="toggle-row"><span class="tlbl">Lab & test results</span><button class="switch" onclick="this.classList.toggle('on')"></button></div>
+              <div class="toggle-row"><span class="tlbl">Care journey & stages</span><button class="switch on" onclick="this.classList.toggle('on')"></button></div>
+            </div>
+            <div class="sec-title">Per-Member Permissions</div>
+            <div class="card">
+              <div class="access-row">
+                <div><div class="an">Mahmoud (Son)</div><div class="ad">Can act on the patient's behalf</div></div>
+                <button class="access-pill" onclick="openSheet('perm','Mahmoud')">Full Access</button>
+              </div>
+              <div class="access-row">
+                <div><div class="an">Samia (Spouse)</div><div class="ad">View status & receive alerts</div></div>
+                <button class="access-pill partial" onclick="openSheet('perm','Samia')">View Only</button>
+              </div>
+            </div>
+            <div class="note-strip">Privacy controls put the patient in charge of their own information — a core principle of patient-centered care.</div>
+          </div>
+        </div>
+
+        <!-- ============ ALERTS ============ -->
+        <div class="page" id="page-alerts">
+          <div class="pad">
+            <div style="padding-top:14px">
+              <div class="eyebrow">Notifications</div>
+              <h1 class="big">Alerts</h1>
+              <div class="sub">Reminders, updates, and things that need you</div>
+            </div>
+            <div class="sec-title">Needs Your Action</div>
+            <div class="card">
+              <div class="alert-item" onclick="openSheet('alertmed','Aspirin 81 mg|Take after lunch with water|2:00 PM')">
+                <div class="aic med"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div>
+                <div class="atx"><div class="at">Medication due: Aspirin 81 mg</div><div class="ad">Take after lunch with water</div></div>
+                <div class="atime">2:00 PM</div>
+                <div class="unread"></div>
+              </div>
+              <div class="alert-item" onclick="openSheet('rate','Diagnosis')">
+                <div class="aic rate"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.196-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118L2.05 9.801c-.783-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/></svg></div>
+                <div class="atx"><div class="at">Rate your Diagnosis stage</div><div class="ad">Your feedback helps us improve</div></div>
+                <div class="atime">Now</div>
+                <div class="unread"></div>
+              </div>
+            </div>
+            <div class="sec-title">Medication Reminders</div>
+            <div class="card">
+              <div class="alert-item" onclick="openSheet('alertmed','Atorvastatin 40 mg|Evening dose reminder|9:00 PM')">
+                <div class="aic med"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div>
+                <div class="atx"><div class="at">Atorvastatin 40 mg</div><div class="ad">Evening dose reminder</div></div>
+                <div class="atime">9:00 PM</div>
+              </div>
+              <div class="alert-item" onclick="openSheet('alertinfo','Clopidogrel 75 mg|This dose was taken at 9:05 AM and recorded in your medication log.')">
+                <div class="aic med"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div>
+                <div class="atx"><div class="at">Clopidogrel 75 mg</div><div class="ad">Taken at 9:05 AM ✓</div></div>
+                <div class="atime">Done</div>
+              </div>
+            </div>
+            <div class="sec-title">Updates</div>
+            <div class="card">
+              <div class="alert-item" onclick="openSheet('alertinfo','Catheterization completed|Your procedure finished successfully. You have moved to the Recovery &amp; Monitoring stage of your journey.')">
+                <div class="aic app"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div>
+                <div class="atx"><div class="at">Catheterization completed</div><div class="ad">You moved to Recovery & Monitoring</div></div>
+                <div class="atime">10:40</div>
+              </div>
+              <div class="alert-item" onclick="openSheet('appt')">
+                <div class="aic app"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg></div>
+                <div class="atx"><div class="at">Follow-up appointment set</div><div class="ad">Cardiology · in 7 days, 11:00 AM</div></div>
+                <div class="atime">11:15</div>
+              </div>
+              <div class="alert-item" onclick="openSheet('alertinfo','Family member joined|Samia Ibrahim has accepted your invite and now follows your care. You can manage her permissions in Family Access.')">
+                <div class="aic sys"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5"/></svg></div>
+                <div class="atx"><div class="at">Family member joined</div><div class="ad">Samia Ibrahim now follows your care</div></div>
+                <div class="atime">09:30</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ============ LEARN ============ -->
+        <div class="page" id="page-learn">
+          <div class="pad">
+            <div style="padding-top:14px">
+              <div class="eyebrow">For You & Your Family</div>
+              <h1 class="big">Learn & Relax</h1>
+              <div class="sub">Education and calm content during your stay</div>
+            </div>
+            <div class="seg">
+              <button class="on" onclick="segLearn(this,'edu')">Education</button>
+              <button onclick="segLearn(this,'fun')">Relax</button>
+            </div>
+            <div id="learn-edu">
+              <div class="vid" onclick="openSheet('video')">
+                <div class="thumb">
+                  <div class="play"><svg fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+                  <span class="dur">3:24</span>
+                </div>
+                <div class="vinfo">
+                  <div class="vt">Understanding Coronary Catheterization</div>
+                  <div class="vd">What was done and why</div>
+                </div>
+              </div>
+              <div class="vid" onclick="openSheet('video')">
+                <div class="thumb alt">
+                  <div class="play"><svg fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+                  <span class="dur">5:10</span>
+                </div>
+                <div class="vinfo">
+                  <div class="vt">Life After a Cardiac Event</div>
+                  <div class="vd">Recovery, habits, and warning signs</div>
+                </div>
+              </div>
+              <div class="vid" onclick="openSheet('video')">
+                <div class="thumb alt2">
+                  <div class="play"><svg fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+                  <span class="dur">4:02</span>
+                </div>
+                <div class="vinfo">
+                  <div class="vt">Taking Your Medication Safely</div>
+                  <div class="vd">Doses, timing, and what to avoid</div>
+                </div>
+              </div>
+            </div>
+            <div id="learn-fun" style="display:none">
+              <div class="card" style="margin-bottom:12px">
+                <div class="row-item" onclick="showToast('Content area — prototype')">
+                  <div class="ric"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div>
+                  <div class="rt"><div class="a">Calm Sounds & Music</div><div class="b">Relax during your stay</div></div>
+                  <span class="chev"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg></span>
+                </div>
+                <div class="row-item" onclick="showToast('Content area — prototype')">
+                  <div class="ric"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a2 2 0 110-4h1a1 1 0 001-1V7a1 1 0 011-1h3a1 1 0 001-1V4z"/></svg></div>
+                  <div class="rt"><div class="a">Light Puzzle Games</div><div class="b">For patients and family</div></div>
+                  <span class="chev"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg></span>
+                </div>
+                <div class="row-item" onclick="showToast('Content area — prototype')">
+                  <div class="ric"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 4v16M17 4v16M3 8h4m10 0h4M3 12h18M3 16h4m10 0h4M4 20h16a1 1 0 001-1V5a1 1 0 00-1-1H4a1 1 0 00-1 1v14a1 1 0 001 1z"/></svg></div>
+                  <div class="rt"><div class="a">Short Films</div><div class="b">Lighthearted viewing</div></div>
+                  <span class="chev"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg></span>
+                </div>
+              </div>
+              <div class="note-strip">Entertainment helps patients and waiting family members through quieter moments of the stay.</div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /view -->
+
+      <!-- ============ TAB BAR ============ -->
+      <div class="tabbar" id="tabbar">
+        <button class="tab on" id="tab-home" onclick="go('home')">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+          Home
+        </button>
+        <button class="tab" id="tab-journey" onclick="go('journey')">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+          Journey
+        </button>
+        <button class="tab" id="tab-advisor" onclick="go('advisor')">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.86 9.86 0 01-4-.8L3 20l1.3-3.9C3.5 15 3 13.6 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+          Advisor
+        </button>
+        <button class="tab" id="tab-care" onclick="go('care')">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+          Care
+        </button>
+        <button class="tab" id="tab-learn" onclick="go('learn')">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+          Learn
+        </button>
+      </div>
+
+      <div class="toast" id="toast"></div>
+
+      <div class="modal-bg" id="modal" onclick="if(event.target===this)closeSheet()">
+        <div class="sheet" id="sheet"></div>
+      </div>
+
+    </div><!-- /screen -->
+  </div><!-- /phone -->
+
+  <div class="topnote" style="opacity:.6;font-size:11px">
+    Starts with intro &amp; login · Tap the bell for Alerts · Rate stages on Journey
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
