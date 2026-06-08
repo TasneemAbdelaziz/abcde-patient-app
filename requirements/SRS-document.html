@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A.B.C.D.E — Software Requirements Specification (SRS)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--teal:#0e7c86;--teal-d:#0a5a62;--ink:#14302f;--muted:#6b8786;--bg:#f3f6f6;--card:#fff;--line:#e2eceb;
+    --green:#1f9d57;--green-bg:#e7f6ee;--amber:#c98a14;--amber-bg:#fdf3df;--red:#c0473e;--red-bg:#fbe9e7;
+    --new:#7a4bd1;--new-bg:#f0eafc;--ai:#0e7c86;--ai-bg:#e3f1f0}
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;font-family:'Outfit',system-ui,sans-serif;color:var(--ink);line-height:1.62;
+    background:radial-gradient(1200px 600px at 80% -10%,#e7f4f3 0%,var(--bg) 55%);-webkit-font-smoothing:antialiased}
+  .sitebar{display:flex;align-items:center;gap:6px;justify-content:center;flex-wrap:wrap;padding:10px 16px;background:#0a5a62;position:sticky;top:0;z-index:50}
+  .sitebar .brand{font-family:'Fraunces',serif;font-weight:700;color:#fff;text-decoration:none;font-size:15px;letter-spacing:.04em;margin-right:10px}
+  .sitebar a.link{color:rgba(255,255,255,.85);text-decoration:none;font-size:13px;font-weight:600;padding:7px 13px;border-radius:999px}
+  .sitebar a.link:hover{background:rgba(255,255,255,.16);color:#fff}
+  .sitebar a.link.active{background:#fff;color:#0a5a62}
+  .wrap{max-width:1000px;margin:0 auto;padding:46px 24px 100px}
+  header.doc{text-align:center;margin-bottom:14px}
+  .eyebrow{font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--teal);font-weight:600}
+  h1{font-family:'Fraunces',serif;font-weight:600;font-size:clamp(28px,5vw,44px);margin:10px 0 8px;line-height:1.06}
+  .lead{color:var(--muted);font-size:15.5px;max-width:680px;margin:0 auto 6px}
+  .meta-strip{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:18px 0 6px;font-size:12.5px;color:var(--muted)}
+  .meta-strip span{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:5px 12px}
+  .toc{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px 24px;margin:30px 0;
+    box-shadow:0 14px 36px -28px rgba(14,124,134,.55)}
+  .toc h2{font-family:'Fraunces',serif;font-size:18px;margin:0 0 12px}
+  .toc ol{margin:0;padding-left:20px;columns:2;column-gap:34px}
+  @media(max-width:680px){.toc ol{columns:1}}
+  .toc a{color:var(--ink);text-decoration:none;font-size:13.5px;display:block;padding:3px 0}
+  .toc a:hover{color:var(--teal)}
+  h2.sec{font-family:'Fraunces',serif;font-weight:600;font-size:25px;margin:48px 0 6px;padding-top:14px;border-top:2px solid var(--line)}
+  h3{font-family:'Fraunces',serif;font-weight:600;font-size:18px;margin:26px 0 6px}
+  h4{font-size:14px;font-weight:700;margin:16px 0 4px;color:var(--teal-d);letter-spacing:.01em}
+  p{margin:8px 0}
+  .sub{color:var(--muted);font-size:14px;margin:2px 0 14px}
+  ul,ol{margin:8px 0;padding-left:22px}
+  li{margin:4px 0;font-size:14.5px}
+  .delta{background:linear-gradient(135deg,#fff,#fbfdfd);border:1px solid var(--line);border-left:4px solid var(--teal);
+    border-radius:12px;padding:12px 16px;margin:14px 0;font-size:14px}
+  .delta b{color:var(--teal-d)}
+  .note{background:var(--amber-bg);border:1px solid #f0dca6;border-radius:12px;padding:12px 16px;margin:14px 0;font-size:13.5px}
+  .note b{color:var(--amber)}
+  table{width:100%;border-collapse:collapse;margin:14px 0;font-size:13.5px;background:var(--card);border-radius:12px;overflow:hidden;border:1px solid var(--line)}
+  th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{background:#eef5f4;font-weight:700;color:var(--teal-d);font-size:12.5px;letter-spacing:.02em}
+  tr:last-child td{border-bottom:none}
+  code{background:#eef5f4;border-radius:5px;padding:1px 6px;font-size:12.5px;font-family:ui-monospace,Menlo,monospace;color:var(--teal-d)}
+  .ss{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px 24px;margin:18px 0;
+    box-shadow:0 14px 36px -30px rgba(14,124,134,.5)}
+  .ss-head{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:2px}
+  .ss-num{font-family:'Fraunces',serif;font-weight:700;color:var(--teal);font-size:18px}
+  .ss-name{font-family:'Fraunces',serif;font-weight:600;font-size:19px;margin:0}
+  .badges{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0 4px}
+  .b{font-size:11px;font-weight:700;border-radius:999px;padding:3px 9px;letter-spacing:.02em}
+  .b.green{background:var(--green-bg);color:var(--green)}
+  .b.amber{background:var(--amber-bg);color:var(--amber)}
+  .b.red{background:var(--red-bg);color:var(--red)}
+  .b.new{background:var(--new-bg);color:var(--new)}
+  .b.ai{background:var(--ai-bg);color:var(--ai)}
+  .b.role{background:#eef5f4;color:var(--teal-d)}
+  .feat{margin:6px 0 0;padding-left:0;list-style:none}
+  .feat li{padding:6px 0 6px 22px;border-bottom:1px solid #f0f5f4;position:relative;font-size:14px}
+  .feat li:last-child{border-bottom:none}
+  .feat li:before{content:"▸";position:absolute;left:2px;color:var(--teal);font-size:12px;top:7px}
+  .feat .fid{font-family:ui-monospace,monospace;font-size:11.5px;color:var(--teal-d);background:#eef5f4;border-radius:4px;padding:0 5px;margin-right:6px}
+  .legend{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin:20px 0;font-size:12.5px;color:var(--muted)}
+  .legend span{display:inline-flex;align-items:center;gap:6px}
+  .dot{width:10px;height:10px;border-radius:50%}
+  footer{text-align:center;color:var(--muted);font-size:12.5px;margin-top:54px;line-height:1.9}
+  footer a{color:var(--teal)}
+  .btn{display:inline-block;background:linear-gradient(135deg,var(--teal),var(--teal-d));color:#fff;border:none;
+    font-family:'Outfit';font-weight:600;font-size:13.5px;padding:10px 20px;border-radius:999px;cursor:pointer;text-decoration:none;margin:8px 0}
+  @media print{
+    .sitebar,.toc,.btn,.legend{display:none}
+    body{background:#fff}
+    .ss,.toc{box-shadow:none}
+    h2.sec{page-break-before:auto}
+    .ss{page-break-inside:avoid}
+  }
+</style>
+</head>
+<body>
+<div class="sitebar">
+  <a class="brand" href="index.html">A.B.C.D.E</a>
+  <a class="link" href="index.html">Home</a>
+  <a class="link active" href="SRS-document.html">SRS</a>
+  <a class="link" href="user-mindmaps.html">Mindmap</a>
+  <a class="link" href="system-architecture.html">Architecture</a>
+  <a class="link" href="patient-stories-pcc.html">PCC · Stories</a>
+</div>
+
+<div class="wrap">
+  <header class="doc">
+    <div class="eyebrow">Software Requirements Specification</div>
+    <h1>A.B.C.D.E System</h1>
+    <p class="lead">A patient-centered digital healthcare platform for <b>Alamein Model Hospital</b> — patient mobile app, public portal, and staff dashboards, working alongside the hospital's existing DMS.</p>
+    <div class="meta-strip">
+      <span>Version 2.0 (post site-visit)</span>
+      <span>Status: Draft</span>
+      <span>Prepared by: Najd Al-Qimam IT</span>
+      <span>17 subsystems</span>
+    </div>
+    <a class="btn" href="#" onclick="window.print();return false;">📄 Generate PDF</a>
+  </header>
+
+  <div class="legend">
+    <span><span class="dot" style="background:var(--green)"></span> In prototype</span>
+    <span><span class="dot" style="background:var(--amber)"></span> Partial / mocked</span>
+    <span><span class="dot" style="background:var(--red)"></span> Not built yet</span>
+    <span><span class="dot" style="background:var(--new)"></span> New (from visit)</span>
+    <span><span class="dot" style="background:var(--ai)"></span> AI feature</span>
+  </div>
+
+  <!-- ===================== TOC ===================== -->
+  <nav class="toc">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#s1">Introduction</a></li>
+      <li><a href="#s2">Overall Description</a></li>
+      <li><a href="#s3">System Features — by Subsystem</a></li>
+      <li><a href="#s4">Non-Functional Requirements</a></li>
+      <li><a href="#s5">External Interfaces & Integration</a></li>
+      <li><a href="#s6">Data & Forms Model</a></li>
+      <li><a href="#s7">Open Points to Confirm</a></li>
+      <li><a href="#s8">Traceability</a></li>
+    </ol>
+  </nav>
+
+  <!-- ===================== 1. INTRODUCTION ===================== -->
+  <h2 class="sec" id="s1">1 · Introduction</h2>
+
+  <h3>1.1 Purpose</h3>
+  <p>This document specifies the requirements for the <b>A.B.C.D.E System</b>, a patient-centered digital healthcare platform for Alamein Model Hospital. It defines what the system shall do, organized by subsystem, with the feature set, the actors who use each subsystem, the data exchanged, current build status, and the source of each requirement. It is the shared reference for the development team, the hospital stakeholders, and the quality reviewers.</p>
+
+  <h3>1.2 Scope</h3>
+  <p>A.B.C.D.E covers the journey of a hospital patient — with a primary focus on the <b>acute myocardial infarction (heart-attack) pathway</b> — from arrival through triage, diagnosis, cardiac catheterization, recovery, admission, discharge, and home follow-up. The platform has three faces:</p>
+  <ul>
+    <li><b>Patient mobile app</b> — journey tracking, AI advisor, medication, appointments, reports, family access, feedback, indoor navigation, and accessibility.</li>
+    <li><b>Public web portal</b> — hospital information, departments, doctors, news, and appointment requests for visitors without an account.</li>
+    <li><b>Staff web dashboards</b> — for doctors, nursing, reception, family, quality, administration, and emergency response.</li>
+  </ul>
+  <p>The system <b>works alongside the hospital's existing DMS</b> (Data Management System) rather than replacing it. The current release is a clickable patient-app prototype; staff dashboards, AI engines, indoor navigation, accessibility, and DMS integration are specified here but not yet built.</p>
+
+  <h3>1.3 Definitions & Acronyms</h3>
+  <table>
+    <tr><th>Term</th><th>Meaning</th></tr>
+    <tr><td><b>DMS</b></td><td>Data Management System — the hospital's existing HMIS (registration, appointments, clinical workflows, lab, administration).</td></tr>
+    <tr><td><b>Serial No.</b></td><td>The patient's medical identifier, generated from the <b>National ID</b> (a sequential number, not a QR code). Used in both Emergency and Outpatient.</td></tr>
+    <tr><td><b>Triage</b></td><td>Initial assessment by a Head Nurse classifying every patient as <b>Cold</b>, <b>Emergency</b>, or <b>Critical</b>.</td></tr>
+    <tr><td><b>Cold State</b></td><td>Any non-urgent case — outpatient clinic booking or a scheduled operation.</td></tr>
+    <tr><td><b>Door-to-Balloon</b></td><td>Key quality KPI: time from patient arrival (Door) to balloon inflation during cardiac catheterization (Balloon).</td></tr>
+    <tr><td><b>Risk Score / RSTP</b></td><td>Patient deterioration / cardiac-cath risk score; RSTP = Risk Score for Transport Patient (internal transfers). Recomputed weekly during wait/stay.</td></tr>
+    <tr><td><b>PCC</b></td><td>Patient-Centered Care — the 8 principles the system is measured against.</td></tr>
+    <tr><td><b>NEWS2 / MEWS</b></td><td>Established clinical early-warning scoring systems used in the first version instead of a custom ML model.</td></tr>
+    <tr><td><b>RAG</b></td><td>Retrieval-Augmented Generation — grounding AI answers in hospital-approved content.</td></tr>
+    <tr><td><b>Three-Doctor Committee</b></td><td>Emergency committee that authorizes life-saving intervention and, separately, reviews the financial situation of uninsured/unable patients.</td></tr>
+  </table>
+
+  <h3>1.4 References</h3>
+  <ul>
+    <li>Alamein Model Hospital — Site Visit Documentation (EN).</li>
+    <li>Reception & Full Patient Journey — Field Visit Documentation (AR): Emergency / Ambulance / Outpatient / Operations pathways, insurance, Serial number, access control.</li>
+    <li>Requirements Questionnaire — 83 questions (website, heart-attack journey under the 8 PCC principles, dashboard data).</li>
+    <li>Features & AI Models specification (mobile app feature set; indoor navigation; accessibility; AI scope).</li>
+    <li>Clinical artifacts: Clinics System, Patient Catheterization Workflow, Clinic Diagnosis Forms (Dental / Gyn-Obs / Pediatric), full Patient File Record (11 sections).</li>
+  </ul>
+
+  <!-- ===================== 2. OVERALL DESCRIPTION ===================== -->
+  <h2 class="sec" id="s2">2 · Overall Description</h2>
+
+  <h3>2.1 Product Perspective</h3>
+  <p>A.B.C.D.E is an additive layer over the hospital's current digital infrastructure. The IT department confirmed:</p>
+  <ul>
+    <li>The hospital runs <b>DMS</b> as its primary HMIS; the <b>Laboratory is fully integrated</b> with DMS.</li>
+    <li><b>Radiology uses a separate system</b> (named "Milestone" during the visit — <i>to confirm with IT</i>).</li>
+    <li>The <b>Pharmacy is connected to DMS but partly manual</b>.</li>
+    <li>The hospital <b>does not currently own integration APIs</b>; they can be purchased from the DMS vendor.</li>
+    <li>All departments communicate over a hospital <b>Local Area Network (LAN)</b>.</li>
+    <li><b>Medical devices are not connected</b> to the system — only Radiology and Labs are.</li>
+  </ul>
+  <div class="delta"><b>Implication:</b> the integration subsystem is built around DMS, an API catalog to be purchased, a LAN with IP-whitelisting and an external server, and API documentation with dummy data for development. Vitals are entered <b>manually</b> (no device feed), and early-warning runs on manual vitals plus lab values.</div>
+
+  <h3>2.2 Patient Journey & Arrival Pathways</h3>
+  <p>Every patient is first assessed by a <b>Head Nurse (Triage)</b> and classified as:</p>
+  <ul>
+    <li><b>Cold case</b> — non-urgent; routed to the appropriate outpatient clinic (or reception outside clinic hours).</li>
+    <li><b>Emergency case</b> — urgent; transferred to the Emergency Department.</li>
+    <li><b>Critical case</b> — unconscious / accident / life-threatening; <b>bypasses triage</b> and goes directly to Emergency.</li>
+  </ul>
+  <p>The journey is therefore a <b>branching workflow</b>, not a single linear timeline. Four arrival pathways were documented:</p>
+  <table>
+    <tr><th>Pathway</th><th>Entry</th><th>Key behavior</th></tr>
+    <tr><td>1 · ER with family</td><td>Triage room</td><td>Parallel: nurse records vitals while admin data is collected from patient/family. ER physician present in triage; refers to specialty (e.g., Cardiology).</td></tr>
+    <tr><td>2 · ER via ambulance</td><td>ER room directly</td><td>Radio pre-alert is <b>manual, not recorded</b>; ambulance vitals are <b>not trusted</b> and re-measured in ER. Three parallel actions: ER exam · re-measure vitals · family registers.</td></tr>
+    <tr><td>3 · Outpatient (Cold)</td><td>Reception</td><td><b>In-person booking only</b> (no phone). Nurse records vitals before the clinic. Findings on specialty-specific paper forms, then entered to the system by IT.</td></tr>
+    <tr><td>4 · Operations (Cold)</td><td>Operations schedule</td><td>Requires a <b>prior exam at this hospital</b>. Physical medical file created; surgeon writes the <b>surgical requisition book</b>; nurse computes the <b>weekly Risk Score</b>; a <b>final financial file</b> is issued at the end.</td></tr>
+  </table>
+
+  <h3>2.3 User Classes</h3>
+  <p>The hospital's patients are largely local residents of Matrouh, members of nearby Arab tribes, and North-Coast workers — which makes a <b>simple, multilingual, accessible</b> interface essential. The system roles are:</p>
+  <div class="badges">
+    <span class="b role">Patient</span><span class="b role">Family / Caregiver</span><span class="b role">Guest</span>
+    <span class="b role">Doctor</span><span class="b role">Nurse / Nursing supervisor</span><span class="b role">Receptionist</span>
+    <span class="b role">Quality Manager</span><span class="b role">Department Head</span><span class="b role">Hospital Director</span>
+    <span class="b role">System / IT Admin</span><span class="b role">Three-Doctor Committee</span>
+  </div>
+
+  <h3>2.4 Constraints</h3>
+  <ul>
+    <li><b>Reception scope is administrative-only</b> — reception never touches medical data.</li>
+    <li><b>Medical-file access</b> is restricted to the <b>treating doctor and the nursing supervisor</b>; even family members may not view it. Each department (branch) sees only its own part of the patient's data.</li>
+    <li>No integration APIs exist today; the system must run as the primary source where DMS data is unavailable, and integrate once APIs are purchased.</li>
+    <li>Operates over the hospital LAN; performance and security tuned for that environment.</li>
+  </ul>
+
+  <h3>2.5 Assumptions & Dependencies</h3>
+  <ul>
+    <li>DMS vendor APIs will be procured to enable read/write integration.</li>
+    <li>Radiology system identity ("Milestone") and the third pharmacy location are pending IT confirmation.</li>
+    <li>Anonymized real-case validation and hospital/ethics approvals are obtained before live piloting.</li>
+  </ul>
+
+  <!-- ===================== 3. SYSTEM FEATURES ===================== -->
+  <h2 class="sec" id="s3">3 · System Features — by Subsystem</h2>
+  <p class="sub">Each subsystem lists its purpose, the actors who use it, its features (functional requirements), build status, and the requirement source. Items marked <b>(Δ visit)</b> are additions or corrections from the site visit.</p>
+
+  <!-- SS1 -->
+  <div class="ss" id="ss1">
+    <div class="ss-head"><span class="ss-num">3.1</span><h3 class="ss-name">Identity, Access & Onboarding</h3></div>
+    <div class="badges"><span class="b amber">Partial</span><span class="b role">Patient</span><span class="b role">Family</span><span class="b role">Guest</span><span class="b role">Receptionist</span><span class="b role">System Admin</span></div>
+    <p class="sub"><b>Purpose:</b> authenticate every user, create patient identity, and enforce role-based permissions.</p>
+    <ul class="feat">
+      <li><span class="fid">1.1</span>Login by mobile number / file ID + password; account lockout after repeated failures.</li>
+      <li><span class="fid">1.2</span>QR-code login (front-end), backed by the patient's Serial on the server.</li>
+      <li><span class="fid">1.3</span>Guest mode — read-only public access; personal areas prompt sign-in.</li>
+      <li><span class="fid">1.4</span>Register a patient profile from <b>National ID</b> → generate the <b>Serial</b> medical identifier <b>(Δ visit)</b>.</li>
+      <li><span class="fid">1.5</span>Issue two ID cards: <b>Arrival card</b> (single copy: serial + registration no. + name + datetime + barcode) and <b>Booking card</b> (multiple copies: serial + age + DOB + name + barcode) <b>(Δ visit)</b>.</li>
+      <li><span class="fid">1.6</span>Record patient preferences (language, contact channel, religious/cultural/dietary) and an authorized decision-maker.</li>
+      <li><span class="fid">1.7</span>Define roles and enforce view/edit permissions across all subsystems.</li>
+      <li><span class="fid">1.8</span>Enforce strict file access: medical file visible only to treating doctor + nursing supervisor; reception sees admin data only; each branch sees its own part <b>(Δ visit)</b>.</li>
+    </ul>
+    <p class="sub" style="margin-top:10px"><b>Source:</b> Q3, Q13–Q16, Q47–Q51 · Reception visit doc.</p>
+  </div>
+
+  <!-- SS2 -->
+  <div class="ss" id="ss2">
+    <div class="ss-head"><span class="ss-num">3.2</span><h3 class="ss-name">Public Portal & Discovery</h3></div>
+    <div class="badges"><span class="b green">In prototype</span><span class="b role">Guest</span></div>
+    <p class="sub"><b>Purpose:</b> present hospital information to visitors without an account.</p>
+    <ul class="feat">
+      <li><span class="fid">2.1</span>Hospital profile, contacts, and intro videos ("About" + "Contact").</li>
+      <li><span class="fid">2.2</span>Department directory with services and working hours.</li>
+      <li><span class="fid">2.3</span>Searchable doctor directory (name, specialty, optional photo + 3-line bio).</li>
+      <li><span class="fid">2.4</span>Hospital news and patient success stories.</li>
+    </ul>
+    <div class="delta"><b>(Δ visit):</b> the hospital currently has <b>no phone booking — in-person only</b>. The portal's online appointment request is therefore a new capability the system introduces.</div>
+    <p class="sub"><b>Source:</b> Q1, Q2, Q8–Q12.</p>
+  </div>
+
+  <!-- SS3 -->
+  <div class="ss" id="ss3">
+    <div class="ss-head"><span class="ss-num">3.3</span><h3 class="ss-name">Appointments & Scheduling</h3></div>
+    <div class="badges"><span class="b amber">Partial</span><span class="b role">Patient</span><span class="b role">Guest</span><span class="b role">Family</span><span class="b role">Receptionist</span><span class="b role">Doctor</span></div>
+    <p class="sub"><b>Purpose:</b> let patients request, view, and reschedule appointments within scheduling rules.</p>
+    <ul class="feat">
+      <li><span class="fid">3.1</span>Submit an appointment request (name, phone, department, complaint, desired time).</li>
+      <li><span class="fid">3.2</span>Generate slots from department working hours (15-min slots; emergency 24/7).</li>
+      <li><span class="fid">3.3</span>View upcoming appointments (doctor, department, room, time).</li>
+      <li><span class="fid">3.4</span>Reschedule up to a cut-off before the slot; cancel within rules.</li>
+      <li><span class="fid">3.5</span>Assign a patient to one treating doctor at a time.</li>
+      <li><span class="fid">3.6</span>Enforce that a <b>scheduled operation requires a prior exam at this hospital (Δ visit)</b>.</li>
+    </ul>
+    <p class="sub"><b>Source:</b> Q4, Q10, Q22, Q23, Q46 · Operations pathway.</p>
+  </div>
+
+  <!-- SS4 -->
+  <div class="ss" id="ss4">
+    <div class="ss-head"><span class="ss-num">3.4</span><h3 class="ss-name">Patient Journey & Care Coordination</h3></div>
+    <div class="badges"><span class="b green">In prototype</span><span class="b role">Receptionist</span><span class="b role">Nurse</span><span class="b role">Doctor</span><span class="b role">Patient</span><span class="b role">Family</span></div>
+    <p class="sub"><b>Purpose:</b> track the patient through every stage of the visit on one shared ticket.</p>
+    <ul class="feat">
+      <li><span class="fid">4.1</span>Open a visit ticket on arrival (ticket no., starting stage, anonymized code).</li>
+      <li><span class="fid">4.2</span><b>Triage classification</b> by head nurse: Cold / Emergency / Critical; Critical bypasses triage <b>(Δ visit)</b>.</li>
+      <li><span class="fid">4.3</span><b>Branching stage engine</b> supporting the 4 arrival pathways, not a single linear timeline <b>(Δ visit)</b>.</li>
+      <li><span class="fid">4.4</span>Parallel arrival actions: record vitals while admin data is captured <b>(Δ visit)</b>.</li>
+      <li><span class="fid">4.5</span>Cold-state operations track: physical file, surgical requisition book, weekly risk score, final financial file <b>(Δ visit)</b>.</li>
+      <li><span class="fid">4.6</span>Stage ownership: each stage has a responsible staff member who advances the patient; alternate (exception) paths.</li>
+      <li><span class="fid">4.7</span>Patient-facing status text per stage (e.g., "Under assessment", "In procedure", "Stable").</li>
+      <li><span class="fid">4.8</span><b>Unidentified life-threatening path</b>: when the case is life-threatening and no patient information is available, activate the <b>Three-Doctor Emergency Committee</b> to assess severity, confirm the emergency, approve immediate intervention, assume medical responsibility, generate a <b>Direct Admission Form</b>, and authorize immediate transfer to the Catheterization Unit <b>(Δ visit)</b>.</li>
+      <li><span class="fid">4.9</span>Select <b>catheterization type</b> and route to the responsible specialist: cerebral → neurologist / neuro-interventionist, cardiac → cardiologist, peripheral → vascular surgeon; interventional radiology is future scope <b>(Δ visit)</b>.</li>
+      <li><span class="fid">4.10</span>Post-procedure complications branch: route a <b>procedure-related</b> complication back to the doctor who performed the catheterization; otherwise raise a consult to the appropriate specialist (neurology / cardiology / vascular / ICU) <b>(Δ visit)</b>.</li>
+      <li><span class="fid">4.11</span><b>Structured discharge step</b>: record <b>Condition at Discharge</b> (Improved / Stable / Deceased) and recommendation (home / transfer), deliver <b>Family Education</b> (procedure outcome, medications, warning signs, follow-up), and book the <b>weekly follow-up</b> (or per doctor's recommendation) <b>(Δ visit)</b>.</li>
+    </ul>
+    <div class="note"><b>Reconcile:</b> ambulance radio pre-alert and in-vehicle vitals are <b>not recorded or trusted</b>; vitals are re-measured in ER. The stage engine must reflect this.</div>
+    <p class="sub"><b>Source:</b> Q17, Q18, Q33–Q37 · Reception & catheterization docs.</p>
+  </div>
+
+  <!-- SS5 -->
+  <div class="ss" id="ss5">
+    <div class="ss-head"><span class="ss-num">3.5</span><h3 class="ss-name">Vitals Monitoring & Early Warning</h3></div>
+    <div class="badges"><span class="b red">Not built</span><span class="b role">Nurse</span><span class="b role">Doctor</span></div>
+    <p class="sub"><b>Purpose:</b> capture vital signs and warn the team early when a patient deteriorates.</p>
+    <ul class="feat">
+      <li><span class="fid">5.1</span><b>Manual</b> vital-sign capture (pulse, blood pressure, SpO₂) — devices are not connected <b>(Δ visit)</b>.</li>
+      <li><span class="fid">5.2</span>Configurable alarm thresholds per vital sign; auto-alert on breach.</li>
+      <li><span class="fid">5.3</span>Compute deterioration risk using <b>NEWS2 / MEWS</b> (v1, no custom model).</li>
+      <li><span class="fid">5.4</span><b>Weekly Risk Score</b> recomputation during wait/stay; <b>RSTP</b> for internal transport <b>(Δ visit)</b>.</li>
+      <li><span class="fid">5.5</span>Raise an early-warning alert to the medical team before a condition becomes critical.</li>
+      <li><span class="fid">5.6</span><b>VTE / Padua risk score</b> from the documented risk factors → Low / High risk result and a <b>prophylaxis recommendation</b> (pharmacological / mechanical / none) <b>(Δ visit)</b>.</li>
+    </ul>
+    <p class="sub"><b>Source:</b> Q38, Q39 · Patient file (Internal Transport Safety / RSTP) · AI models doc.</p>
+  </div>
+
+  <!-- SS6 -->
+  <div class="ss" id="ss6">
+    <div class="ss-head"><span class="ss-num">3.6</span><h3 class="ss-name">Medication Management</h3></div>
+    <div class="badges"><span class="b amber">Partial</span><span class="b role">Doctor</span><span class="b role">Nurse</span><span class="b role">Pharmacist</span><span class="b role">Patient</span></div>
+    <p class="sub"><b>Purpose:</b> prescribe, dispense, administer, and remind on medication.</p>
+    <ul class="feat">
+      <li><span class="fid">6.1</span>Define a prescription (drug, dose, route, frequency, duration) and route it to pharmacy.</li>
+      <li><span class="fid">6.2</span>Medication administration record (MAR) with "taken / soon" status and reminders.</li>
+      <li><span class="fid">6.3</span>Record discontinued / refused / unavailable medications.</li>
+      <li><span class="fid">6.4</span>Patient-side medication list, doses, and today's goals.</li>
+      <li><span class="fid">6.5</span><b>Nursing medication reconciliation</b> for multi-disease / multi-drug patients (esp. post-procedure): identify all chronic diseases, review current medications, verify treatment compatibility <b>(Δ visit)</b>.</li>
+    </ul>
+    <div class="delta"><b>(Δ visit) Known gap:</b> physicians prescribe from personal knowledge of stock; they <b>cannot see real-time availability, quantities, or alternatives</b>. Three pharmacies exist (Emergency/Reception, Outpatient, Internal Care — location to confirm). A future pharmacy-inventory integration is a high-value improvement.</div>
+    <p class="sub"><b>Source:</b> Q40 · Patient file (Medication) · Pharmacy visit findings.</p>
+  </div>
+
+  <!-- SS7 -->
+  <div class="ss" id="ss7">
+    <div class="ss-head"><span class="ss-num">3.7</span><h3 class="ss-name">Diagnostics, Reports & Records</h3></div>
+    <div class="badges"><span class="b amber">Partial</span><span class="b role">Doctor</span><span class="b role">Nurse</span><span class="b role">Lab</span><span class="b role">Radiology</span><span class="b role">Patient</span></div>
+    <p class="sub"><b>Purpose:</b> order tests, route results, and maintain the complete medical record.</p>
+    <ul class="feat">
+      <li><span class="fid">7.1</span>Order lab / radiology tests and route them to the right department.</li>
+      <li><span class="fid">7.2</span>Lab results flow back via DMS integration; radiology via its separate system <b>(Δ visit)</b>.</li>
+      <li><span class="fid">7.3</span>Maintain the full patient record across the <b>11 documented sections</b> (basic info, admission/discharge summary, personal history, internal-transport safety, daily antibiotics, medication, multidisciplinary care plan, nutrition, VTE/Padua, doctor's orders, consultation request).</li>
+      <li><span class="fid">7.4</span>Specialty clinic forms: Dental, Gyn-Obstetric, Pediatric (structured fields + ICD-10).</li>
+      <li><span class="fid">7.5</span>Patient/doctor access to past visits (old diagnoses & prescriptions).</li>
+      <li><span class="fid">7.6</span>Consultation request workflow (type, clinical info, requested investigations, signatures).</li>
+      <li><span class="fid">7.7</span>Informed-consent capture (<code>SMC-F-ALH-008</code>) with a <b>pre-procedure checklist</b> (procedure explained, basic investigations completed, equipment available) and a <b>surgical-safety time-out</b> (verify patient identity, procedure, and site) completed and signed before the procedure <b>(Δ visit)</b>.</li>
+      <li><span class="fid">7.8</span>Cardiac diagnostic set for the heart-attack pathway: lab system <b>Lab 2000</b> returns cardiac enzymes <b>CK-MB</b> + <b>Troponin</b>; <b>echocardiography (ECO)</b> performed by the cardiologist <b>(Δ visit)</b>.</li>
+    </ul>
+    <div class="note"><b>(Δ visit) Radiology categories:</b> Economic (pays full, gets films) · Health Insurance (discount, no films unless they pay) · Contracted Company (predefined discount, pays separately for films) — affects billing and report delivery.</div>
+    <p class="sub"><b>Source:</b> Q20 · Patient file record · Clinic diagnosis forms · Catheterization workflow.</p>
+  </div>
+
+  <!-- SS8 -->
+  <div class="ss" id="ss8">
+    <div class="ss-head"><span class="ss-num">3.8</span><h3 class="ss-name">AI Smart Healthcare Assistant</h3></div>
+    <div class="badges"><span class="b red">Not built</span><span class="b ai">AI · initial scope</span><span class="b role">Patient</span><span class="b role">Family</span><span class="b role">Care team</span></div>
+    <p class="sub"><b>Purpose:</b> in-app medical assistant for education, guidance, symptom triage, and escalation.</p>
+    <ul class="feat">
+      <li><span class="fid">8.1</span><b>Healthcare Advisor</b> — trusted educational answers grounded in hospital-approved content via <b>RAG</b> (post-op instructions, medication, diet, procedures).</li>
+      <li><span class="fid">8.2</span><b>Symptom Triage</b> — classifies urgency and detects red flags (chest pain, breathing difficulty, severe dizziness); <b>does not diagnose</b>.</li>
+      <li><span class="fid">8.3</span>Red-flag detection → emergency escalation + nurse/doctor notification + human handoff.</li>
+      <li><span class="fid">8.4</span>Voice input/output for the advisor (links to Accessibility).</li>
+    </ul>
+    <p class="sub"><b>Tech:</b> LLM APIs · RAG · vector DB · rule-based emergency engine. &nbsp;<b>Source:</b> Q2 · AI models doc.</p>
+  </div>
+
+  <!-- SS9 -->
+  <div class="ss" id="ss9">
+    <div class="ss-head"><span class="ss-num">3.9</span><h3 class="ss-name">AI Clinical Documentation & Insights</h3></div>
+    <div class="badges"><span class="b red">Not built</span><span class="b ai">AI · initial scope</span><span class="b role">Doctor</span><span class="b role">Nurse</span><span class="b role">Quality Manager</span></div>
+    <p class="sub"><b>Purpose:</b> reduce documentation workload and turn feedback into insight.</p>
+    <ul class="feat">
+      <li><span class="fid">9.1</span><b>Medical report generation</b> — draft visit summaries, follow-ups, progress notes, discharge summaries; <b>doctor approval required before saving</b>.</li>
+      <li><span class="fid">9.2</span><b>Voice transcription</b> for clinical notes (Arabic + English, Whisper).</li>
+      <li><span class="fid">9.3</span><b>Medical translation</b> (Arabic ↔ English; international-patient support).</li>
+      <li><span class="fid">9.4</span><b>AI feedback & quality reports</b> — sentiment analysis, complaint categorization, theme extraction, summaries.</li>
+    </ul>
+    <p class="sub"><b>Tech:</b> LLM APIs · prompt engineering · EMR/DMS integration · sentiment models. &nbsp;<b>Source:</b> AI models doc · Q73.</p>
+  </div>
+
+  <!-- SS10 -->
+  <div class="ss" id="ss10">
+    <div class="ss-head"><span class="ss-num">3.10</span><h3 class="ss-name">Notifications, Alerts & Emergency</h3></div>
+    <div class="badges"><span class="b amber">Partial</span><span class="b role">All roles</span></div>
+    <p class="sub"><b>Purpose:</b> deliver timely notifications and run emergency escalation.</p>
+    <ul class="feat">
+      <li><span class="fid">10.1</span>Notify by the patient's preferred channel (appointment, results, treatment updates, stage transitions).</li>
+      <li><span class="fid">10.2</span>Emergency SOS with an ordered escalation chain: <b>treating physician → nursing station → family contact → care center (Δ visit)</b>.</li>
+      <li><span class="fid">10.3</span>Auto-escalate after a configured wait if there is no response.</li>
+      <li><span class="fid">10.4</span>Distinguish "emergency" (immediate intervention) from a normal "alert" (informational).</li>
+      <li><span class="fid">10.5</span>Code Blue / critical-event handling.</li>
+    </ul>
+    <p class="sub"><b>Source:</b> Q77, Q78, Q79 · Features doc (Emergency).</p>
+  </div>
+
+  <!-- SS11 -->
+  <div class="ss" id="ss11">
+    <div class="ss-head"><span class="ss-num">3.11</span><h3 class="ss-name">Family & Caregiver Access</h3></div>
+    <div class="badges"><span class="b green">In prototype</span><span class="b role">Patient</span><span class="b role">Family</span></div>
+    <p class="sub"><b>Purpose:</b> let a trusted companion follow and act for the patient, with permission.</p>
+    <ul class="feat">
+      <li><span class="fid">11.1</span>Link family members (QR invite or manual add); active-status badges.</li>
+      <li><span class="fid">11.2</span>Per-member permissions: view status, receive alerts, book appointments, submit ratings, trigger emergency.</li>
+      <li><span class="fid">11.3</span>Privacy toggles for what family can see (vitals, medication, lab results, journey).</li>
+      <li><span class="fid">11.4</span>Notify family on stage transitions and key decisions.</li>
+    </ul>
+    <div class="note"><b>Reconcile with hospital rule (Δ visit):</b> the hospital does <b>not</b> let family view the medical file. The app's family view must stay limited to <b>status / stage and patient-approved items</b>, not clinical detail.</div>
+    <p class="sub"><b>Source:</b> Q29–Q32, Q61–Q64.</p>
+  </div>
+
+  <!-- SS12 -->
+  <div class="ss" id="ss12">
+    <div class="ss-head"><span class="ss-num">3.12</span><h3 class="ss-name">Billing & Financial</h3></div>
+    <div class="badges"><span class="b red">Not built</span><span class="b role">Patient</span><span class="b role">Receptionist</span><span class="b role">Billing</span><span class="b role">Three-Doctor Committee</span></div>
+    <p class="sub"><b>Purpose:</b> manage insurance, payments, and the patient's financial file.</p>
+    <ul class="feat">
+      <li><span class="fid">12.1</span><b>Auto-determine insurance status from National ID</b>: insured / has employer / uninsured <b>(Δ visit)</b>.</li>
+      <li><span class="fid">12.2</span>Uninsured branch: capable (self-pay) vs. unable → <b>Three-Doctor Committee + official state memo (Δ visit)</b>.</li>
+      <li><span class="fid">12.3</span><b>Critical-emergency principle</b>: patient is admitted immediately regardless of insurance/financial status; admin handled later <b>(Δ visit)</b>.</li>
+      <li><span class="fid">12.4</span>Payment methods: cash receipt and card e-receipt (distinct formats).</li>
+      <li><span class="fid">12.5</span>Radiology film charges per patient category (see 3.7).</li>
+      <li><span class="fid">12.6</span>Issue the <b>final financial file</b> with itemized costs and invoices at end of treatment <b>(Δ visit)</b>.</li>
+      <li><span class="fid">12.7</span>Patient-side bill, insurance coverage, amount due, and Pay Now.</li>
+      <li><span class="fid">12.8</span>Classify each patient into a <b>coverage category</b> — self-pay (اقتصادي) · state-funded (نفقة دولة) · health insurance (تأمين صحي) · pension/retired (تقاعد) · student (طلاب) — each with a <b>different reception processing time</b> <b>(Δ visit)</b>.</li>
+    </ul>
+    <p class="sub"><b>Source:</b> Q7 · Reception (insurance) · Billing visit findings.</p>
+  </div>
+
+  <!-- SS13 -->
+  <div class="ss" id="ss13">
+    <div class="ss-head"><span class="ss-num">3.13</span><h3 class="ss-name">Feedback & Quality Management</h3></div>
+    <div class="badges"><span class="b green">In prototype</span><span class="b role">Patient</span><span class="b role">Family</span><span class="b role">Quality Manager</span><span class="b role">Department Head</span></div>
+    <p class="sub"><b>Purpose:</b> capture per-stage feedback and turn it into quality action.</p>
+    <ul class="feat">
+      <li><span class="fid">13.1</span>Rate each completed stage (1–5 stars + optional comment); proxy rating when the patient is unable.</li>
+      <li><span class="fid">13.2</span>Report an issue linked to the current stage → ticket routed to the unit supervisor.</li>
+      <li><span class="fid">13.3</span>Route negative feedback to the relevant department head.</li>
+      <li><span class="fid">13.4</span>Complaint SLA + escalation when unresolved within the response window.</li>
+      <li><span class="fid">13.5</span>Quality dashboard: average rating, lowest points, open complaints.</li>
+    </ul>
+    <p class="sub"><b>Source:</b> Q65–Q71.</p>
+  </div>
+
+  <!-- SS14 -->
+  <div class="ss" id="ss14">
+    <div class="ss-head"><span class="ss-num">3.14</span><h3 class="ss-name">Education, Engagement & Loyalty</h3></div>
+    <div class="badges"><span class="b green">In prototype</span><span class="b role">Patient</span><span class="b role">Family</span><span class="b role">Quality (approval)</span></div>
+    <p class="sub"><b>Purpose:</b> educate, reassure, and reward engagement.</p>
+    <ul class="feat">
+      <li><span class="fid">14.1</span>Video library (procedure explanation, life after a cardiac event, medication safety).</li>
+      <li><span class="fid">14.2</span>Relax content (calm sounds, light games, short films) for patient and waiting family.</li>
+      <li><span class="fid">14.3</span>Care Points loyalty (earned per rating; progress to next reward, e.g., priority booking).</li>
+      <li><span class="fid">14.4</span>Educational/medical content must be <b>approved by the Quality head before publishing</b>.</li>
+    </ul>
+    <p class="sub"><b>Source:</b> Q7, Q19, Q28 · Features doc.</p>
+  </div>
+
+  <!-- SS15 -->
+  <div class="ss" id="ss15">
+    <div class="ss-head"><span class="ss-num">3.15</span><h3 class="ss-name">Administration, Reporting & Integration</h3></div>
+    <div class="badges"><span class="b red">Not built</span><span class="b role">System Admin</span><span class="b role">Hospital Director</span><span class="b role">Quality</span><span class="b role">IT</span></div>
+    <p class="sub"><b>Purpose:</b> administer users, generate reports, and integrate with hospital systems.</p>
+    <ul class="feat">
+      <li><span class="fid">15.1</span>User & role administration; create accounts and adjust permissions (IT admin).</li>
+      <li><span class="fid">15.2</span>Management dashboard KPIs: patient counts, average stage durations, <b>Door-to-Balloon time</b>, department comparison <b>(Δ visit)</b>.</li>
+      <li><span class="fid">15.3</span>Scheduled report generation (e.g., monthly) to defined recipients.</li>
+      <li><span class="fid">15.4</span><b>DMS integration</b> (registration, appointments, clinical, lab, admin) via purchased APIs <b>(Δ visit)</b>.</li>
+      <li><span class="fid">15.5</span>Integrate Lab (via DMS), Radiology (separate system), Pharmacy (DMS, partly manual), and POS / ERP back-office systems <b>(Δ visit)</b>.</li>
+      <li><span class="fid">15.6</span>Network & security: LAN, IP whitelist, external server, API docs with dummy data <b>(Δ visit)</b>.</li>
+    </ul>
+    <p class="sub"><b>Source:</b> Q72–Q76, Q80, Q81 · IT department findings · API catalog (see §5).</p>
+  </div>
+
+  <!-- SS16 -->
+  <div class="ss" id="ss16">
+    <div class="ss-head"><span class="ss-num">3.16</span><h3 class="ss-name">Indoor Navigation & Hospital Map</h3></div>
+    <div class="badges"><span class="b red">Not built</span><span class="b new">New</span><span class="b role">Patient</span><span class="b role">Family</span><span class="b role">Guest</span></div>
+    <p class="sub"><b>Purpose:</b> help patients and visitors find their way inside the hospital.</p>
+    <ul class="feat">
+      <li><span class="fid">16.1</span>Interactive floor-by-floor map with color-coded zones and zoom.</li>
+      <li><span class="fid">16.2</span>Live "you are here" location via indoor positioning (BLE beacons / Wi-Fi).</li>
+      <li><span class="fid">16.3</span>Search (room, doctor, department, service) with distance/time and pin.</li>
+      <li><span class="fid">16.4</span>Turn-by-turn indoor directions, with an accessible-route option.</li>
+      <li><span class="fid">16.5</span>Deep links from appointment, journey stage, and doctor profile to the map.</li>
+      <li><span class="fid">16.6</span>POI layer (restrooms, prayer rooms, cafeteria, pharmacy, ATM, parking).</li>
+      <li><span class="fid">16.7</span>Family/visitor map mode without login (no patient live location unless granted).</li>
+    </ul>
+    <p class="sub"><b>Source:</b> Q13(map) · Features doc (Indoor Navigation, NEW).</p>
+  </div>
+
+  <!-- SS17 -->
+  <div class="ss" id="ss17">
+    <div class="ss-head"><span class="ss-num">3.17</span><h3 class="ss-name">Accessibility</h3></div>
+    <div class="badges"><span class="b red">Not built</span><span class="b new">New</span><span class="b role">All patients · sensory / motor / language / elderly</span></div>
+    <p class="sub"><b>Purpose:</b> ensure every patient can use the app, including those who cannot see, hear, or speak.</p>
+    <ul class="feat">
+      <li><span class="fid">17.1</span>Vision: high-contrast, font scaler, bold text, reduced motion; full screen-reader (VoiceOver/TalkBack) labels and logical focus order.</li>
+      <li><span class="fid">17.2</span>Audio & voice: voice commands, voice I/O for the AI advisor, audio alerts, voice-triggered SOS.</li>
+      <li><span class="fid">17.3</span>Indoor nav for visually impaired: audio turn-by-turn, haptic cues, BLE location announcements, "Guide Me" voice-only mode.</li>
+      <li><span class="fid">17.4</span>Hearing & communication: captions on all videos, visual + haptic alert equivalents, sign-language support card, text-to-nurse.</li>
+      <li><span class="fid">17.5</span>Motor: switch-access, large tap targets, single-hand mode, button alternatives to swipes.</li>
+      <li><span class="fid">17.6</span>Accessibility profiles (Default / Low Vision / Blind / Deaf / Motor) synced to the patient account.</li>
+    </ul>
+    <p class="sub"><b>Source:</b> Q5(languages) · Features doc (Accessibility, NEW) · PCC personas.</p>
+  </div>
+
+  <!-- ===================== 4. NFR ===================== -->
+  <h2 class="sec" id="s4">4 · Non-Functional Requirements</h2>
+  <table>
+    <tr><th>ID</th><th>Attribute</th><th>Requirement</th></tr>
+    <tr><td>NFR-1</td><td>Access Control</td><td>The medical file shall be visible only to the treating doctor and nursing supervisor; reception shall access administrative data only; each department shall see only its own part of the record. <b>(Δ visit)</b></td></tr>
+    <tr><td>NFR-2</td><td>Privacy & Consent</td><td>Sensitive data shall be shown only to authorized roles and the patient-approved companion; consent shall be recorded and respected.</td></tr>
+    <tr><td>NFR-3</td><td>Security</td><td>Encrypted credentials, session control, account lockout, IP whitelisting on the LAN, and an audit trail of access and edits.</td></tr>
+    <tr><td>NFR-4</td><td>Auditability</td><td>Every view/edit of clinical data shall be logged with user, role, time, and the self-edit window enforced.</td></tr>
+    <tr><td>NFR-5</td><td>Multilingual</td><td>The interface and content shall support Arabic and English (Russian where required by existing scope), driven by the patient's preferred language.</td></tr>
+    <tr><td>NFR-6</td><td>Accessibility</td><td>The system shall meet the accessibility features in §3.17 so sensory/motor/elderly/other-language patients can use it.</td></tr>
+    <tr><td>NFR-7</td><td>Usability</td><td>The interface shall be simple enough for the hospital's largely local/tribal/worker population, with minimal text and clear visuals.</td></tr>
+    <tr><td>NFR-8</td><td>Performance</td><td>The system shall perform responsively over the hospital LAN under normal clinic and emergency load.</td></tr>
+    <tr><td>NFR-9</td><td>Availability</td><td>Emergency-related functions shall be available 24/7.</td></tr>
+    <tr><td>NFR-10</td><td>Interoperability</td><td>The system shall integrate with DMS and the radiology system through purchased APIs, and operate as the primary source where APIs are unavailable. <b>(Δ visit)</b></td></tr>
+  </table>
+
+  <!-- ===================== 5. EXTERNAL INTERFACES ===================== -->
+  <h2 class="sec" id="s5">5 · External Interfaces & Integration</h2>
+  <p>Integration depends on APIs purchased from the DMS vendor. The current environment is a LAN with no APIs; development uses an external server, IP whitelisting, and API documentation with dummy data.</p>
+  <table>
+    <tr><th>System</th><th>State today</th><th>Integration plan</th></tr>
+    <tr><td>DMS (HMIS)</td><td>Primary system; no APIs</td><td>Purchase APIs for registration, appointments, records, clinical, admin.</td></tr>
+    <tr><td>Laboratory</td><td>Integrated with DMS</td><td>Consume lab orders/results through DMS APIs.</td></tr>
+    <tr><td>Radiology</td><td>Separate system ("Milestone" — confirm)</td><td>Dedicated interface for orders, reports, images; honor patient categories for films.</td></tr>
+    <tr><td>Pharmacy</td><td>DMS-connected, partly manual</td><td>Read prescription/dispense; target real-time availability + alternatives (future).</td></tr>
+    <tr><td>POS (point-of-sale)</td><td>Pharmacy/billing terminals; not integrated</td><td>Interface for cash/card sale and dispense receipts; reconcile with Billing (§3.12). <b>(Δ visit)</b></td></tr>
+    <tr><td>ERP</td><td>Hospital back-office; not integrated</td><td>Integrate for finance / procurement / inventory so the system can link all apps. <b>(Δ visit)</b></td></tr>
+  </table>
+  <h4>Recommended API catalog</h4>
+  <p class="sub">Authentication (login, logout, patient verification) · Patient (profile, update) · Appointment (book, cancel, reschedule, history) · Medical Records (diagnoses, treatment plans, clinical notes) · Laboratory (orders, results, report download) · Radiology (orders, reports, images) · Pharmacy (medication list, prescription history, availability, alternatives) · Billing (payments, invoices, insurance coverage) · Notification (appointment reminders, lab-result alerts, treatment updates).</p>
+
+  <!-- ===================== 6. DATA & FORMS ===================== -->
+  <h2 class="sec" id="s6">6 · Data & Forms Model</h2>
+  <p>The records subsystem (§3.7) is built on the documented clinical artifacts:</p>
+  <ul>
+    <li><b>Patient File Record (11 sections):</b> basic info · admission/discharge summary · personal history · internal-transport safety (RSTP) · daily antibiotics · medication prescription & administration · multidisciplinary care plan · nutritional care plan · VTE/Padua risk assessment · doctor's orders · consultation request.</li>
+    <li><b>Clinic diagnosis forms:</b> Dental examination + informed consent (form code SMC-F-ALH-008) · Gyn-Obstetric outpatient · Pediatric outpatient — each with patient data, history, examination, plan of care, investigations, medications, follow-up, referral.</li>
+    <li><b>Catheterization workflow:</b> arrival → identification → catheterization type (cerebral / cardiac / peripheral / interventional radiology) → procedure → post-procedure → discharge → complications → treatment options; includes the Three-Doctor Emergency Committee.</li>
+    <li><b>Identity & insurance logic:</b> Serial from National ID, arrival vs. booking cards, and the insurance decision tree (insured / employer / uninsured-capable / uninsured-unable → committee).</li>
+  </ul>
+
+  <!-- ===================== 7. OPEN POINTS ===================== -->
+  <h2 class="sec" id="s7">7 · Open Points to Confirm</h2>
+  <table>
+    <tr><th>#</th><th>Question for the hospital / IT</th><th>Affects</th></tr>
+    <tr><td>1</td><td>Is the Risk Score computed automatically by the system, or entered manually by the nurse?</td><td>§3.5 Vitals & Early Warning</td></tr>
+    <tr><td>2</td><td>Is the Outpatient Serial the same as the Emergency Serial for the same patient, or independent?</td><td>§3.1 Identity</td></tr>
+    <tr><td>3</td><td>Is the report saved in the system before the patient enters (ambulance cases only)?</td><td>§3.4 Journey · §3.7 Records</td></tr>
+    <tr><td>4</td><td>Confirm the radiology system name ("Milestone") and its interface.</td><td>§5 Integration</td></tr>
+    <tr><td>5</td><td>Confirm the location of the third (Internal Care) pharmacy.</td><td>§3.6 Medication</td></tr>
+  </table>
+
+  <!-- ===================== 8. TRACEABILITY ===================== -->
+  <h2 class="sec" id="s8">8 · Traceability</h2>
+  <p>Every feature in §3 carries a <b>Source</b> line. Sources map to the 83-question requirements questionnaire (Q-numbers), the field-visit documentation, and the clinical artifacts. The 83 questions are organized as: hospital website (Q1–Q12) · heart-attack journey under the 8 PCC principles (Q13–Q46) · dashboards, roles, emergency, and existing-systems scope (Q47–Q83). Customer requirements CR-1…CR-17 are satisfied by the functional requirements in §3 and the NFRs in §4.</p>
+
+  <footer>
+    A.B.C.D.E System · Alamein Model Hospital · SRS v2.0 (post site-visit)<br>
+    The clickable prototype lives at <a href="../index.html">the patient app home</a>.
+  </footer>
+</div>
+</body>
+</html>

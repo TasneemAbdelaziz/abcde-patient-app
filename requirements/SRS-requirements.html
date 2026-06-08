@@ -137,6 +137,11 @@ const CR=[
  ['CR-15','The system works with the hospital existing DMS and HMIS instead of replacing it.','FR 7, 17 · NFR-8'],
  ['CR-16','Patient data stays private, only authorized people and the chosen companion see sensitive details, and consent is respected.','FR 1, 11 · NFR-3, 4'],
  ['CR-17','Management reads quality and performance reports and compares departments and periods.','FR 10, 17'],
+ ['CR-18','Emergency and unidentified patients can be admitted and treated safely under an authorized medical committee, even with no documents or companion.','FR 4'],
+ ['CR-19','Before any procedure the team captures informed consent and completes a surgical-safety check-list.','FR 4'],
+ ['CR-20','The medical record follows the hospital file structure: ICD-coded diagnosis, problem list, doctor\'s orders, a multidisciplinary care plan, transport-safety and VTE risk, medication reconciliation, and a nutrition plan.','FR 4, 5, 6, 7'],
+ ['CR-21','Care moves safely between departments and to other specialties, with a transport-safety check and specialist consultations.','FR 4, 7'],
+ ['CR-22','Billing reflects the patient\'s coverage category — self-pay, state-funded, health insurance, pension, or student.','FR 13'],
 ];
 
 /* low-level fn: {id, s(stmt), in, out, a:[[actor,phrase]], ac:[..], p, src, pcc:[..]} */
@@ -220,11 +225,44 @@ const FR=[
        ['Stages: Reception, Triage, Diagnosis, Catheterization, Post-cath, Cardiac care, Discharge.','Only the stage owner can advance it.'],'High','Q33, Q34, Q36',[6]),
      L('4.2.2','Handle an alternative pathway when the case is not cardiac.','ticketNo, finding','re-route to internal medicine or discharge',
        [['Doctor','re-route the patient so that care stays correct']],
-       ['A non-cardiac case is referred or safely discharged.'],'Medium','Q37',[6])]},
+       ['A non-cardiac case is referred or safely discharged.'],'Medium','Q37',[6]),
+     L('4.2.3','Select the catheterization type and the responsible specialist.','ticketNo, finding','cathType, responsible specialist',
+       [['Doctor','select the right catheterization type so that the correct specialist takes over']],
+       ['Cerebral → neurologist / neuro-interventionist; cardiac → cardiologist; peripheral → vascular surgeon; interventional radiology is a future type.','The patient is transferred to the Cath Lab and the findings are documented.'],'Medium','Catheterization workflow',[6])]},
    {id:'4.3',name:'Show patient status',ll:[
      L('4.3.1','Display a simplified status to the patient.','ticketNo','statusText (Under exam, Awaiting result, In operation, Stable)',
        [['Patient','see a simple status so that I understand what is happening'],['Family companion','see the general status so that I stay informed']],
-       ['Status text is plain and non-clinical.'],'High','Q17, Q18',[2,4])]}]},
+       ['Status text is plain and non-clinical.'],'High','Q17, Q18',[2,4])]},
+   {id:'4.4',name:'Admit and identify emergency patients',ll:[
+     L('4.4.1','Classify the arrival type on admission.','patientId, arrival channel','arrivalType (emergency | scheduled), pathway',
+       [['Receptionist','classify the arrival so that the patient takes the right pathway'],['Triage Nurse','flag an emergency so that assessment starts at once']],
+       ['Emergency cases (from the ER / ambulance) route straight to assessment.','Scheduled cases complete registration and admission first.'],'High','Catheterization workflow',[6]),
+     L('4.4.2','Identify an incapacitated patient with no documents.','family info | wallet, ID card, insurance card','provisional identity, history',
+       [['Receptionist','identify the patient from any available source so that a file can be opened'],['Nurse','collect history from the companion so that care is safe']],
+       ['When a companion is present, identity and medical history are collected from them.','Otherwise the wallet, ID card, insurance card or any documents are used.'],'Medium','Catheterization workflow',[6,5]),
+     L('4.4.3','Authorize an emergency admission through a three-doctor committee.','life-threatening case, three physicians','Direct Admission Form, authorized transfer',
+       [['Treating specialist','convene the committee so that a life-saving intervention can start'],['Consultant','assess and co-authorize so that responsibility is shared']],
+       ['For a life-threatening case with no information, three doctors assess severity, confirm the emergency, approve the intervention and assume medical responsibility.','A Direct Admission Form is generated authorizing immediate transfer to the catheterization unit.'],'High','Catheterization workflow',[6,4])]},
+   {id:'4.5',name:'Capture consent and run procedure safety',ll:[
+     L('4.5.1','Capture informed consent for a procedure.','ticketNo, procedure, patient | decisionMaker','consent record (form SMC-F-ALH-008)',
+       [['Doctor','obtain informed consent so that the procedure is lawful and understood'],['Patient','give consent so that I agree to my own care'],['Decision-maker','consent on the patient behalf so that care proceeds when the patient cannot']],
+       ['Consent is recorded before any procedure on the hospital consent form.','A decision-maker may consent when the patient is unable.'],'High','Diagnosis-in-clinic forms',[1,5]),
+     L('4.5.2','Complete the pre-procedure and surgical-safety time-out checklists.','ticketNo, checklist items','verified checklists',
+       [['Nurse','complete the pre-procedure checklist so that the patient is ready'],['Surgical team','run the safety time-out so that the right patient, site and procedure are confirmed']],
+       ['A pre-procedure checklist is completed before transfer.','A surgical-safety time-out (patient, site, procedure) is confirmed before the catheterization begins.'],'High','Diagnosis-in-clinic forms',[6]),
+     L('4.5.3','Record door-to-balloon time for cardiac cases.','arrival time, balloon time','door-to-balloon minutes',
+       [['Quality Manager','track door-to-balloon time so that emergency cardiac response is measured']],
+       ['Door-to-balloon time is captured for every cardiac catheterization and reported as a KPI.'],'Medium','Field notes',[6,7])]},
+   {id:'4.6',name:'Plan care, transfers and safe discharge',ll:[
+     L('4.6.1','Maintain a multidisciplinary care plan.','problem list, interventions','care plan (desired outcome, time frame, signature)',
+       [['Doctor','keep a care plan so that the whole team works to the same goals'],['Nurse','follow the care plan so that interventions are consistent']],
+       ['The plan lists problems, interventions, desired outcomes and time frames with the physician signature.','A nutrition plan is included when the patient needs one.'],'Medium','Patient file record §7, §8',[6]),
+     L('4.6.2','Document an internal transport safety check.','from / to department, monitoring data','transport safety form, RSTP',
+       [['Nurse','complete the transport-safety form so that the patient is moved safely'],['Transport staff','follow the form so that monitoring continues during the move']],
+       ['Transfers between departments record clinical, respiratory and neurological status (incl. GCS) and a Risk Score for Transport Patient (RSTP).'],'Medium','Patient file record §4',[6,7]),
+     L('4.6.3','Manage discharge condition and family education.','ticketNo, outcome','discharge condition, education record, follow-up',
+       [['Doctor','record the discharge condition so that the outcome is clear'],['Patient','receive education so that I recover safely at home'],['Family companion','receive education so that I can care for the patient']],
+       ['Condition at discharge is recorded (improved / stable / deceased).','The family is educated on the outcome, medications, warning signs and follow-up; a weekly follow-up is booked.'],'High','Catheterization workflow',[8,5])]}]},
 
  {n:5,title:'Monitor Vital Signs and Detect Deterioration',svc:'Vitals and Early-Warning Service',shall:'The system shall record vital signs, score clinical risk, and alert staff before deterioration.',pcc:[7,6],
   hlf:[
@@ -245,35 +283,51 @@ const FR=[
        ['The first version uses NEWS2 or MEWS, not a custom model.'],'High','Features doc',[7]),
      L('5.3.2','Raise a clinical alert on deterioration.','risk level > threshold','alert to staff, escalation',
        [['Doctor','receive a critical alert so that I intervene early'],['Nurse','receive a deterioration alert so that I respond quickly']],
-       ['Alerts are delivered within seconds and are never silently dropped.'],'High','Features doc',[7,6])]}]},
+       ['Alerts are delivered within seconds and are never silently dropped.'],'High','Features doc',[7,6]),
+     L('5.3.3','Assess venous-thromboembolism risk with the Padua score.','risk factors','Padua score, risk level, prophylaxis recommendation',
+       [['Doctor','score VTE risk so that I prevent clots'],['Nurse','record the risk factors so that prophylaxis is timely']],
+       ['The Padua score classifies the patient as low or high VTE risk.','A pharmacological or mechanical prophylaxis is recommended for high-risk patients.'],'Medium','Patient file record §9',[7])]}]},
 
  {n:6,title:'Manage Medication',svc:'Medication Service',shall:'The system shall define medication plans, remind patients, and log administration.',pcc:[7],
   hlf:[
    {id:'6.1',name:'Define the plan',ll:[
      L('6.1.1','Define a medication plan.','drug, dose, timing, route','medication plan',
        [['Doctor','prescribe the plan so that treatment is clear'],['Pharmacist','review drug details so that the plan is safe']],
-       ['The treating physician and clinical pharmacist define each drug.'],'High','Q40',[7])]},
+       ['The treating physician and clinical pharmacist define each drug.'],'High','Q40',[7]),
+     L('6.1.2','Reconcile medications on admission and after the procedure.','chronic diseases, current medications','reconciled list, compatibility check',
+       [['Nurse','reconcile the patient medications so that nothing conflicts'],['Pharmacist','verify compatibility so that the combined plan is safe']],
+       ['For patients with multiple diseases or medications, nursing identifies chronic conditions, reviews current medications and verifies treatment compatibility.'],'High','Catheterization workflow',[7])]},
    {id:'6.2',name:'Remind and log',ll:[
      L('6.2.1','Remind the patient of due doses.','patientId','due doses, times',
        [['Patient','get reminders so that I take medication on time']],
        ['A reminder fires at each scheduled dose time.'],'High','Q59',[7]),
      L('6.2.2','Record dose administration.','medItemId, time, givenBy','adherence log, next due',
        [['Nurse','administer and log each dose so that adherence is tracked'],['Patient','mark a dose taken so that my log stays current']],
-       ['Each administration is timestamped and attributed.'],'Medium','Q58',[7])]}]},
+       ['Each administration is timestamped and attributed.','Discontinued, refused or unavailable medications are recorded.'],'Medium','Q58 · Patient file record §6',[7])]}]},
 
  {n:7,title:'Manage Diagnostics and Medical Records',svc:'Diagnostics and Records Service',shall:'The system shall order tests, route results to the treating physician, and maintain the medical record.',pcc:[6,2],
   hlf:[
    {id:'7.1',name:'Order and route tests',ll:[
      L('7.1.1','Order diagnostic tests and route results.','patientId, types[]','orderIds[], result routed to physician',
        [['Doctor','order tests and read results so that I diagnose'],['Lab system','return results so that decisions are timely']],
-       ['Cardiac set: enzymes, coagulation, CBC, ECG, echo, kidney, liver.','Results are delivered to the treating physician.'],'High','Q20',[6])]},
+       ['Cardiac set: cardiac enzymes (CK-MB, Troponin), coagulation, CBC, ECG, echocardiography (ECO), kidney, liver.','Lab results arrive from the Lab 2000 system; imaging from PACS; all are delivered to the treating physician.'],'High','Q20 · Field notes',[6])]},
    {id:'7.2',name:'Provide records',ll:[
      L('7.2.1','Provide medical reports to the patient.','patientId, type','report doc, download or share link',
        [['Patient','view and download my reports so that I keep my records'],['Family companion','stay blocked from detailed results unless permitted so that privacy holds']],
        ['Reports can be downloaded or shared with another provider.'],'Medium','Q62',[2]),
      L('7.2.2','Maintain patient history through DMS and HMIS.','patientId, external data','synced history',
        [['Doctor','review history so that care is informed'],['System Admin','maintain the integration so that records stay synced']],
-       ['Patient, lab, and pharmacy data sync with the existing DMS.'],'High','Q80, Q81',[6])]}]},
+       ['Patient, lab, and pharmacy data sync with the existing DMS.'],'High','Q80, Q81',[6]),
+     L('7.2.3','Record an ICD-coded diagnosis and admission/discharge summary.','final diagnosis, comorbidities','ICD-10 code, summary',
+       [['Doctor','code the diagnosis so that records are standard and comparable']],
+       ['The final diagnosis carries an ICD-10 code.','The summary records comorbid diagnoses, length of stay and condition at discharge.'],'Medium','Patient file record §2',[6])]},
+   {id:'7.3',name:'Manage orders and consultations',ll:[
+     L('7.3.1','Place and track doctor\'s orders.','medication / lab / imaging / nursing / diet / activity orders','orders with status',
+       [['Doctor','place orders so that the team acts on one instruction set'],['Nurse','act on orders so that care follows the physician plan']],
+       ['Each order carries a status (active / completed / modified / cancelled) and the physician signature.'],'High','Patient file record §10',[6]),
+     L('7.3.2','Raise a specialist consultation request.','specialty, question, urgency','consultation request, consultant reply',
+       [['Doctor','request a consultation so that the right specialist weighs in'],['Consultant','reply to the request so that the patient gets specialist input']],
+       ['Requests carry an urgency (emergency / urgent / routine), clinical information, requested investigations and both physician signatures.'],'Medium','Patient file record §11',[6])]}]},
 
  {n:8,title:'Provide the AI Healthcare Assistant',svc:'Healthcare Assistant Service',shall:'The system shall answer patient questions from approved content and triage symptoms, escalating when needed.',pcc:[2,4],
   hlf:[
@@ -354,9 +408,9 @@ const FR=[
  {n:13,title:'Manage Billing and Payments',svc:'Billing Service',shall:'The system shall present the bill, apply insurance coverage, and accept payment.',pcc:[3],
   hlf:[
    {id:'13.1',name:'Bill and pay',ll:[
-     L('13.1.1','Present an itemized bill with insurance and amount due.','patientId','bill, insurance, amount due',
+     L('13.1.1','Present an itemized bill with coverage and amount due.','patientId','bill, coverage, amount due',
        [['Patient','see my bill and coverage so that I know what I owe']],
-       ['Insurance coverage and the due amount are shown clearly.'],'Medium','derived',[3]),
+       ['Coverage and the due amount are shown clearly.','Coverage category is one of self-pay (economic), state-funded, health insurance, pension, or student — each with its own billing route.'],'Medium','Field notes (reception)',[3]),
      L('13.1.2','Accept a payment and provide statements.','amount, method','receipt, invoice, claim',
        [['Patient','pay the due amount so that my account is settled'],['Family companion','pay on the patient behalf when granted full access so that the bill is cleared']],
        ['A receipt and downloadable statements are produced.'],'Low','derived',[3])]}]},
@@ -414,13 +468,13 @@ const FR=[
      L('17.1.2','Configure stages, roles, alarm rules, and languages.','config','configuration saved',
        [['System Admin','configure the system so that it matches the hospital workflow']],
        ['Arabic, English, and Russian are configurable everywhere.'],'Medium','Q5',[3]),
-     L('17.1.3','Integrate with the hospital DMS and HMIS.','external data','synced data',
-       [['System Admin','maintain the integration so that data stays consistent']],
-       ['Patient, lab, and pharmacy data sync with the existing DMS.'],'High','Q80, Q81',[6])]},
+     L('17.1.3','Integrate with the hospital DMS, HMIS and ancillary systems.','external data','synced data',
+       [['System Admin','maintain the integrations so that data stays consistent']],
+       ['Integration covers DMS / HMIS, the Lab 2000 lab system, PACS imaging, pharmacy / POS and ERP.','Integration is exposed through documented APIs with sample (dummy) data; the local network is IP-whitelisted and an external (cloud) server backs storage.'],'High','Q80, Q81 · Field notes (integration)',[6])]},
    {id:'17.2',name:'Report and govern',ll:[
      L('17.2.1','Produce management and comparison reports.','range, filters','KPIs, comparisons',
        [['Hospital Director','read comparisons so that I make decisions'],['Quality Manager','read quality reports so that I track service']],
-       ['Reports cover patients per department, bookings, and performance.','Comparison by department and by period is supported.'],'High','Q72, Q73, Q74, Q75, Q76',[1]),
+       ['Reports cover patients per department, bookings, and performance.','Comparison by department and by period is supported.','Clinical KPIs include door-to-balloon time for cardiac cases.'],'High','Q72, Q73, Q74, Q75, Q76 · Field notes',[1]),
      L('17.2.2','Enforce the edit window and protect sensitive data.','record','audit log, access control',
        [['System Admin','enforce the fifteen-minute window and protect sensitive data so that integrity holds']],
        ['Every change is logged; sensitive data is restricted to authorized roles.'],'High','Q49, Q50',[1])]}]},
@@ -434,13 +488,14 @@ const NFR=[
  ['NFR-5 · Usability','The system shall offer a calm, mobile-first interface a first-time patient can use without training.','High'],
  ['NFR-6 · Accessibility','The system shall meet WCAG 2.1 AA, including screen-reader and keyboard support.','High'],
  ['NFR-7 · Localization','The system shall provide Arabic, English, and Russian across interface, content, and notifications.','High'],
- ['NFR-8 · Interoperability','The system shall integrate with the existing DMS and HMIS for patient, lab, and pharmacy data.','High'],
+ ['NFR-8 · Interoperability','The system shall integrate with the existing DMS / HMIS, Lab 2000, PACS, POS and ERP for patient, lab, imaging, pharmacy and billing data, over documented APIs and an IP-whitelisted network.','High'],
  ['NFR-9 · Auditability','The system shall log every change and allow self-editing only within fifteen minutes.','Medium'],
  ['NFR-10 · Scalability','The system shall support concurrent use across all departments without degradation.','Medium'],
  ['NFR-11 · Reliability','The system shall deliver critical alerts within seconds and never silently drop them.','High'],
  ['NFR-12 · Compliance','The system shall follow hospital accreditation and patient-consent requirements.','High'],
  ['NFR-13 · Maintainability','The system shall be built as independent services so each can evolve separately.','Medium'],
  ['NFR-14 · Data retention','The system shall retain records per hospital policy and support export and sharing.','Low'],
+ ['NFR-15 · Clinical safety','The system shall enforce safety steps before high-risk actions — informed consent, a surgical-safety time-out, medication reconciliation, and an internal-transport safety check.','High'],
 ];
 
 /* ---------- render ---------- */
