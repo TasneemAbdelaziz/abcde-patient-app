@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A.B.C.D.E — Staff Dashboards</title>
+<meta name="description" content="Staff web dashboards (Reception · Nursing · Doctor) for the A.B.C.D.E patient-centered system at Alamein Model Hospital.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- ============ LANDING PAGE ============ -->
+  <div class="landing" id="landing"><!-- filled by app.js --></div>
+
+  <!-- ============ LOGIN / ROLE PICKER ============ -->
+  <div class="login hidden" id="login"><!-- filled by app.js --></div>
+
+  <!-- ============ APP SHELL ============ -->
+  <div class="app" id="appRoot">
+    <aside class="sidebar" id="sidebar"></aside>
+    <header class="topbar" id="topbar"></header>
+    <main class="main" id="main"></main>
+    <div class="sb-backdrop" id="sbBackdrop" onclick="App.closeNav()"></div>
+  </div>
+
+  <!-- ============ OVERLAYS ============ -->
+  <div id="aiLayer"></div>
+  <div class="modal-back" id="modalBack"></div>
+  <div class="toast-wrap" id="toastWrap"></div>
+
+  <!-- ============ SCRIPTS (order matters; no build step) ============ -->
+  <script src="data.js"></script>
+  <script src="components.js"></script>
+  <script src="reception.js"></script>
+  <script src="nurse.js"></script>
+  <script src="doctor.js"></script>
+  <script src="quality.js"></script>
+  <script src="admin.js"></script>
+  <script src="emergency.js"></script>
+  <script src="family.js"></script>
+  <script src="ai.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Alamein Model Hospital — Care, Reimagined · A.B.C.D.E</title>
+<meta name="description" content="Alamein Model Hospital — a world-class smart hospital on Egypt's Mediterranean coast. AI-powered diagnostics, 20+ specialties, and the A.B.C.D.E patient-centered care ecosystem.">
+<link rel="icon" href="logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700;9..144,900&family=Outfit:wght@300;400;500;600;700;800&family=Cairo:wght@400;500;600;700;800&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="landing.css">
+</head>
+<body>
+
+<!-- ===================== PRELOADER ===================== -->
+<div class="preloader" id="preloader">
+  <div class="pl-mark">
+    <svg viewBox="0 0 120 120" class="pl-ecg">
+      <path class="pl-line" d="M2 60 H30 L38 60 L44 34 L52 86 L60 52 L66 60 H88 L96 44 L104 60 H118"/>
+    </svg>
+    <div class="pl-heart">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+    </div>
+  </div>
+  <div class="pl-name" data-en="ALAMEIN MODEL HOSPITAL" data-ar="مستشفى العلمين النموذجي">ALAMEIN MODEL HOSPITAL</div>
+</div>
+
+<!-- ===================== PROGRESS BAR ===================== -->
+<div class="scroll-progress" id="scrollProgress"></div>
+
+<!-- ===================== NAV ===================== -->
+<header class="nav" id="nav">
+  <div class="nav-inner">
+    <a href="#top" class="brand" aria-label="Alamein Model Hospital">
+      <span class="brand-chip"><img src="logo.png" alt="Alamein Model Hospital"></span>
+    </a>
+
+    <nav class="nav-links" id="navLinks">
+      <a href="#about"     data-en="About"      data-ar="عن المستشفى">About</a>
+      <a href="#centers"   data-en="Specialties" data-ar="التخصصات">Specialties</a>
+      <a href="#ecosystem" data-en="Ecosystem"  data-ar="المنظومة">Ecosystem</a>
+      <a href="#journey"   data-en="Journey"    data-ar="رحلة المريض">Journey</a>
+      <a href="#app"       data-en="Patient App" data-ar="تطبيق المريض">Patient App</a>
+      <a href="#contact"   data-en="Contact"    data-ar="تواصل">Contact</a>
+    </nav>
+
+    <div class="nav-right">
+      <button class="lang-toggle" id="langToggle" aria-label="Switch language">
+        <span class="lang-en">العربية</span>
+        <span class="lang-ar">English</span>
+      </button>
+      <a href="index.html" class="btn btn-solid btn-sm" data-en="Open App" data-ar="افتح التطبيق">Open App</a>
+      <button class="burger" id="burger" aria-label="Menu"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+
+<!-- ===================== HERO ===================== -->
+<section class="hero" id="hero">
+  <div class="hero-bg" data-parallax data-speed="0.35" id="heroBg"></div>
+  <div class="hero-tint"></div>
+  <div class="hero-grain"></div>
+
+  <!-- floating decorative orbs (parallax) -->
+  <span class="orb orb-a" data-parallax data-speed="-0.12"></span>
+  <span class="orb orb-b" data-parallax data-speed="0.18"></span>
+
+  <div class="hero-inner">
+    <div class="hero-eyebrow" data-reveal>
+      <span class="pulse-dot"></span>
+      <span data-en="New Alamein City · Mediterranean Coast" data-ar="مدينة العلمين الجديدة · ساحل البحر المتوسط">New Alamein City · Mediterranean Coast</span>
+    </div>
+
+    <h1 class="hero-title">
+      <span class="line" data-reveal style="--d:.05s" data-en="World-class care," data-ar="رعاية بمعايير عالمية،">World-class care,</span>
+      <span class="line grad" data-reveal style="--d:.16s" data-en="beautifully reimagined." data-ar="بتجربة استثنائية.">beautifully reimagined.</span>
+    </h1>
+
+    <p class="hero-lead" data-reveal style="--d:.28s"
+       data-en="A modern smart hospital on Egypt's North Coast — AI-powered diagnostics, 20+ specialties, and the A.B.C.D.E ecosystem that puts every patient at the centre of their own care."
+       data-ar="مستشفى ذكي حديث على الساحل الشمالي لمصر — تشخيص مدعوم بالذكاء الاصطناعي، وأكثر من 20 تخصصًا، ومنظومة A.B.C.D.E التي تجعل المريض محور رعايته.">
+      A modern smart hospital on Egypt's North Coast — AI-powered diagnostics, 20+ specialties, and the A.B.C.D.E ecosystem that puts every patient at the centre of their own care.
+    </p>
+
+    <div class="hero-cta" data-reveal style="--d:.4s">
+      <a href="index.html" class="btn btn-solid btn-lg">
+        <span data-en="Open Patient App" data-ar="افتح تطبيق المريض">Open Patient App</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+      <a href="dashboards/index.html" class="btn btn-ghost btn-lg" data-en="Staff Portal" data-ar="بوابة الطاقم">Staff Portal</a>
+    </div>
+
+    <div class="hero-meta" data-reveal style="--d:.52s">
+      <div class="hmeta"><b data-count="107">0</b><span data-en="Inpatient beds" data-ar="سرير إقامة">Inpatient beds</span></div>
+      <div class="hmeta"><b data-count="20" data-suffix="+">0</b><span data-en="Specialties" data-ar="تخصص">Specialties</span></div>
+      <div class="hmeta"><b data-count="5">0</b><span data-en="Operating rooms" data-ar="غرفة عمليات">Operating rooms</span></div>
+    </div>
+  </div>
+
+  <a href="#about" class="scroll-cue" aria-label="Scroll down">
+    <span class="mouse"><span></span></span>
+    <span data-en="Scroll" data-ar="انزل">Scroll</span>
+  </a>
+</section>
+
+<!-- ===================== MARQUEE / TRUST ===================== -->
+<div class="marquee" aria-hidden="true">
+  <div class="marquee-track">
+    <span data-en="GAHAR Accredited" data-ar="اعتماد جهار">GAHAR Accredited</span><i>✦</i>
+    <span data-en="AI-Powered Imaging" data-ar="تصوير بالذكاء الاصطناعي">AI-Powered Imaging</span><i>✦</i>
+    <span data-en="Cardiac Catheterization" data-ar="قسطرة قلبية">Cardiac Catheterization</span><i>✦</i>
+    <span data-en="Stroke Care" data-ar="رعاية السكتات">Stroke Care</span><i>✦</i>
+    <span data-en="Medical Tourism" data-ar="السياحة العلاجية">Medical Tourism</span><i>✦</i>
+    <span data-en="Powered by AIU" data-ar="بدعم جامعة العلمين">Powered by AIU</span><i>✦</i>
+    <span data-en="GAHAR Accredited" data-ar="اعتماد جهار">GAHAR Accredited</span><i>✦</i>
+    <span data-en="AI-Powered Imaging" data-ar="تصوير بالذكاء الاصطناعي">AI-Powered Imaging</span><i>✦</i>
+    <span data-en="Cardiac Catheterization" data-ar="قسطرة قلبية">Cardiac Catheterization</span><i>✦</i>
+    <span data-en="Stroke Care" data-ar="رعاية السكتات">Stroke Care</span><i>✦</i>
+    <span data-en="Medical Tourism" data-ar="السياحة العلاجية">Medical Tourism</span><i>✦</i>
+    <span data-en="Powered by AIU" data-ar="بدعم جامعة العلمين">Powered by AIU</span><i>✦</i>
+  </div>
+</div>
+
+<!-- ===================== ABOUT ===================== -->
+<section class="section about" id="about">
+  <div class="container about-grid">
+    <div class="about-media" data-reveal>
+      <div class="about-img" data-parallax data-speed="0.08" style="background-image:url(alamein-city.jpg)"></div>
+      <div class="about-badge">
+        <b data-count="23597" data-group="1">0</b>
+        <span data-en="m² medical campus" data-ar="م² حرم طبي">m² medical campus</span>
+      </div>
+    </div>
+
+    <div class="about-copy">
+      <div class="eyebrow" data-reveal data-en="About the Hospital" data-ar="عن المستشفى">About the Hospital</div>
+      <h2 class="h-display" data-reveal style="--d:.08s"
+          data-en="A model hospital opening new horizons for healthcare in Egypt."
+          data-ar="مستشفى نموذجي يفتح آفاقًا جديدة للرعاية الصحية في مصر.">
+        A model hospital opening new horizons for healthcare in Egypt.
+      </h2>
+      <p class="lead" data-reveal style="--d:.16s"
+         data-en="Founded in 2002 and elevated to a “Model Hospital” in 2019, we serve the people and visitors of Matrouh Governorate and the North Coast — under the Secretariat of Specialized Medical Centers."
+         data-ar="تأسست عام 2002 وارتقت إلى «مستشفى نموذجي» عام 2019، نخدم أهالي وزوار محافظة مطروح والساحل الشمالي — تحت مظلة أمانة المراكز الطبية المتخصصة.">
+        Founded in 2002 and elevated to a "Model Hospital" in 2019, we serve the people and visitors of Matrouh Governorate and the North Coast — under the Secretariat of Specialized Medical Centers.
+      </p>
+
+      <div class="about-points">
+        <div class="apoint" data-reveal style="--d:.05s">
+          <div class="apoint-ic">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
+          </div>
+          <div>
+            <div class="apoint-t" data-en="AI-equipped imaging" data-ar="تصوير مدعوم بالذكاء">AI-equipped imaging</div>
+            <div class="apoint-d" data-en="MRI &amp; CT powered by artificial intelligence for precise diagnosis." data-ar="رنين مغناطيسي وأشعة مقطعية مدعومة بالذكاء الاصطناعي لتشخيص دقيق.">MRI &amp; CT powered by artificial intelligence for precise diagnosis.</div>
+          </div>
+        </div>
+        <div class="apoint" data-reveal style="--d:.13s">
+          <div class="apoint-ic">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </div>
+          <div>
+            <div class="apoint-t" data-en="GAHAR accredited" data-ar="معتمدة من جهار">GAHAR accredited</div>
+            <div class="apoint-d" data-en="Initial accreditation by the General Authority for Healthcare Accreditation &amp; Regulation." data-ar="اعتماد مبدئي من الهيئة العامة للاعتماد والرقابة الصحية.">Initial accreditation by the General Authority for Healthcare Accreditation &amp; Regulation.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== STATS ===================== -->
+<section class="section stats-sec">
+  <div class="container stats-grid">
+    <div class="stat" data-reveal style="--d:.0s">
+      <b data-count="107">0</b>
+      <span data-en="Inpatient beds" data-ar="سرير إقامة">Inpatient beds</span>
+    </div>
+    <div class="stat" data-reveal style="--d:.08s">
+      <b data-count="5">0</b>
+      <span data-en="Operating rooms" data-ar="غرف عمليات">Operating rooms</span>
+    </div>
+    <div class="stat" data-reveal style="--d:.16s">
+      <b data-count="20" data-suffix="+">0</b>
+      <span data-en="Specialties" data-ar="تخصص طبي">Specialties</span>
+    </div>
+    <div class="stat" data-reveal style="--d:.24s">
+      <b data-count="2002">0</b>
+      <span data-en="Established" data-ar="سنة التأسيس">Established</span>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== CENTERS OF EXCELLENCE ===================== -->
+<section class="section centers" id="centers">
+  <div class="container">
+    <div class="sec-head" data-reveal>
+      <div class="eyebrow" data-en="Centers of Excellence" data-ar="مراكز التميز">Centers of Excellence</div>
+      <h2 class="h-display" data-en="Specialized care, end to end." data-ar="رعاية متخصصة من البداية للنهاية.">Specialized care, end to end.</h2>
+      <p class="lead" data-en="From the heart to the brain — advanced specialties supported by state-of-the-art operating rooms and imaging." data-ar="من القلب إلى المخ — تخصصات متقدمة مدعومة بأحدث غرف العمليات وأجهزة التصوير.">From the heart to the brain — advanced specialties supported by state-of-the-art operating rooms and imaging.</p>
+    </div>
+
+    <div class="centers-grid">
+      <article class="ccard tilt" data-reveal style="--d:.0s">
+        <div class="ccard-ic c-rose"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg></div>
+        <h3 data-en="Cardiology" data-ar="أمراض القلب">Cardiology</h3>
+        <p data-en="Comprehensive cardiac diagnosis, monitoring and rehabilitation." data-ar="تشخيص ومتابعة وتأهيل شامل لأمراض القلب.">Comprehensive cardiac diagnosis, monitoring and rehabilitation.</p>
+      </article>
+
+      <article class="ccard tilt" data-reveal style="--d:.06s">
+        <div class="ccard-ic c-teal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12h4l3 8 4-16 3 8h4"/></svg></div>
+        <h3 data-en="Cardiac Catheterization" data-ar="القسطرة القلبية">Cardiac Catheterization</h3>
+        <p data-en="Rapid door-to-balloon response for acute coronary syndromes." data-ar="استجابة سريعة من الباب للبالون لمتلازمات الشريان التاجي الحادة.">Rapid door-to-balloon response for acute coronary syndromes.</p>
+      </article>
+
+      <article class="ccard tilt" data-reveal style="--d:.12s">
+        <div class="ccard-ic c-purple"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3a4 4 0 00-4 4 4 4 0 00-1 7.874V17a3 3 0 006 0M12 3a4 4 0 014 4 4 4 0 011 7.874V17a3 3 0 01-6 0"/></svg></div>
+        <h3 data-en="Cerebral Catheterization" data-ar="قسطرة المخ">Cerebral Catheterization</h3>
+        <p data-en="Minimally invasive neuro-interventional procedures." data-ar="تدخلات عصبية دقيقة بأقل تدخل جراحي.">Minimally invasive neuro-interventional procedures.</p>
+      </article>
+
+      <article class="ccard tilt" data-reveal style="--d:.0s">
+        <div class="ccard-ic c-gold"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg></div>
+        <h3 data-en="Stroke Care" data-ar="رعاية السكتات">Stroke Care</h3>
+        <p data-en="Time-critical stroke pathways with 24/7 imaging support." data-ar="مسارات علاج السكتات الحرجة زمنياً بدعم تصوير على مدار الساعة.">Time-critical stroke pathways with 24/7 imaging support.</p>
+      </article>
+
+      <article class="ccard tilt" data-reveal style="--d:.06s">
+        <div class="ccard-ic c-blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg></div>
+        <h3 data-en="Neurosurgery" data-ar="جراحة المخ والأعصاب">Neurosurgery</h3>
+        <p data-en="Advanced surgical care for the brain and nervous system." data-ar="رعاية جراحية متقدمة للمخ والجهاز العصبي.">Advanced surgical care for the brain and nervous system.</p>
+      </article>
+
+      <article class="ccard tilt" data-reveal style="--d:.12s">
+        <div class="ccard-ic c-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg></div>
+        <h3 data-en="Plastic Surgery" data-ar="الجراحة التجميلية">Plastic Surgery</h3>
+        <p data-en="Reconstructive and aesthetic procedures by expert surgeons." data-ar="عمليات ترميمية وتجميلية على يد نخبة من الجراحين.">Reconstructive and aesthetic procedures by expert surgeons.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== PARALLAX QUOTE BAND ===================== -->
+<section class="parallax-band">
+  <div class="pb-bg" style="background-image:url(alamein-city.jpg)"></div>
+  <div class="pb-tint"></div>
+  <div class="container pb-inner" data-reveal>
+    <div class="pb-quote h-display"
+         data-en="“The patient is not a visitor in our care — they are the centre of it.”"
+         data-ar="«المريض ليس زائرًا في رعايتنا — بل هو محورها.»">
+      "The patient is not a visitor in our care — they are the centre of it."
+    </div>
+    <div class="pb-sub" data-en="Patient-centered care, built into every stage of the A.B.C.D.E journey." data-ar="رعاية محورها المريض، مدمجة في كل مرحلة من رحلة A.B.C.D.E.">Patient-centered care, built into every stage of the A.B.C.D.E journey.</div>
+  </div>
+</section>
+
+<!-- ===================== ECOSYSTEM ===================== -->
+<section class="section ecosystem" id="ecosystem">
+  <div class="container">
+    <div class="sec-head" data-reveal>
+      <div class="eyebrow light" data-en="The A.B.C.D.E Ecosystem" data-ar="منظومة A.B.C.D.E">The A.B.C.D.E Ecosystem</div>
+      <h2 class="h-display" data-en="One connected system. Every role, in sync." data-ar="منظومة واحدة متصلة. كل دور في تناغم.">One connected system. Every role, in sync.</h2>
+      <p class="lead" data-en="A digital backbone linking patients, families, doctors, nurses, reception and quality teams — powered by Alamein International University." data-ar="عمود رقمي يربط المرضى والعائلات والأطباء والممرضين والاستقبال وفرق الجودة — بدعم جامعة العلمين الدولية.">A digital backbone linking patients, families, doctors, nurses, reception and quality teams — powered by Alamein International University.</p>
+    </div>
+
+    <div class="eco-grid">
+      <a href="index.html" class="eco-card" data-reveal style="--d:.0s">
+        <div class="eco-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h8a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.83 14.83 8 16l1.17-3.83 7.416-7.586z"/></svg></div>
+        <h3 data-en="Patient Mobile App" data-ar="تطبيق المريض">Patient Mobile App</h3>
+        <p data-en="Live vitals, care journey, AI assistant, family access and stage-by-stage ratings." data-ar="مؤشرات حيوية لحظية، ورحلة علاج، ومساعد ذكي، ووصول للعائلة، وتقييم لكل مرحلة.">Live vitals, care journey, AI assistant, family access and stage-by-stage ratings.</p>
+        <span class="eco-link" data-en="Open the app" data-ar="افتح التطبيق">Open the app
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </span>
+      </a>
+
+      <div class="eco-card glow" data-reveal style="--d:.1s">
+        <div class="eco-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg></div>
+        <h3 data-en="AI Health Assistant" data-ar="المساعد الصحي الذكي">AI Health Assistant</h3>
+        <p data-en="Explains conditions, answers questions, and supports recovery — in Arabic, English and Russian." data-ar="يشرح الحالات، ويجيب عن الأسئلة، ويدعم التعافي — بالعربية والإنجليزية والروسية.">Explains conditions, answers questions, and supports recovery — in Arabic, English and Russian.</p>
+        <span class="eco-tag" data-en="Powered by AI" data-ar="مدعوم بالذكاء الاصطناعي">Powered by AI</span>
+      </div>
+
+      <a href="dashboards/index.html" class="eco-card" data-reveal style="--d:.2s">
+        <div class="eco-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg></div>
+        <h3 data-en="Staff Dashboards" data-ar="لوحات الطاقم">Staff Dashboards</h3>
+        <p data-en="Reception, nursing, doctors, emergency, admin and quality — a workspace for every role." data-ar="الاستقبال والتمريض والأطباء والطوارئ والإدارة والجودة — مساحة عمل لكل دور.">Reception, nursing, doctors, emergency, admin and quality — a workspace for every role.</p>
+        <span class="eco-link" data-en="Open dashboards" data-ar="افتح اللوحات">Open dashboards
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== JOURNEY ===================== -->
+<section class="section journey" id="journey">
+  <div class="container">
+    <div class="sec-head" data-reveal>
+      <div class="eyebrow" data-en="The Care Journey" data-ar="رحلة الرعاية">The Care Journey</div>
+      <h2 class="h-display" data-en="Eight stages. One seamless path." data-ar="ثماني مراحل. مسار واحد متكامل.">Eight stages. One seamless path.</h2>
+      <p class="lead" data-en="From arrival to home follow-up, every step is tracked, transparent and ready to be rated by the patient." data-ar="من الوصول إلى المتابعة المنزلية، كل خطوة متتبَّعة وشفافة وقابلة للتقييم من المريض.">From arrival to home follow-up, every step is tracked, transparent and ready to be rated by the patient.</p>
+    </div>
+
+    <div class="timeline">
+      <div class="tl-line"><span class="tl-fill" id="tlFill"></span></div>
+      <div class="tl-steps">
+        <div class="tl-step" data-reveal style="--d:.0s"><span class="tl-dot">1</span><div class="tl-nm" data-en="Arrival &amp; Registration" data-ar="الوصول والتسجيل">Arrival &amp; Registration</div></div>
+        <div class="tl-step" data-reveal style="--d:.05s"><span class="tl-dot">2</span><div class="tl-nm" data-en="Triage Assessment" data-ar="الفرز والتقييم">Triage Assessment</div></div>
+        <div class="tl-step" data-reveal style="--d:.1s"><span class="tl-dot">3</span><div class="tl-nm" data-en="Diagnosis" data-ar="التشخيص">Diagnosis</div></div>
+        <div class="tl-step" data-reveal style="--d:.15s"><span class="tl-dot">4</span><div class="tl-nm" data-en="Procedure" data-ar="الإجراء الطبي">Procedure</div></div>
+        <div class="tl-step" data-reveal style="--d:.2s"><span class="tl-dot">5</span><div class="tl-nm" data-en="Recovery &amp; Monitoring" data-ar="التعافي والمتابعة">Recovery &amp; Monitoring</div></div>
+        <div class="tl-step" data-reveal style="--d:.25s"><span class="tl-dot">6</span><div class="tl-nm" data-en="Ward Admission" data-ar="الإقامة بالجناح">Ward Admission</div></div>
+        <div class="tl-step" data-reveal style="--d:.3s"><span class="tl-dot">7</span><div class="tl-nm" data-en="Discharge Planning" data-ar="تخطيط الخروج">Discharge Planning</div></div>
+        <div class="tl-step" data-reveal style="--d:.35s"><span class="tl-dot">8</span><div class="tl-nm" data-en="Home Follow-up" data-ar="المتابعة المنزلية">Home Follow-up</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== APP SHOWCASE ===================== -->
+<section class="section app-show" id="app">
+  <div class="container app-grid">
+    <div class="app-copy">
+      <div class="eyebrow light" data-reveal data-en="In your pocket" data-ar="في جيبك">In your pocket</div>
+      <h2 class="h-display" data-reveal style="--d:.08s" data-en="Your whole hospital, in one app." data-ar="مستشفاك كله في تطبيق واحد.">Your whole hospital, in one app.</h2>
+      <p class="lead" data-reveal style="--d:.16s" data-en="Track your vitals, follow your care journey live, chat with the AI assistant, manage family access and rate every stage — all from your phone." data-ar="تابع مؤشراتك الحيوية، وراقب رحلة علاجك لحظيًا، وتحدث مع المساعد الذكي، وأدر وصول عائلتك، وقيّم كل مرحلة — من هاتفك.">Track your vitals, follow your care journey live, chat with the AI assistant, manage family access and rate every stage — all from your phone.</p>
+
+      <ul class="app-feats">
+        <li data-reveal style="--d:.05s"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg><span data-en="Live vital readings &amp; alerts" data-ar="قراءات حيوية وتنبيهات لحظية">Live vital readings &amp; alerts</span></li>
+        <li data-reveal style="--d:.11s"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg><span data-en="AI assistant in 3 languages" data-ar="مساعد ذكي بثلاث لغات">AI assistant in 3 languages</span></li>
+        <li data-reveal style="--d:.17s"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg><span data-en="Family access with privacy controls" data-ar="وصول العائلة مع ضوابط الخصوصية">Family access with privacy controls</span></li>
+        <li data-reveal style="--d:.23s"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg><span data-en="Reports, billing &amp; insurance in one place" data-ar="التقارير والفواتير والتأمين في مكان واحد">Reports, billing &amp; insurance in one place</span></li>
+      </ul>
+
+      <a href="index.html" class="btn btn-solid btn-lg" data-reveal style="--d:.3s">
+        <span data-en="Launch the App" data-ar="شغّل التطبيق">Launch the App</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+    </div>
+
+    <div class="app-device" data-reveal data-parallax data-speed="0.06">
+      <div class="phone-mock">
+        <span class="pm-notch"></span>
+        <div class="pm-screen">
+          <div class="pm-band">
+            <div class="pm-hi" data-en="Good morning 👋" data-ar="صباح الخير 👋">Good morning 👋</div>
+            <div class="pm-name" data-en="Ahmed Al-Rashid" data-ar="أحمد الراشد">Ahmed Al-Rashid</div>
+            <div class="pm-cond"><span class="pm-dot"></span><span data-en="Acute coronary syndrome" data-ar="متلازمة الشريان التاجي الحادة">Acute coronary syndrome</span></div>
+            <div class="pm-stage" data-en="Stage 5 of 8 · Recovery" data-ar="المرحلة 5 من 8 · التعافي">Stage 5 of 8 · Recovery</div>
+          </div>
+          <div class="pm-vitals">
+            <div class="pm-v">
+              <div class="pm-v-k" data-en="Heart rate" data-ar="معدل النبض">Heart rate</div>
+              <div class="pm-v-v">72<small>bpm</small></div>
+              <svg class="pm-ecg" viewBox="0 0 120 28" preserveAspectRatio="none"><path d="M0 14 H22 L28 14 L33 4 L40 24 L47 14 H70 L76 8 L82 14 H120"/></svg>
+            </div>
+            <div class="pm-v">
+              <div class="pm-v-k" data-en="SpO₂" data-ar="الأكسجين">SpO₂</div>
+              <div class="pm-v-v">98<small>%</small></div>
+              <div class="pm-ring"><span></span></div>
+            </div>
+          </div>
+          <div class="pm-prog">
+            <div class="pm-prog-top"><span data-en="Care journey" data-ar="رحلة الرعاية">Care journey</span><b>62%</b></div>
+            <div class="pm-bar"><i></i></div>
+          </div>
+          <div class="pm-chat">
+            <div class="pm-bub" data-en="What does my result mean?" data-ar="إيه معنى نتيجتي؟">What does my result mean?</div>
+            <div class="pm-bub ai" data-en="Your artery is open and blood flow is restored. Rest is key now 💙" data-ar="شريانك أصبح مفتوحًا وتدفق الدم عاد. الراحة أهم شيء الآن 💙">Your artery is open and blood flow is restored. Rest is key now 💙</div>
+          </div>
+        </div>
+      </div>
+      <span class="app-glow"></span>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== TESTIMONIALS ===================== -->
+<section class="section testi">
+  <div class="container">
+    <div class="sec-head" data-reveal>
+      <div class="eyebrow" data-en="Voices of Care" data-ar="أصوات الرعاية">Voices of Care</div>
+      <h2 class="h-display" data-en="Trusted by the people we serve." data-ar="ثقة من نخدمهم.">Trusted by the people we serve.</h2>
+    </div>
+    <div class="testi-grid">
+      <figure class="tcard" data-reveal style="--d:.0s">
+        <div class="stars">★★★★★</div>
+        <blockquote data-en="“From registration to discharge, I always knew exactly what was happening. The app made my father's recovery so much calmer for our whole family.”" data-ar="«من التسجيل حتى الخروج، كنت أعرف بالضبط ما يحدث. التطبيق جعل تعافي والدي أكثر طمأنينة لعائلتنا كلها.»">"From registration to discharge, I always knew exactly what was happening. The app made my father's recovery so much calmer for our whole family."</blockquote>
+        <figcaption><b data-en="Mahmoud I." data-ar="محمود إ.">Mahmoud I.</b><span data-en="Family caregiver" data-ar="أحد أفراد العائلة">Family caregiver</span></figcaption>
+      </figure>
+      <figure class="tcard" data-reveal style="--d:.1s">
+        <div class="stars">★★★★★</div>
+        <blockquote data-en="“The cath lab team moved fast and explained every step. Seeing my journey update in real time gave me real peace of mind.”" data-ar="«فريق القسطرة تحرك بسرعة وشرح كل خطوة. متابعة رحلتي لحظة بلحظة منحتني طمأنينة حقيقية.»">"The cath lab team moved fast and explained every step. Seeing my journey update in real time gave me real peace of mind."</blockquote>
+        <figcaption><b data-en="Ahmed R." data-ar="أحمد ر.">Ahmed R.</b><span data-en="Cardiac patient" data-ar="مريض قلب">Cardiac patient</span></figcaption>
+      </figure>
+      <figure class="tcard" data-reveal style="--d:.2s">
+        <div class="stars">★★★★★</div>
+        <blockquote data-en="“As a nurse, the dashboard keeps my whole ward in view. Less paperwork, more time with patients.”" data-ar="«كممرضة، تتيح لي اللوحة رؤية الجناح كاملًا. أوراق أقل ووقت أكثر مع المرضى.»">"As a nurse, the dashboard keeps my whole ward in view. Less paperwork, more time with patients."</blockquote>
+        <figcaption><b data-en="Nurse Salma H." data-ar="الممرضة سلمى ح.">Nurse Salma H.</b><span data-en="Ward B" data-ar="جناح B">Ward B</span></figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== CTA ===================== -->
+<section class="section cta-sec" id="contact">
+  <div class="cta-bg"></div>
+  <div class="container cta-inner" data-reveal>
+    <span class="brand-chip big"><img src="logo.png" alt="Alamein Model Hospital"></span>
+    <h2 class="h-display" data-en="Experience care, reimagined." data-ar="جرّب الرعاية بشكلها الجديد.">Experience care, reimagined.</h2>
+    <p class="lead" data-en="Open the patient app to explore the full A.B.C.D.E experience — or step into the staff portal." data-ar="افتح تطبيق المريض لاستكشاف تجربة A.B.C.D.E كاملة — أو ادخل بوابة الطاقم.">Open the patient app to explore the full A.B.C.D.E experience — or step into the staff portal.</p>
+    <div class="cta-btns">
+      <a href="index.html" class="btn btn-solid btn-lg" data-en="Open Patient App" data-ar="افتح تطبيق المريض">Open Patient App</a>
+      <a href="dashboards/index.html" class="btn btn-outline btn-lg" data-en="Staff Portal" data-ar="بوابة الطاقم">Staff Portal</a>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ===================== FOOTER ===================== -->
+<footer class="footer">
+  <div class="container foot-grid">
+    <div class="foot-brand">
+      <span class="brand-chip"><img src="logo.png" alt="Alamein Model Hospital"></span>
+      <p data-en="A model hospital on Egypt's North Coast, opening new horizons for medical tourism and patient-centered care." data-ar="مستشفى نموذجي على الساحل الشمالي لمصر، يفتح آفاقًا جديدة للسياحة العلاجية والرعاية المتمحورة حول المريض.">A model hospital on Egypt's North Coast, opening new horizons for medical tourism and patient-centered care.</p>
+      <div class="foot-accred" data-en="GAHAR Accredited · Powered by Alamein International University" data-ar="معتمدة من جهار · بدعم جامعة العلمين الدولية">GAHAR Accredited · Powered by Alamein International University</div>
+    </div>
+
+    <div class="foot-col">
+      <h4 data-en="Explore" data-ar="استكشف">Explore</h4>
+      <a href="#about" data-en="About" data-ar="عن المستشفى">About</a>
+      <a href="#centers" data-en="Specialties" data-ar="التخصصات">Specialties</a>
+      <a href="#ecosystem" data-en="Ecosystem" data-ar="المنظومة">Ecosystem</a>
+      <a href="#journey" data-en="Care Journey" data-ar="رحلة الرعاية">Care Journey</a>
+    </div>
+
+    <div class="foot-col">
+      <h4 data-en="Access" data-ar="الدخول">Access</h4>
+      <a href="index.html" data-en="Patient App" data-ar="تطبيق المريض">Patient App</a>
+      <a href="dashboards/index.html" data-en="Staff Dashboards" data-ar="لوحات الطاقم">Staff Dashboards</a>
+    </div>
+
+    <div class="foot-col">
+      <h4 data-en="Visit" data-ar="زورنا">Visit</h4>
+      <p class="foot-line" data-en="New Alamein City, Matrouh, Egypt" data-ar="مدينة العلمين الجديدة، مطروح، مصر">New Alamein City, Matrouh, Egypt</p>
+      <p class="foot-line" data-en="107 km west of Alexandria" data-ar="107 كم غرب الإسكندرية">107 km west of Alexandria</p>
+      <p class="foot-line emerg"><span class="pulse-dot"></span><span data-en="24/7 Emergency" data-ar="طوارئ على مدار الساعة">24/7 Emergency</span></p>
+    </div>
+  </div>
+  <div class="foot-bottom container">
+    <span data-en="© 2026 Alamein Model Hospital — A.B.C.D.E System. Prototype." data-ar="© 2026 مستشفى العلمين النموذجي — منظومة A.B.C.D.E. نموذج أولي.">© 2026 Alamein Model Hospital — A.B.C.D.E System. Prototype.</span>
+    <span class="foot-up"><a href="#top" data-en="Back to top ↑" data-ar="للأعلى ↑">Back to top ↑</a></span>
+  </div>
+</footer>
+
+<script src="landing.js"></script>
+</body>
+</html>
