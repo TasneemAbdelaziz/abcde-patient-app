@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A.B.C.D.E — Task Board · لوحة المهام</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Outfit:wght@400;500;600;700&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --teal:#0e7c86;--teal-d:#0a5a62;--ink:#14302f;--muted:#6b8786;--bg:#eef3f3;--card:#fff;--line:#e2eceb;
+    --todo:#c2453d;--doing:#b67b12;--review:#3a6ea5;--done:#16895a;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%}
+  body{font-family:'Outfit','Tajawal',system-ui,sans-serif;color:var(--ink);
+    background:radial-gradient(1200px 600px at 80% -10%,#e7f4f3 0%,var(--bg) 55%);-webkit-font-smoothing:antialiased;
+    display:flex;flex-direction:column;height:100vh;overflow:hidden}
+  /* header */
+  .top{padding:12px 18px 8px;flex:none}
+  .top h1{font-family:'Fraunces',serif;font-weight:600;font-size:21px;margin:0;display:flex;align-items:center;gap:10px}
+  .top h1 .badge{font-family:'Outfit';font-size:11px;font-weight:700;letter-spacing:.12em;background:var(--teal);color:#fff;padding:3px 9px;border-radius:999px}
+  .top .sub{color:var(--muted);font-size:12.5px;margin-top:3px}
+  /* toolbar */
+  .bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:8px 18px;flex:none}
+  .group{display:flex;align-items:center;gap:5px;flex-wrap:wrap}
+  .group .lbl{font-size:11px;color:var(--muted);font-weight:600;margin-inline-end:2px}
+  .chip{font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;border:1px solid var(--line);background:#fff;color:var(--muted);
+    padding:6px 11px;border-radius:999px;transition:.12s;display:inline-flex;align-items:center;gap:6px}
+  .chip:hover{border-color:var(--teal);color:var(--teal)}
+  .chip.on{background:var(--teal);border-color:var(--teal);color:#fff}
+  .chip .dot{width:9px;height:9px;border-radius:50%}
+  .chip.person.on{background:var(--pc,#333);border-color:var(--pc,#333)}
+  input.search,select.sel{font-family:inherit;font-size:12.5px;padding:7px 11px;border-radius:10px;border:1px solid var(--line);background:#fff;color:var(--ink);outline:none}
+  input.search:focus,select.sel:focus{border-color:var(--teal)}
+  .spacer{flex:1}
+  button.act{font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;color:var(--teal);background:#fff;border:1px solid var(--line);padding:7px 13px;border-radius:10px}
+  button.act:hover{background:var(--teal);color:#fff;border-color:var(--teal)}
+  /* progress strip */
+  .stats{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:4px 18px 10px;flex:none}
+  .pcard{display:flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:6px 10px}
+  .av{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:700;font-size:11px;flex:none}
+  .pcard .pn{font-size:12px;font-weight:600;line-height:1}
+  .pcard .pr{font-size:10.5px;color:var(--muted)}
+  .pbar{width:64px;height:6px;border-radius:99px;background:#e9efef;overflow:hidden}
+  .pbar > i{display:block;height:100%;background:var(--done)}
+  .pcard .cnt{font-size:11px;color:var(--muted);font-variant-numeric:tabular-nums}
+  .overall{margin-inline-start:auto;font-size:12.5px;font-weight:600;color:var(--teal);display:flex;align-items:center;gap:8px}
+  .overall .pbar{width:120px;height:8px}
+  /* board */
+  .board{display:flex;gap:14px;padding:6px 18px 18px;overflow-x:auto;flex:1;align-items:flex-start}
+  .col{flex:1 1 0;min-width:270px;max-width:1fr;background:rgba(255,255,255,.55);border:1px solid var(--line);border-radius:16px;
+    display:flex;flex-direction:column;max-height:100%}
+  .col.drag{background:#e7f4f3;border-color:var(--teal);border-style:dashed}
+  .colhead{display:flex;align-items:center;gap:8px;padding:11px 13px 8px;flex:none}
+  .colhead .nm{font-weight:700;font-size:13.5px;display:flex;align-items:center;gap:7px}
+  .colhead .k{width:10px;height:10px;border-radius:50%}
+  .colhead .num{margin-inline-start:auto;font-size:11.5px;font-weight:700;color:var(--muted);background:#fff;border:1px solid var(--line);border-radius:999px;padding:2px 9px;min-width:24px;text-align:center}
+  .list{padding:4px 9px 12px;overflow-y:auto;display:flex;flex-direction:column;gap:9px;flex:1}
+  /* card */
+  .tc{flex:none;background:#fff;border:1px solid var(--line);border-radius:13px;padding:10px 11px 9px;cursor:grab;position:relative;overflow:hidden;
+    box-shadow:0 4px 14px -10px rgba(14,124,134,.5);transition:.1s}
+  .tc:active{cursor:grabbing}
+  .tc.ghost{opacity:.4}
+  .tc.hl{box-shadow:0 0 0 2px var(--teal), 0 6px 16px -10px rgba(14,124,134,.6)}
+  .tc::before{content:"";position:absolute;inset-inline-start:0;top:0;bottom:0;width:4px;background:var(--mc,#999)}
+  .tc .r1{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:5px;padding-inline-start:4px}
+  .srs{font-size:10px;font-weight:700;font-variant-numeric:tabular-nums;color:#fff;background:var(--mc,#777);border-radius:6px;padding:2px 6px;letter-spacing:.02em}
+  .mtag{font-size:10px;font-weight:700;color:var(--mc,#777);border:1px solid currentColor;border-radius:6px;padding:1px 6px}
+  .pr0,.pr1,.pr2{font-size:9.5px;font-weight:800;border-radius:5px;padding:2px 5px;letter-spacing:.04em}
+  .pr0{background:#fdeceb;color:#c2453d}.pr1{background:#fdf3e0;color:#b67b12}.pr2{background:#eef2f8;color:#3a6ea5}
+  .tc .ttl{font-size:13px;font-weight:600;line-height:1.25;padding-inline-start:4px}
+  .tc .ar{font-size:11.5px;color:var(--muted);font-family:'Tajawal';padding-inline-start:4px;margin-top:1px}
+  .tc .io{font-size:10.5px;color:#8aa0a0;padding-inline-start:4px;margin-top:5px;line-height:1.35;border-top:1px dashed var(--line);padding-top:5px}
+  .tc .io b{color:var(--muted);font-weight:600}
+  .tc .r2{display:flex;align-items:center;gap:6px;margin-top:8px;padding-inline-start:4px;flex-wrap:wrap}
+  .surf{font-size:10px;color:var(--muted);background:#f2f6f6;border-radius:6px;padding:2px 7px;font-weight:600}
+  .own{display:inline-flex;align-items:center;gap:4px;position:relative}
+  .own .ic{font-size:11px;opacity:.7}
+  .own select{font-family:inherit;font-size:10.5px;font-weight:700;border:none;border-radius:7px;padding:3px 4px;color:#fff;cursor:pointer;appearance:none;text-align:center}
+  .own select.empty{background:#dfe7e7 !important;color:#90a3a3 !important}
+  .hint{padding:0 18px 8px;color:var(--muted);font-size:11px;flex:none}
+  @media (max-width:760px){.board{flex-direction:column;overflow-x:hidden;overflow-y:auto}.col{max-width:none;width:100%}}
+  /* add / edit / custom / modal */
+  button.act.primary{background:var(--teal);color:#fff;border-color:var(--teal)}
+  button.act.primary:hover{background:var(--teal-d)}
+  .tc .editbtn{position:absolute;top:6px;inset-inline-end:7px;width:22px;height:22px;border-radius:7px;border:1px solid var(--line);background:#fff;color:var(--muted);font-size:12px;cursor:pointer;line-height:1;padding:0;opacity:0;transition:.12s;z-index:2}
+  .tc:hover .editbtn{opacity:1}
+  .tc .editbtn:hover{background:var(--teal);color:#fff;border-color:var(--teal)}
+  .tc.custom{border-color:#bfe0d4;box-shadow:0 4px 14px -10px rgba(22,137,90,.7)}
+  .newtag{font-size:9px;font-weight:800;color:#16895a;background:#e7f6ee;border-radius:5px;padding:2px 5px}
+  .modal-bg{position:fixed;inset:0;background:rgba(20,48,47,.5);display:none;align-items:center;justify-content:center;z-index:50;padding:16px}
+  .modal-bg.show{display:flex}
+  .modal{background:#fff;border-radius:18px;padding:20px;width:min(460px,94vw);max-height:92vh;overflow:auto;box-shadow:0 30px 80px -20px rgba(0,0,0,.45)}
+  .modal h3{font-family:'Fraunces',serif;font-weight:600;margin:0 0 10px;font-size:19px}
+  .modal label{display:block;font-size:11px;font-weight:600;color:var(--muted);margin:9px 0 3px}
+  .modal input,.modal select,.modal textarea{width:100%;font-family:inherit;font-size:13px;padding:8px 10px;border:1px solid var(--line);border-radius:9px;outline:none;background:#fff;color:var(--ink);resize:vertical}
+  .modal input:focus,.modal select:focus,.modal textarea:focus{border-color:var(--teal)}
+  .modal .row{display:flex;gap:8px}.modal .row>div{flex:1;min-width:0}
+  .modal .btns{display:flex;gap:8px;margin-top:16px;align-items:center}
+  .modal .btns button{padding:10px 14px;border-radius:10px;font-family:inherit;font-weight:600;font-size:13px;cursor:pointer;border:1px solid var(--line);background:#fff;color:var(--muted)}
+  .modal .btns .save{background:var(--teal);color:#fff;border-color:var(--teal);flex:1}
+  .modal .btns .del{background:#fdeceb;color:#c2453d;border-color:#fdeceb}
+</style>
+</head>
+<body>
+  <div class="top">
+    <h1><span class="badge">A.B.C.D.E</span> Task Board · لوحة المهام <span style="font-family:'Outfit';font-size:12px;font-weight:600;color:var(--muted)">— Alamein Model Hospital</span></h1>
+    <div class="sub">كل feature من الـ mindmap = كارت · اسحب الكارت بين الأعمدة لتغيير الحالة · غيّر المسؤول (🎨 فرونت · ⚙️ باك) · التغييرات تتحفظ تلقائياً في المتصفح.</div>
+  </div>
+
+  <div class="bar">
+    <div class="group"><span class="lbl">👤 الشخص</span><span id="peopleChips"></span></div>
+    <div class="group"><span class="lbl">الأولوية</span>
+      <span class="chip prio on" data-p="all">الكل</span>
+      <span class="chip prio" data-p="P0">P0</span>
+      <span class="chip prio" data-p="P1">P1</span>
+      <span class="chip prio" data-p="P2">P2</span>
+    </div>
+    <select class="sel" id="moduleSel"></select>
+    <input class="search" id="search" placeholder="🔎 بحث... (اسم/SRS)" style="width:160px">
+    <div class="spacer"></div>
+    <button class="act primary" id="addBtn">➕ مهمة جديدة</button>
+    <button class="act" id="exportBtn">⬇ Export</button>
+    <button class="act" id="resetBtn">↺ Reset</button>
+  </div>
+
+  <div class="stats" id="stats"></div>
+  <div class="board" id="board"></div>
+  <div class="hint" id="hint"></div>
+
+  <div class="modal-bg" id="modalBg">
+    <div class="modal">
+      <h3 id="modalTitle">مهمة جديدة</h3>
+      <div class="row">
+        <div><label>SRS</label><input id="ed_srs" placeholder="—"></div>
+        <div><label>Module</label><select id="ed_m"></select></div>
+        <div><label>الحالة</label><select id="ed_st"></select></div>
+      </div>
+      <label>العنوان (English)</label><input id="ed_en" placeholder="Feature name">
+      <label>العنوان (عربي)</label><input id="ed_ar" placeholder="اسم المهمة">
+      <div class="row">
+        <div><label>Surface</label><input id="ed_surface" placeholder="Mobile / Web / Backend"></div>
+        <div><label>Role</label><input id="ed_role" placeholder="Patient / Doctor..."></div>
+      </div>
+      <div class="row">
+        <div><label>🎨 Frontend</label><select id="ed_fe"></select></div>
+        <div><label>⚙️ Backend</label><select id="ed_be"></select></div>
+      </div>
+      <label>In → Out (عقد الـ API)</label><textarea id="ed_io" rows="2" placeholder="inputs → outputs"></textarea>
+      <div class="btns">
+        <button class="del" id="ed_del" style="display:none">🗑 حذف</button>
+        <button id="ed_cancel">إلغاء</button>
+        <button class="save" id="ed_save">💾 حفظ</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+/* ============ TEAM ============ */
+const TEAM={
+  Mohamed:{role:'Backend',color:'#0e7c86'},
+  Tasnem:{role:'Backend',color:'#9b5de5'},
+  Mena:{role:'Mobile Screens',color:'#3aa0d1'},
+  Heba:{role:'Mobile Screens',color:'#e06c9f'},
+  Sara:{role:'Web Dashboards · الخراشي',color:'#16895a'},
+  Mayar:{role:'UI/UX & Content',color:'#b67b12'},
+};
+const initials=n=>n==='—'?'—':n.slice(0,2);
+
+/* ============ MODULES ============ */
+const MOD={
+  M1:{name:'Identity',color:'#c2453d',p:'P0'},
+  M2:{name:'Public & Appointments',color:'#e07b3a',p:'P2'},
+  M3:{name:'Patient Journey',color:'#d9a72b',p:'P0'},
+  M4:{name:'Vitals / NEWS2',color:'#16895a',p:'P0'},
+  M5:{name:'Clinical (Meds/Dx)',color:'#2a8a7a',p:'P0'},
+  M6:{name:'AI Assistant',color:'#9b5de5',p:'P1'},
+  M7:{name:'Emergency',color:'#e8554e',p:'P0'},
+  M8:{name:'Family',color:'#e06c9f',p:'P1'},
+  M9:{name:'Billing',color:'#b67b12',p:'P2'},
+  M10:{name:'Feedback / Quality',color:'#3fb27f',p:'P1'},
+  M11:{name:'Education',color:'#3aa0d1',p:'P2'},
+  M12:{name:'Admin / Nav / Access',color:'#6c8cd5',p:'P2'},
+};
+
+/* ============ COLUMNS ============ */
+const COLS=[
+  {k:'todo',  nm:'⬜ To Do · لسه',     c:'#c2453d'},
+  {k:'doing', nm:'🟡 In Progress · شغّال',c:'#b67b12'},
+  {k:'review',nm:'🔵 Review · مراجعة',  c:'#3a6ea5'},
+  {k:'done',  nm:'✅ Done · خلص',       c:'#16895a'},
+];
+
+/* ============ TASKS (from mindmap FRs) ============
+   t(srs, en, ar, module, surface, role, status, fe, be)  */
+let _id=0;
+const t=(srs,en,ar,m,surface,role,st,fe,be,io)=>({id:++_id,srs,en,ar,m,surface,role,st,fe,be,io});
+const TASKS=[
+/* M1 Identity */
+t('1.1.1','Login (password)','دخول بكلمة سر','M1','Mobile','Patient','done','Mena','Mohamed','mobile/fileId, password → token, role'),
+t('1.1.1','Login (staff)','دخول الموظف','M1','Web','Staff','todo','Sara','Mohamed','credentials → token'),
+t('1.1.2','Login by QR','دخول بـ QR','M1','Mobile','Patient','doing','Mena','Mohamed','qrToken → token'),
+t('1.1.2','Issue QR','إصدار QR','M1','Web','Reception','todo','Sara','Mohamed','patientId → qrToken'),
+t('1.1.3','Guest access','دخول كزائر','M1','Public','Visitor','done','Mena','Mohamed','— → guest session'),
+t('1.2.1','Register patient','تسجيل مريض','M1','Mobile/Web','Patient/Reception','doing','Mena','Mohamed','name, nationalId, age, phone → patientId'),
+t('1.2.1','Issue ID card','إصدار كارت','M1','Web','Reception','todo','Sara','Mohamed','patientId, type → card+barcode'),
+t('1.2.2','Set preferences','التفضيلات','M1','Mobile','Patient','todo','Mena','Mohamed','language, contact, decisionMaker → prefs'),
+/* M2 Public & Appointments */
+t('2.1.1','View hospital info','معلومات المستشفى','M2','Public','Visitor','todo','Mayar','Tasnem','— → about, contacts, videos'),
+t('2.2.1','Browse departments (21)','تصفّح الأقسام','M2','Public','Visitor','todo','Mayar','Tasnem','— → dept pages'),
+t('2.2.2','Doctor directory','دليل الأطباء','M2','Public','Visitor','todo','Mayar','Tasnem','specialty → doctors[]'),
+t('2.3.1','News & stories','أخبار وقصص','M2','Public','Visitor','todo','Mayar','Tasnem','— → articles[]'),
+t('3.1.1','Request appointment','طلب موعد','M2','Mobile','Patient','doing','Mena','Tasnem','dept, complaint, time → requestId'),
+t('3.1.2','Manage bookings','إدارة الحجوزات','M2','Web','Reception','todo','Sara','Tasnem','— → slots[]'),
+t('3.2.1','View appointments','عرض المواعيد','M2','Mobile','Patient','done','Mena','Tasnem','patientId → upcoming[]'),
+t('3.2.2','Reschedule / Cancel','إعادة جدولة/إلغاء','M2','Mobile','Patient','doing','Mena','Tasnem','apptId, newTime → updated'),
+t('3.3.1','Assign to doctor','إسناد لطبيب','M2','Web','Reception/Director','todo','Sara','Tasnem','patientId, doctorId → assignment'),
+/* M3 Journey */
+t('4.1.1','Open ticket / file','فتح التذكرة','M3','Web','Reception','todo','Sara','Mohamed','patientId → ticketNo, file'),
+t('4.1.1','Receive visit ticket','استلام التذكرة','M3','Mobile','Patient','doing','Mena','Mohamed','patientId → ticketNo'),
+t('4.1.1','Triage & route','فرز وتوجيه','M3','Web','Nurse','todo','Sara','Mohamed','assessment → destination'),
+t('4.2.1','Advance stages','تحريك المراحل','M3','Web','Doctor/Nurse','todo','Sara','Mohamed','decision → new stage, owner'),
+t('4.2.2','Alternative pathway','مسار بديل','M3','Web','Doctor','todo','Sara','Mohamed','finding → re-route'),
+t('4.2.3','Select cath type','نوع القسطرة','M3','Web','Doctor','todo','Sara','Mohamed','finding → cathType, specialist'),
+t('4.3.1','View simplified status','الحالة المبسّطة','M3','Mobile','Patient/Family','done','Mena','Mohamed','ticketNo → statusText'),
+t('4.4.1','Classify arrival type','نوع الوصول','M3','Web','Reception','todo','Sara','Mohamed','channel → emergency|scheduled'),
+t('4.4.2','Identify patient','تحديد الهوية','M3','Web','Reception','todo','Sara','Mohamed','wallet, ID, insurance → identity'),
+t('4.4.3','Three-doctor committee','لجنة الأطباء الثلاثة','M3','Web','Doctor','todo','Sara','Mohamed','case → Direct Admission Form'),
+t('4.5.1','Informed consent','الموافقة المستنيرة','M3','Mobile/Web','Doctor/Patient','todo','Mena','Mohamed','procedure, decisionMaker → consent'),
+t('4.5.2','Pre-op safety time-out','فحص الأمان الجراحي','M3','Web','Nurse','todo','Sara','Mohamed','checklist → verified'),
+t('4.6.1','Maintain care plan','خطة الرعاية','M3','Web','Doctor','todo','Sara','Mohamed','problem list → plan, outcomes'),
+t('4.6.2','Internal transport (RSTP)','أمان النقل الداخلي','M3','Web','Nurse','todo','Sara','Mohamed','from/to → transport form'),
+t('4.6.3','Discharge + family education','الخروج والتثقيف','M3','Web','Doctor','todo','Sara','Mohamed','outcome → education, follow-up'),
+/* M4 Vitals */
+t('5.1.1','Record vitals','تسجيل العلامات','M4','Web','Nurse','todo','Sara','Tasnem','BP, pulse, RR, SpO2 → saved'),
+t('5.1.2','Assess pain / consciousness','تقييم الألم/الوعي','M4','Web','Doctor/Nurse','todo','Sara','Tasnem','scale → saved'),
+t('5.2.1','Set thresholds','ضبط الحدود','M4','Web','Doctor','todo','Sara','Tasnem','limits → ruleSet'),
+t('5.3.1','Compute risk (NEWS2)','حساب الخطورة','M4','Backend','AI engine','todo','—','Tasnem','vitals, labs → score'),
+t('5.3.2','Deterioration alert','تنبيه تدهور','M4','Web/Mobile','Doctor/Nurse','todo','Sara','Tasnem','riskLevel → alert'),
+t('5.3.3','VTE Padua score','خطورة الجلطات','M4','Web','Doctor','todo','Sara','Tasnem','factors → score, prophylaxis'),
+t('5.4','View own vitals','عرض علاماتي','M4','Mobile','Patient','done','Mena','Tasnem','patientId → HR, BP, SpO2'),
+/* M5 Clinical */
+t('6.1.1','Prescribe medication','وصف الدواء','M5','Web','Doctor','todo','Sara','Tasnem','drug, dose, route → medPlan'),
+t('6.1.2','Reconcile medications','مطابقة الأدوية','M5','Web','Doctor/Nurse','todo','Sara','Tasnem','chronic dx, meds → reconciled'),
+t('6.2.1','Medication reminders','تذكيرات الدواء','M5','Mobile','Patient','done','Mena','Tasnem','patientId → due doses'),
+t('6.2.2','Administer & log (MAR)','إعطاء وتسجيل','M5','Web','Nurse','todo','Sara','Tasnem','medItemId, time → log'),
+t('6.2.2','Mark dose taken','تأكيد جرعة','M5','Mobile','Patient','doing','Mena','Tasnem','medItemId → adherence'),
+t('—','Pharmacy availability','توفّر الدواء','M5','Web','Doctor/Nurse','todo','Sara','Tasnem','drug → availability'),
+t('7.1.1','Order tests','طلب فحوصات','M5','Web','Doctor','todo','Sara','Tasnem','types[] → orderIds[]'),
+t('7.2.1','View / download reports','عرض التقارير','M5','Mobile','Patient','done','Mena','Tasnem','patientId, type → report doc'),
+t('7.2.2','Review history','السجل التاريخي','M5','Web','Doctor','todo','Sara','Tasnem','patientId → past visits'),
+t('7.2.3','ICD-coded diagnosis','تشخيص بترميز ICD','M5','Web','Doctor','todo','Sara','Tasnem','findings → ICD-10, summary'),
+t('7.3.1','Doctor’s orders','أوامر الطبيب','M5','Web','Doctor','todo','Sara','Tasnem','orders → status'),
+t('7.3.2','Consultation request','طلب استشارة','M5','Web','Doctor','todo','Sara','Tasnem','specialty, question → reply'),
+/* M6 AI */
+t('—','AI Chatbot engine (n8n)','شات بوت بـ n8n','M6','Backend','AI / Backend','doing','—','Mohamed','n8n flows → advisor + triage (مع Tasnem) · BIG'),
+t('8.1.1','Ask advisor','اسأل المساعد','M6','Mobile','Patient/Family','doing','Heba','Tasnem','question, context → answer (via n8n)'),
+t('8.1.2','Symptom triage','فرز الأعراض','M6','Mobile','Patient','todo','Heba','Tasnem','symptoms → urgency, red-flag'),
+t('8.2.1','Receive escalation','استقبال تحويل','M6','Web','Doctor/Nurse','todo','Sara','Tasnem','ticketNo → handoff'),
+t('9.1.1','Generate report draft','مسودة تقرير','M6','Web','Doctor','todo','Sara','Tasnem','EMR data, type → draft'),
+t('9.1.2','Review & approve','مراجعة واعتماد','M6','Web','Doctor','todo','Sara','Tasnem','draftId, edits → final'),
+t('9.2.1','Voice transcription','تفريغ صوتي','M6','Web','Doctor','todo','Sara','Tasnem','audio → note text'),
+t('9.2.2','Translate (AR/EN/RU)','ترجمة','M6','Web/Mobile','Doctor/Patient','todo','Heba','Tasnem','text, lang → translated'),
+/* M7 Emergency */
+t('12.1.1','Receive alerts','استقبال التنبيهات','M7','Mobile','Patient/Family','done','Heba','Mohamed','patientId → alerts[]'),
+t('12.2.1','Trigger SOS','زر الطوارئ','M7','Mobile','Patient/Family','done','Heba','Mohamed','patientId, location → raised'),
+t('12.2.2','Activate Code Blue','تفعيل كود بلو','M7','Web','Nurse/Emergency','todo','Sara','Mohamed','location → team paged'),
+t('—','Escalation chain','سلسلة التصعيد','M7','Web','Emergency','doing','Sara','Mohamed','sos → physician→nursing→family→center'),
+t('—','Mark read','تعليم مقروء','M7','Mobile','Patient','done','Heba','Mohamed','notifId → read'),
+/* M8 Family */
+t('11.1.1','Add companion (QR/manual)','إضافة مرافق','M8','Mobile','Patient','done','Heba','Mohamed','name|QR, relation → linked'),
+t('11.1.1','Accept link','قبول الربط','M8','Mobile','Family','done','Heba','Mohamed','inviteId → access'),
+t('11.1.2','Set permissions','الصلاحيات','M8','Mobile','Patient','done','Heba','Mohamed','companionId, level → permission'),
+t('11.2.1','Family notifications','تنبيهات الأهل','M8','Mobile/Web','Family','doing','Heba','Mohamed','companionId → alerts'),
+t('4.3.1','View status (family)','متابعة الحالة','M8','Web/Mobile','Family','doing','Sara','Mohamed','ticketNo → stage, physician'),
+t('7.2.1','Blocked from results','محجوب عن النتائج','M8','Backend','Family','todo','—','Mohamed','— → privacy enforced'),
+t('4.5.1','Consent (decision-maker)','موافقة المخوّل','M8','Mobile','Family','todo','Heba','Mohamed','requestId → consent record'),
+/* M9 Billing */
+t('13.1.1','Set coverage category','فئة التغطية','M9','Web','Reception','todo','Sara','Tasnem','patientId → self-pay/state/insurance'),
+t('13.1.1','View bill','عرض الفاتورة','M9','Mobile','Patient','done','Heba','Tasnem','patientId → bill, due'),
+t('13.1.2','Pay','الدفع','M9','Mobile','Patient/Family','doing','Heba','Tasnem','amount, method → receipt'),
+t('—','Committee review (funding)','لجنة التمويل','M9','Web','Reception','todo','Sara','Tasnem','reason → memo'),
+t('—','Financial file','الملف المالي','M9','Web','Reception','todo','Sara','Tasnem','visitId → financial file'),
+/* M10 Quality */
+t('10.1.1','Rate a stage','تقييم مرحلة','M10','Mobile','Patient/Family','done','Heba','Mohamed','stageId, stars → ratingId, +20'),
+t('10.1.2','Report an issue','إبلاغ مشكلة','M10','Mobile','Patient','done','Heba','Mohamed','stage, text → ticketId'),
+t('10.2.1','Handle complaints (≤6h)','إدارة الشكاوى','M10','Web','Quality','todo','Sara','Mohamed','complaintId → response/escalate'),
+t('10.2.2','Analyze & report (sentiment)','تحليل وتقارير','M10','Web','Quality','todo','Sara','Tasnem','ratings → sentiment, themes'),
+/* M11 Education */
+t('14.1.1','Education videos','فيديوهات تثقيفية','M11','Mobile','Patient','done','Mena','Mayar','condition → videos[]'),
+t('14.1.2','Relax content','محتوى مهدّئ','M11','Mobile','Patient','done','Mena','Mayar','— → sounds, games, films'),
+t('14.2.1','Earn Care Points','نقاط الرعاية','M11','Mobile','Patient','done','Mena','Mohamed','ratingId → points'),
+t('—','Tutorial / demo video (walkthrough)','فيديو شرح للتطبيق','M11','Video','Tutorial','doing','Tasnem','—','app flows → recorded tutorial · BIG TASK'),
+/* M12 Admin / Nav / Access */
+t('1.3.1','Define roles','تعريف الأدوار','M12','Web','Admin','todo','Sara','Mohamed','user, role → permissions'),
+t('1.3.2','Edit-window rule (≤15m)','نافذة التعديل','M12','Web','Admin','todo','Sara','Mohamed','record → enforced'),
+t('17.1.1','Manage accounts','إدارة الحسابات','M12','Web','Admin','todo','Sara','Mohamed','user, role → account'),
+t('17.1.2','Configure system','إعدادات النظام','M12','Web','Admin','todo','Sara','Mohamed','stages, alarms, langs → config'),
+t('17.1.3','Integrate DMS/HMIS','تكامل','M12','Web','Admin','todo','Sara','Tasnem','external data → synced'),
+t('17.2.1','Management / KPI reports','تقارير الإدارة','M12','Web','Director/Quality','todo','Sara','Tasnem','range → KPIs, comparisons'),
+t('17.2.2','Audit / protect data','تدقيق وحماية','M12','Backend','Admin','todo','—','Mohamed','record → log, access control'),
+t('15.1.1','Open indoor map','الخريطة الداخلية','M12','Mobile','Patient/Visitor','todo','Heba','Mayar','floor → map'),
+t('15.1.2','Search & navigate','بحث وتوجيه','M12','Mobile','Patient','todo','Heba','Mayar','room|doctor → route'),
+t('16.1.1','Vision / screen reader','إبصار/قارئ شاشة','M12','Mobile','Patient','todo','Heba','—','profile → contrast, TTS'),
+t('16.1.2','Voice & audio','صوت','M12','Mobile','Patient','todo','Heba','—','voice command → action'),
+t('16.1.3','Hearing (captions/haptics)','سمع','M12','Mobile','Patient','todo','Heba','—','event → captions, haptics'),
+t('16.2.1','Non-verbal','غير ناطق','M12','Mobile','Patient','todo','Heba','—','tap, message → request'),
+t('16.2.2','Motor / elderly mode','حركة/كبار السن','M12','Mobile','Patient','todo','Heba','—','profile → switch, simple mode'),
+];
+
+/* ============ STATE / PERSISTENCE ============ */
+const KEY='abcde-board-v1', KEY_C='abcde-board-custom-v1';
+let overrides=JSON.parse(localStorage.getItem(KEY)||'{}');
+let custom=JSON.parse(localStorage.getItem(KEY_C)||'[]');
+function save(){localStorage.setItem(KEY,JSON.stringify(overrides));}
+function saveCustom(){localStorage.setItem(KEY_C,JSON.stringify(custom));}
+function allTasks(){return TASKS.concat(custom);}
+function isCustom(id){return custom.some(x=>x.id===id);}
+function task(o){const ov=overrides[o.id]||{};return {...o,...ov};}
+function set(id,patch){overrides[id]={...(overrides[id]||{}),...patch};save();render();}
+
+/* ============ FILTERS ============ */
+const F={person:'all',prio:'all',module:'all',q:''};
+
+/* people chips */
+const pc=document.getElementById('peopleChips');
+function pchip(name,color){const c=document.createElement('span');c.className='chip person'+(F.person===name?' on':'');
+  c.style.setProperty('--pc',color||'#0e7c86');
+  c.innerHTML=(name==='all'?'الكل':`<span class="av" style="width:18px;height:18px;font-size:9px;background:${color}">${initials(name)}</span>${name}`);
+  c.onclick=()=>{F.person=name;render();};return c;}
+function buildPeople(){pc.innerHTML='';pc.appendChild(pchip('all'));
+  Object.entries(TEAM).forEach(([n,o])=>pc.appendChild(pchip(n,o.color)));}
+
+/* module select */
+const msel=document.getElementById('moduleSel');
+msel.innerHTML='<option value="all">📦 كل الـ Modules</option>'+Object.entries(MOD).map(([k,m])=>`<option value="${k}">${k} · ${m.name} (${m.p})</option>`).join('');
+msel.onchange=()=>{F.module=msel.value;render();};
+document.querySelectorAll('.chip.prio').forEach(c=>c.onclick=()=>{F.prio=c.dataset.p;document.querySelectorAll('.chip.prio').forEach(x=>x.classList.toggle('on',x===c));render();});
+document.getElementById('search').oninput=e=>{F.q=e.target.value.trim().toLowerCase();render();};
+
+function match(o){
+  if(F.module!=='all'&&o.m!==F.module)return false;
+  if(F.prio!=='all'&&MOD[o.m].p!==F.prio)return false;
+  if(F.person!=='all'&&o.fe!==F.person&&o.be!==F.person)return false;
+  if(F.q){const s=(o.srs+' '+o.en+' '+o.ar+' '+o.role+' '+o.m+' '+MOD[o.m].name).toLowerCase();if(!s.includes(F.q))return false;}
+  return true;
+}
+
+/* ============ RENDER ============ */
+const board=document.getElementById('board');
+function ownSel(o,field){
+  const val=o[field];const wrap=document.createElement('span');wrap.className='own';
+  wrap.innerHTML=`<span class="ic">${field==='fe'?'🎨':'⚙️'}</span>`;
+  const s=document.createElement('select');
+  const opts=['—',...Object.keys(TEAM)];
+  s.innerHTML=opts.map(n=>`<option value="${n}"${n===val?' selected':''}>${n}</option>`).join('');
+  const col=val==='—'?'':TEAM[val]?.color;
+  if(val==='—')s.classList.add('empty');else s.style.background=col;
+  s.onchange=e=>{e.stopPropagation();set(o.id,{[field]:s.value});};
+  s.onclick=e=>e.stopPropagation();
+  wrap.appendChild(s);return wrap;}
+
+function card(o){
+  const m=MOD[o.m];const el=document.createElement('div');el.className='tc';el.draggable=true;el.style.setProperty('--mc',m.color);
+  if(F.person!=='all'&&(o.fe===F.person||o.be===F.person))el.classList.add('hl');
+  if(isCustom(o.id))el.classList.add('custom');
+  const r1=document.createElement('div');r1.className='r1';
+  r1.innerHTML=`<span class="srs">${o.srs}</span><span class="mtag">${o.m}</span><span class="pr${m.p[1]}">${m.p}</span>`+(isCustom(o.id)?'<span class="newtag">✦ جديد</span>':'');
+  const ttl=document.createElement('div');ttl.className='ttl';ttl.textContent=o.en;
+  const ar=document.createElement('div');ar.className='ar';ar.textContent=o.ar;
+  const io=document.createElement('div');io.className='io';io.innerHTML=`<b>In→Out:</b> ${o.io||''}`;
+  const r2=document.createElement('div');r2.className='r2';
+  r2.innerHTML=`<span class="surf">${o.surface} · ${o.role}</span>`;
+  r2.appendChild(ownSel(o,'fe'));r2.appendChild(ownSel(o,'be'));
+  const edit=document.createElement('button');edit.className='editbtn';edit.textContent='✎';edit.title='تعديل';edit.draggable=false;
+  edit.onclick=ev=>{ev.stopPropagation();openEditor(o.id);};
+  el.append(r1,ttl,ar,io,r2,edit);
+  el.addEventListener('dragstart',ev=>{ev.dataTransfer.setData('text/plain',o.id);el.classList.add('ghost');});
+  el.addEventListener('dragend',()=>el.classList.remove('ghost'));
+  return el;}
+
+function render(){
+  buildPeople();
+  const items=allTasks().map(task).filter(match);
+  board.innerHTML='';
+  COLS.forEach(col=>{
+    const c=document.createElement('div');c.className='col';c.dataset.k=col.k;
+    const list=items.filter(o=>o.st===col.k);
+    const head=document.createElement('div');head.className='colhead';
+    head.innerHTML=`<span class="nm"><span class="k" style="background:${col.c}"></span>${col.nm}</span><span class="num">${list.length}</span>`;
+    const ul=document.createElement('div');ul.className='list';
+    list.forEach(o=>ul.appendChild(card(o)));
+    c.append(head,ul);
+    c.addEventListener('dragover',ev=>{ev.preventDefault();c.classList.add('drag');});
+    c.addEventListener('dragleave',()=>c.classList.remove('drag'));
+    c.addEventListener('drop',ev=>{ev.preventDefault();c.classList.remove('drag');
+      const id=+ev.dataTransfer.getData('text/plain');if(id)set(id,{st:col.k});});
+    board.appendChild(c);
+  });
+  renderStats();
+  document.getElementById('hint').textContent=`عدد المهام المعروضة: ${items.length} من ${allTasks().length} · إجمالي ${Object.keys(MOD).length} موديول، ${Object.keys(TEAM).length} أعضاء · اسحب الكارت لتغيير الحالة · ✎ للتعديل · ➕ لإضافة مهمة.`;
+}
+
+function renderStats(){
+  const all=allTasks().map(task);
+  const stats=document.getElementById('stats');stats.innerHTML='';
+  Object.entries(TEAM).forEach(([n,o])=>{
+    const mine=all.filter(x=>x.fe===n||x.be===n);
+    const done=mine.filter(x=>x.st==='done').length;
+    const pct=mine.length?Math.round(done/mine.length*100):0;
+    const d=document.createElement('div');d.className='pcard';
+    d.innerHTML=`<span class="av" style="background:${o.color}">${initials(n)}</span>
+      <span><span class="pn">${n}</span><br><span class="pr">${o.role}</span></span>
+      <span class="pbar"><i style="width:${pct}%;background:${o.color}"></i></span>
+      <span class="cnt">${done}/${mine.length}</span>`;
+    d.style.cursor='pointer';d.onclick=()=>{F.person=(F.person===n?'all':n);render();};
+    stats.appendChild(d);
+  });
+  const done=all.filter(x=>x.st==='done').length;
+  const doing=all.filter(x=>x.st==='doing').length;
+  const pct=Math.round(done/all.length*100);
+  const ov=document.createElement('div');ov.className='overall';
+  ov.innerHTML=`الإنجاز الكلي: ${done}/${all.length} (${pct}%) · شغّال ${doing}
+    <span class="pbar"><i style="width:${pct}%"></i></span>`;
+  stats.appendChild(ov);
+}
+
+/* ============ ACTIONS ============ */
+document.getElementById('resetBtn').onclick=()=>{
+  if(confirm('استرجاع كل المهام لحالتها الأصلية؟ (هيمسح تعديلاتك المحفوظة)')){overrides={};save();render();}
+};
+document.getElementById('exportBtn').onclick=()=>{
+  const rows=[['SRS','Module','Priority','Feature(EN)','Feature(AR)','Surface','Role','Status','Frontend','Backend']];
+  allTasks().map(task).forEach(o=>rows.push([o.srs,o.m,MOD[o.m].p,o.en,o.ar,o.surface,o.role,o.st,o.fe,o.be]));
+  const csv='﻿'+rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
+  a.download='abcde-tasks.csv';a.click();
+};
+
+/* ============ EDITOR (add / edit task) ============ */
+const mg=document.getElementById('modalBg');
+function fillSel(id,arr,val){document.getElementById(id).innerHTML=arr.map(o=>`<option value="${o.v}"${o.v===val?' selected':''}>${o.t}</option>`).join('');}
+let editingId=null;
+const gv=id=>document.getElementById(id).value;
+const sv=(id,v)=>document.getElementById(id).value=v;
+function openEditor(id){
+  editingId=id||null;
+  const o=id?task(allTasks().find(x=>x.id===id)):{srs:'—',en:'',ar:'',m:'M1',surface:'Mobile',role:'',st:'todo',fe:'—',be:'—',io:''};
+  fillSel('ed_m',Object.keys(MOD).map(k=>({v:k,t:`${k} · ${MOD[k].name}`})),o.m);
+  fillSel('ed_st',COLS.map(c=>({v:c.k,t:c.nm})),o.st);
+  fillSel('ed_fe',['—',...Object.keys(TEAM)].map(n=>({v:n,t:n})),o.fe);
+  fillSel('ed_be',['—',...Object.keys(TEAM)].map(n=>({v:n,t:n})),o.be);
+  sv('ed_srs',o.srs);sv('ed_en',o.en);sv('ed_ar',o.ar);sv('ed_surface',o.surface);sv('ed_role',o.role);sv('ed_io',o.io||'');
+  document.getElementById('modalTitle').textContent=id?'تعديل المهمة':'➕ مهمة جديدة';
+  document.getElementById('ed_del').style.display=(id&&isCustom(id))?'block':'none';
+  mg.classList.add('show');
+}
+function closeEditor(){mg.classList.remove('show');editingId=null;}
+document.getElementById('ed_cancel').onclick=closeEditor;
+mg.onclick=e=>{if(e.target===mg)closeEditor();};
+document.getElementById('addBtn').onclick=()=>openEditor(null);
+document.getElementById('ed_save').onclick=()=>{
+  const f={srs:gv('ed_srs')||'—',en:gv('ed_en')||'(بدون عنوان)',ar:gv('ed_ar'),m:gv('ed_m'),
+    surface:gv('ed_surface')||'—',role:gv('ed_role')||'—',st:gv('ed_st'),fe:gv('ed_fe'),be:gv('ed_be'),io:gv('ed_io')};
+  if(editingId){
+    if(isCustom(editingId)){const i=custom.findIndex(x=>x.id===editingId);custom[i]={...custom[i],...f};saveCustom();}
+    else{overrides[editingId]={...(overrides[editingId]||{}),...f};save();}
+  }else{custom.push({id:Date.now(),...f});saveCustom();}
+  closeEditor();render();
+};
+document.getElementById('ed_del').onclick=()=>{
+  if(editingId&&isCustom(editingId)&&confirm('حذف المهمة دي نهائياً؟')){
+    custom=custom.filter(x=>x.id!==editingId);saveCustom();delete overrides[editingId];save();closeEditor();render();}
+};
+
+render();
+</script>
+</body>
+</html>
