@@ -1,3 +1,7 @@
 .DS_Store
 Thumbs.db
 *.log
+
+# Large media/archives excluded from GitHub (exceed 100MB limit)
+requirements/celestial.zip
+requirements/celestial/Recording 2026-05-09 234456.mp4
