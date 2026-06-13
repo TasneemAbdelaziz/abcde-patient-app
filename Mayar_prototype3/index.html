@@ -1,1 +1,299 @@
 
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Alamein Model Hospital</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="phone-frame">
+    <section class="screen">
+
+      <!-- ================= HOME SLIDER ================= -->
+      <section class="home-view active" id="homeView">
+        <nav class="navbar">
+          <div class="brand">
+            <img src="logo.png" alt="Alamein Model Hospital Logo" class="logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='grid';">
+            <div class="logo-fallback">AMH</div>
+            <h1 data-i18n="hospitalName" class="titleText">Alamein Model Hospital</h1>
+          </div>
+          <div class="language-dropdown">
+            <button class="language-btn" id="languageBtn" aria-label="Change language">🌐</button>
+            <div class="language-menu" id="languageMenu">
+              <button data-lang="en">English</button>
+              <button data-lang="ar">العربية</button>
+              <button data-lang="ru">Русский</button>
+            </div>
+          </div>
+        </nav>
+
+        <p class="outside-about-title" data-i18n="aboutTitle">ABOUT THE HOSPITAL</p>
+
+        <section class="about-slider" id="about">
+          <div class="about-track" id="aboutTrack">
+            <div class="about-slide slide-1">
+              <div class="slide-overlay"></div>
+              <div class="slide-content">
+                <h1 data-i18n="card1Title">Matrouh’s Largest Medical Hub</h1>
+                <p data-i18n="card1Text">A leading healthcare destination serving Matrouh, New Alamein, the North Coast, residents, visitors, and medical tourism patients.</p>
+              </div>
+            </div>
+            <div class="about-slide slide-2">
+              <div class="slide-overlay"></div>
+              <div class="slide-content">
+                <h1 data-i18n="card2Title">Multi‑Specialty Excellence</h1>
+                <p data-i18n="card2Text">More than 20 departments bring specialized care together, including cardiology, neurosurgery, emergency, radiology, stroke care, and surgery.</p>
+              </div>
+            </div>
+            <div class="about-slide slide-3">
+              <div class="slide-overlay"></div>
+              <div class="slide-content">
+                <h1 data-i18n="card3Title">AI‑Powered Imaging</h1>
+                <p data-i18n="card3Text">Advanced MRI, CT, and catheterization technologies support faster diagnosis and more precise clinical decisions.</p>
+              </div>
+            </div>
+            <div class="about-slide slide-4">
+              <div class="slide-overlay"></div>
+              <div class="slide-content">
+                <h1 data-i18n="card4Title">Quality‑Driven Care</h1>
+                <p data-i18n="card4Text">Built around safety, clinical quality, patient experience, and trusted healthcare standards for every stage of care.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="slider-controls">
+            <button class="dot active" data-slide="0" aria-label="Show slide 1"></button>
+            <button class="dot" data-slide="1" aria-label="Show slide 2"></button>
+            <button class="dot" data-slide="2" aria-label="Show slide 3"></button>
+            <button class="dot" data-slide="3" aria-label="Show slide 4"></button>
+          </div>
+
+          <div class="actions two-buttons">
+            <button class="primary-btn" id="nextBtn" data-i18n="nextBtn">Next</button>
+            <button class="secondary-btn" id="openAppBtn"><span data-i18n="learnBtn">Open Patient App</span><span>→</span></button>
+          </div>
+          <div class="aiu-footer home-aiu-footer">Empowered by AIU</div>
+        </section>
+      </section>
+
+
+      <!-- ================= LOGIN ================= -->
+      <section class="login-view" id="loginView">
+        <div class="login-top">
+          <button class="login-back" onclick="backToHome()" aria-label="Back to home">←</button>
+          <div class="login-logo">
+            <img src="logo.png" alt="Alamein Model Hospital Logo">
+          </div>
+          <h2>Sign In</h2>
+          <p>Access your patient profile, reports, treatment plan, and care journey.</p>
+        </div>
+
+        <div class="login-body">
+          <label class="login-field">
+            <span>National ID</span>
+            <input type="text" value="xxxxxxxxxxxxxx" aria-label="National ID">
+          </label>
+
+          <label class="login-field">
+            <span>Password</span>
+            <input type="password" value="12345678" aria-label="Password">
+          </label>
+
+          <button class="login-main-btn" onclick="enterPatientApp(false)">Log In</button>
+
+          <div class="login-or"><span>or</span></div>
+
+          <button class="qr-login-btn" onclick="scanQRLogin()">
+            <span>▦</span>
+            Scan QR Code
+          </button>
+
+          <button class="guest-login-btn" onclick="enterPatientApp(true)">Continue as Guest</button>
+        </div>
+        <div class="aiu-footer login-aiu-footer">Empowered by AIU</div>
+      </section>
+
+      <!-- ================= PATIENT APP ================= -->
+      <section class="app-view" id="appView">
+        <header class="app-header">
+          <div class="app-brand">
+            <img src="logo.png" alt="Alamein Model Hospital" />
+            <div>
+              <strong>Alamein Model Hospital</strong>
+              <span>Patient Mobile App</span>
+            </div>
+          </div>
+          <button class="icon-btn" onclick="showPage('alerts')" aria-label="Notifications">🔔</button>
+        </header>
+
+        <main class="app-pages" id="appPages">
+          <section class="app-page active" id="page-profile">
+            <div class="simple-profile">
+              <div class="profile-avatar">AA</div>
+              <div class="profile-info">
+                <p id="profileGreeting">Welcome back</p>
+                <h2 id="profileName">Ahmed Al‑Rashid</h2>
+                <span id="profileRoom">Room 204 · Ward B</span>
+              </div>
+            </div>
+
+            <div class="status-card">
+              <span class="eyebrow">Current condition</span>
+              <h3 id="conditionTitle">Recovery & Monitoring</h3>
+              <p id="conditionText">Acute coronary syndrome · Stage 5 of 8</p>
+            </div>
+
+            <h4 class="section-label">Vital Readings</h4>
+            <div class="vitals-grid vitals-priority">
+              <div><b>72</b><span>bpm</span><small>Heart rate</small></div>
+              <div><b>98%</b><span></span><small>SpO₂</small></div>
+              <div><b>120/80</b><span>mmHg</span><small>Blood pressure</small></div>
+              <div><b>36.6</b><span>°C</span><small>Temperature</small></div>
+            </div>
+
+            <h4 class="section-label">My Health</h4>
+            <div class="tile-grid">
+              <button class="tile" onclick="showPage('visits')"><span>🩺</span><b>Diagnoses</b><small>Visits & conditions</small></button>
+              <button class="tile" onclick="showPage('care')"><span>💊</span><b>Treatment Plan</b><small>Medication & goals</small></button>
+              <button class="tile" onclick="showPage('reports')"><span>📄</span><b>Reports</b><small>Health records</small></button>
+              <button class="tile feedback-tile" onclick="showPage('feedback')"><span>⭐</span><b>Feedback</b><small>Rate service & send notes</small></button>
+              <button class="tile entertainment-tile" onclick="showPage('entertainment')"><span>🎧</span><b>Entertainment</b><small>Relaxing media & games</small></button>
+            </div>
+          </section>
+
+          <section class="app-page" id="page-visits">
+            <div class="page-head"><button onclick="showPage('profile')">←</button><div><span class="eyebrow">Diagnoses & Visits</span><h2>My Visits</h2></div></div>
+            <div class="list-card"><b>Visit #ALM‑20413</b><span class="badge active">Active</span><p>Acute coronary syndrome — catheterization</p><small>Today · Dr. Amira Fouad · Cardiology</small></div>
+            <div class="list-card"><b>Visit #ALM‑20104</b><span class="badge">Completed</span><p>Hypertension follow‑up</p><small>14 Feb 2026 · Rated 4.6 / 5</small></div>
+            <div class="journey-card">
+              <h3>Care Journey</h3>
+              <ol class="journey-list">
+                <li class="done">Arrival & Registration</li>
+                <li class="done">Triage Assessment</li>
+                <li class="done">Diagnosis</li>
+                <li class="done">Catheterization</li>
+                <li class="current">Recovery & Monitoring</li>
+                <li>Ward Admission</li>
+                <li>Discharge Planning</li>
+              </ol>
+            </div>
+          </section>
+
+          <section class="app-page" id="page-care">
+            <div class="page-head"><button onclick="showPage('profile')">←</button><div><span class="eyebrow">Care Plan</span><h2>Treatment Plan</h2></div></div>
+
+            <div class="progress-card">
+              <div class="progress-top">
+                <div>
+                  <span class="eyebrow">Today’s achievement</span>
+                  <h3>63% Completed</h3>
+                  <p>5 completed tasks · 3 tasks remaining</p>
+                </div>
+                <div class="donut" style="--p:63"><span>63%</span></div>
+              </div>
+              <div class="progress-bar"><i style="width:63%"></i></div>
+              <div class="progress-legend">
+                <span><b class="done-dot"></b> Completed</span>
+                <span><b class="remain-dot"></b> Remaining</span>
+              </div>
+            </div>
+
+            <h4 class="section-label">Completed</h4>
+            <div class="plan-row done"><b>Morning vitals check</b><span>Done</span><p>Heart rate, SpO₂, blood pressure, and temperature recorded.</p></div>
+            <div class="plan-row done"><b>Clopidogrel 75 mg</b><span>Taken</span><p>Morning dose recorded at 9:05 AM.</p></div>
+            <div class="plan-row done"><b>Low-salt meal</b><span>Done</span><p>Dietary plan followed for lunch.</p></div>
+
+            <h4 class="section-label">Remaining Plan</h4>
+            <div class="plan-row remain"><b>Aspirin 81 mg</b><span>2:00 PM</span><p>Take after lunch with water.</p></div>
+            <div class="plan-row remain"><b>Light walking</b><span>Pending</span><p>10 minutes supervised by nursing.</p></div>
+            <div class="plan-row remain"><b>Atorvastatin 40 mg</b><span>9:00 PM</span><p>Evening dose before sleep.</p></div>
+
+            <button class="primary-full" onclick="openModal('Appointment request screen — prototype only.')">Reserve Appointment</button>
+          </section>
+
+          <section class="app-page" id="page-reports">
+            <div class="page-head"><button onclick="showPage('profile')">←</button><div><span class="eyebrow">Records</span><h2>Reports</h2></div></div>
+            <div class="list-card"><b>Catheterization Report</b><p>Cardiology · today 11:20</p><small>Tap to download or share</small></div>
+            <div class="list-card"><b>Lab Results</b><p>Cardiac enzymes & blood panel</p><small>Laboratory · today 08:55</small></div>
+            <div class="list-card"><b>Financial Summary</b><p>Current visit invoice</p><small>Amount due: EGP 6,030</small></div>
+          </section>
+
+          <section class="app-page" id="page-feedback">
+            <div class="page-head"><button onclick="showPage('profile')">←</button><div><span class="eyebrow">Patient Voice</span><h2>Feedback</h2></div></div>
+            <div class="feedback-hero">
+              <div class="feedback-icon">⭐</div>
+              <h3>How was your experience?</h3>
+              <p>Your feedback helps Alamein Model Hospital improve service quality and patient comfort.</p>
+            </div>
+            <div class="feedback-card">
+              <b>Rate today’s service</b>
+              <div class="rating-stars" aria-label="Five star rating"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div>
+              <button class="primary-full" onclick="openModal('Thank you. Your service rating has been submitted.')">Submit Rating</button>
+            </div>
+            <div class="feedback-options">
+              <button onclick="openModal('Cleanliness feedback sent to quality team.')"><span>🧼</span><b>Cleanliness</b><small>Room and facilities</small></button>
+              <button onclick="openModal('Staff feedback sent to quality team.')"><span>👩‍⚕️</span><b>Staff Care</b><small>Nurses and doctors</small></button>
+              <button onclick="openModal('Waiting-time feedback sent to quality team.')"><span>⏱️</span><b>Waiting Time</b><small>Speed of service</small></button>
+              <button onclick="openModal('Your issue has been reported to the hospital support team.')"><span>📝</span><b>Report Issue</b><small>Send a note</small></button>
+            </div>
+          </section>
+
+          <section class="app-page" id="page-alerts">
+            <div class="page-head"><button onclick="showPage('profile')">←</button><div><span class="eyebrow">Notifications</span><h2>Alerts</h2></div></div>
+            <div class="list-card"><b>Medication due: Aspirin</b><span class="badge active">Now</span><p>Take after lunch with water.</p></div>
+            <div class="list-card"><b>Rate your diagnosis stage</b><p>Your feedback helps improve hospital quality.</p></div>
+            <div class="list-card"><b>Follow‑up appointment set</b><p>Cardiology · in 7 days, 11:00 AM</p></div>
+          </section>
+
+          <section class="app-page" id="page-entertainment">
+            <div class="page-head"><button onclick="showPage('profile')">←</button><div><span class="eyebrow">Patient Comfort</span><h2>Entertainment</h2></div></div>
+            <div class="entertainment-hero">
+              <div class="ent-icon">🎧</div>
+              <h3>Relax During Your Stay</h3>
+              <p>Calm content, light games, and educational videos for patients and family members.</p>
+            </div>
+            <div class="ent-grid">
+              <button onclick="openModal('Calm music player — prototype only.')"><span>🎵</span><b>Calm Music</b><small>Relaxing sounds</small></button>
+              <button onclick="openModal('Video library — prototype only.')"><span>▶️</span><b>Short Videos</b><small>Health & comfort</small></button>
+              <button onclick="openModal('Puzzle games — prototype only.')"><span>🧩</span><b>Light Games</b><small>Simple puzzles</small></button>
+              <button onclick="openModal('Reading library — prototype only.')"><span>📖</span><b>Reading</b><small>Articles & tips</small></button>
+            </div>
+          </section>
+
+          <section class="app-page" id="page-family">
+            <div class="page-head"><button onclick="showPage('profile')">←</button><div><span class="eyebrow">Caregiver Access</span><h2>Family</h2></div></div>
+            <div class="list-card"><b>Mahmoud Ibrahim</b><span class="badge active">Active</span><p>Son · Full access</p></div>
+            <div class="list-card"><b>Samia Ibrahim</b><span class="badge">View only</span><p>Spouse · Receives alerts</p></div>
+            <button class="primary-full" onclick="openModal('Family invite QR — prototype only.')">Add Family Member</button>
+          </section>
+        </main>
+
+        <button class="doctor-chat-alert" onclick="openModal('Your care team has been alerted and will respond immediately.')" aria-label="Alert doctor">
+          <span class="doctor-chat-icon">🚨</span>
+          <span class="doctor-chat-text">Doctor</span>
+        </button>
+
+        <div class="aiu-footer app-aiu-footer">Empowered by AIU</div>
+
+        <nav class="tabbar">
+          <button class="tab active" data-page="profile" onclick="showPage('profile')">⌂<span>Home</span></button>
+          <button class="tab" data-page="visits" onclick="showPage('visits')">☑<span>Visits</span></button>
+          <button class="tab" data-page="feedback" onclick="showPage('feedback')">⭐<span>Feedback</span></button>
+          <button class="tab" data-page="entertainment" onclick="showPage('entertainment')">🎧<span>Relax</span></button>
+          <button class="tab" data-page="family" onclick="showPage('family')">👥<span>Family</span></button>
+        </nav>
+      </section>
+
+      <div class="modal" id="modal" onclick="if(event.target===this)closeModal()">
+        <div class="modal-sheet"><span></span><p id="modalText"></p><button onclick="closeModal()">OK</button></div>
+      </div>
+    </section>
+  </main>
+  <script src="script.js"></script>
+</body>
+</html>
