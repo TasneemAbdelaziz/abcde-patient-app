@@ -1,8 +1,11 @@
 # Deploying the ABCDE Healthcare API (free host)
 
 The backend ships as a single Docker image (verified locally: it builds, boots,
-imports `db/*.xlsx`, and serves the API in production mode). Recommended free
-host: **Render** (free Docker web service + GitHub auto-deploy).
+imports `db/*.xlsx`, and serves the API in production mode). The **same image runs
+on any Docker host** — pick whichever one doesn't ask for a credit card.
+
+**No credit card, free:** Koyeb or Back4App (Option A below).
+**Needs a card:** Render, Railway, Fly.io, Google Cloud Run, AWS.
 
 Files that power this:
 - [`Dockerfile`](Dockerfile) — PHP 8.2 + extensions, installs deps, runs the app.
@@ -17,36 +20,41 @@ Files that power this:
 
 ---
 
-## Option A — Render (recommended)
+## Option A — Koyeb (free, no credit card) ★ recommended
 
-1. **Push the code to GitHub** (Render deploys from a repo). The `Dockerfile`,
-   `render.yaml`, `backend/`, and `db/` must be committed.
-2. Go to **render.com** → sign up (free) → **New + → Blueprint**.
-3. Connect the GitHub repo `abcde-patient-app`. Render reads `render.yaml`.
-4. When prompted for **`APP_KEY`**, paste one generated with:
-   ```bash
-   cd backend && php artisan key:generate --show
+1. Push the code to GitHub (done — branch `add-backend-and-deploy`).
+2. Sign up at **koyeb.com** with your GitHub account (free tier, no card).
+3. **Create Web Service → GitHub** → pick the repo and branch.
+4. Builder: **Dockerfile** (path `./Dockerfile`, work dir = repo root).
+5. Set the service **port to 8080** and **health check path** `/api/v1/health`.
+   Koyeb injects `$PORT`; `start.sh` already listens on it.
+6. (Optional) add env var `APP_KEY` = output of
+   `cd backend && php artisan key:generate --show`. Otherwise one is generated
+   on boot (sessions reset on restart — fine for a demo).
+7. **Deploy** → you get a URL like `https://abcde-<you>.koyeb.app`.
+8. Smoke-test, then point Postman `{{baseUrl}}` at `https://.../api/v1`:
    ```
-   (copy the whole `base64:...` string). Or leave it blank — the container
-   generates one on boot (sessions then reset on each restart).
-5. Click **Apply**. First build takes a few minutes. When live you get a URL like
-   `https://abcde-healthcare-api.onrender.com`.
-6. Smoke-test:
-   ```
-   GET  https://<your-app>.onrender.com/api/v1/health
-   POST https://<your-app>.onrender.com/api/v1/auth/login
+   GET  https://<app>.koyeb.app/api/v1/health
+   POST https://<app>.koyeb.app/api/v1/auth/login
         { "identifier": "k.adel@alamein.example", "password": "password" }
    ```
-7. In your **Postman** collection set `{{baseUrl}}` to
-   `https://<your-app>.onrender.com/api/v1`.
 
-> Free services sleep after ~15 min idle; the first request after that takes
-> ~30–60s to wake. That's normal on the free plan.
+## Option B — Back4App Containers (free, no credit card)
+Same `Dockerfile`. At **back4app.com** → *Containers* → deploy from the GitHub
+repo, Dockerfile at root, exposed port `8080`. Free 256–512 MB instance.
 
-## Option B — Koyeb / Railway
-Both deploy the same `Dockerfile` from GitHub. Create a service, point it at the
-repo, set the Docker context to the repo root, and add the same env vars that
-`render.yaml` lists. Railway uses a small trial credit; Koyeb has a free service.
+## Option C — Render / Railway (need a credit card)
+The repo includes a [`render.yaml`](render.yaml) Blueprint if you ever use Render
+(New + → Blueprint → pick the repo; paste an `APP_KEY` when asked). Railway works
+the same way on a small trial credit. Both ask for a card, so prefer A/B for $0.
+
+> All free tiers sleep after ~15 min idle; the first request then takes ~30–60s
+> to wake. Normal.
+
+## Truly-free-forever (if you'll use a card once for sign-up only)
+**Oracle Cloud Always Free** gives a real always-free VM (ARM, generous specs).
+A card is taken only for identity verification — never charged on the free tier.
+You manage a full Linux box: install Docker, then `docker run` this same image.
 
 ## The static dashboards / landing page
 The dashboards in `dashboards/` + `landing.html` are static and use mock data
