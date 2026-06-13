@@ -1,0 +1,19 @@
+# Keep the build context small and reproducible.
+**/.git
+**/node_modules
+backend/vendor
+backend/.env
+backend/.env.backup
+backend/database/database.sqlite
+backend/storage/logs/*
+backend/storage/framework/cache/*
+backend/storage/framework/sessions/*
+backend/storage/framework/views/*
+
+# Repo tooling / docs that the running API does not need.
+requirements/
+db/_backup_original/
+db/_generate_dummy_data.py
+backend/_update_postman.py
+**/*.bak
+**/.DS_Store
