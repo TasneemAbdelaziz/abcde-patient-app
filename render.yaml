@@ -1,0 +1,23 @@
+# Render Blueprint — free Docker web service for the ABCDE Healthcare API.
+# In Render: New + → Blueprint → pick this repo. Most config is baked into the
+# Dockerfile; the values below are the few worth seeing/overriding in the dashboard.
+services:
+  - type: web
+    name: abcde-healthcare-api
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /api/v1/health
+    autoDeploy: true
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: "false"
+      - key: APP_LOCALE
+        value: ar
+      # Set a fixed key so sessions/cookies survive restarts (optional for a
+      # token-based API). Generate one with: php artisan key:generate --show
+      - key: APP_KEY
+        sync: false

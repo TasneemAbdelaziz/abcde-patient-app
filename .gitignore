@@ -5,3 +5,9 @@ Thumbs.db
 # Large media/archives excluded from GitHub (exceed 100MB limit)
 requirements/celestial.zip
 requirements/celestial/Recording 2026-05-09 234456.mp4
+
+# Local tooling / backups (not part of the deployable app)
+*.bak
+db/_backup_original/
+db/_generate_dummy_data.py
+backend/_update_postman.py
