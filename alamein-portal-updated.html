@@ -58,7 +58,7 @@ body{background:linear-gradient(160deg,#dceafb 0%,#eef5fd 45%,#e3effb 100%);disp
 .bottom-nav{display:flex;background:#fff;border-top:1px solid var(--border);flex-shrink:0;box-shadow:0 -4px 16px rgba(20,59,102,.05)}
 .nav-tab{flex:1;padding:10px 4px 8px;display:flex;flex-direction:column;align-items:center;gap:4px;background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:10px;transition:.2s;font-family:inherit;font-weight:500}
 .nav-tab.active{color:var(--blue)}
-.nav-tab.active span:first-child{transform:translateY(-1px)}
+.nav-tab.active svg{transform:translateY(-1px)}
 .nav-tab svg{width:22px;height:22px}
 .aiu-footer{padding:10px 20px;text-align:center;font-size:10px;color:var(--text-dim);border-top:1px solid var(--border);background:var(--bg-soft);flex-shrink:0;display:flex;align-items:center;justify-content:center;gap:10px}
 .aiu-badge{background:#fff;border:1px solid var(--border2);border-radius:6px;padding:3px 8px;font-size:10px;color:var(--blue-strong);font-weight:700}
@@ -302,17 +302,6 @@ textarea.input-field{resize:none;height:80px}
 .dev-upvote{display:flex;flex-direction:column;align-items:center;gap:2px;background:var(--blue-pale);border:1px solid var(--border2);border-radius:10px;padding:6px 10px;color:var(--blue-strong);font-weight:700;font-size:13px;cursor:pointer;flex-shrink:0;transition:.2s}
 .dev-upvote:hover{background:var(--blue);color:#fff;border-color:var(--blue)}
 .dev-upvote small{font-size:9px;font-weight:600}
-/* ─── QUICK SURVEY ─── */
-.dev-survey{background:#fff;border:1px solid var(--border);border-radius:16px;padding:14px 16px;margin:8px 16px;box-shadow:var(--shadow)}
-.dev-survey .sv-eyebrow{font-size:10px;font-weight:800;letter-spacing:1px;color:var(--blue-strong)}
-.dev-survey .sv-q{font-size:13px;font-weight:600;color:var(--navy);margin:10px 0 6px}
-.sv-opts{display:flex;gap:6px}
-.sv-opts.emoji{justify-content:space-between}
-.so-btn{flex:1;text-align:center;border:1px solid var(--border2);border-radius:12px;padding:8px 4px;font-size:12px;font-weight:600;color:var(--text-muted);background:var(--bg-soft);cursor:pointer;transition:.15s}
-.so-btn .emo{font-size:20px;display:block;line-height:1}
-.so-btn:hover{border-color:var(--blue-pale2)}
-.so-btn.sel{background:var(--blue-pale);border-color:var(--blue);color:var(--blue-strong)}
-.sv-thanks{display:none;text-align:center;padding:8px 0;font-size:13px;font-weight:600;color:var(--teal)}
 
 /* ─── AI FLOATING BUTTON ─── */
 .ai-fab{position:absolute;right:16px;bottom:84px;z-index:90;width:58px;height:58px;border-radius:50%;background:linear-gradient(135deg,var(--teal),#0E8276);border:3px solid #fff;box-shadow:0 10px 26px rgba(18,157,144,.5);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:.2s;color:#fff}
@@ -535,14 +524,7 @@ textarea.input-field{resize:none;height:80px}
 <div class="screen" id="screen-home" style="flex-direction:column">
   <div class="brand-bar"><div class="bb-logo"></div><div class="bb-right"><div class="bb-aiu"></div><button class="icon-btn" onclick="openLang()" style="font-size:20px;padding:4px">🌐</button></div></div>
   <div class="top-bar">
-    <div class="logo-row">
-      <div class="logo-circle">🏥</div>
-      <div>
-        <div class="logo-text" id="h-appname">Alamein Hospital</div>
-        <div class="logo-sub">Powered by AIU</div>
-      </div>
-    </div>
-    <div class="top-icons">
+    <div class="top-icons" style="margin-left:auto">
       
       <button class="icon-btn" onclick="goTo('notifications')" style="position:relative">
         🔔<span style="position:absolute;top:4px;right:4px;width:8px;height:8px;background:#e53935;border-radius:50%;border:2px solid var(--bg-dark)"></span>
@@ -621,7 +603,7 @@ textarea.input-field{resize:none;height:80px}
         <div class="feature-ico">💊</div>
         <span class="feature-label" id="feat_treatment">Treatment Plan</span>
       </button>
-      <button class="feature-btn fb" onclick="goTo('feedback')">
+      <button class="feature-btn fb" onclick="openCurrentVisit()">
         <div class="feature-ico">⭐</div>
         <span class="feature-label" id="feat_feedback">Rating</span>
       </button>
@@ -639,10 +621,11 @@ textarea.input-field{resize:none;height:80px}
     <div style="height:16px"></div>
   </div>
   <div class="bottom-nav" id="bnav-home">
-    <button class="nav-tab active" onclick="goTo('home')"><span style="font-size:20px">🏠</span><span id="bn-home">Home</span></button>
-    <button class="nav-tab" onclick="goTo('visits')"><span style="font-size:20px">📅</span><span id="bn-visits">Visits</span></button>
-    <button class="nav-tab" onclick="goTo('ai')"><span style="font-size:20px">🤖</span><span id="bn-ai">AI Advisor</span></button>
-    <button class="nav-tab" onclick="goTo('family')"><span style="font-size:20px">👨‍👩‍👧</span><span id="bn-family">Family</span></button>
+    <button class="nav-tab active" onclick="goTo('home')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.7 12 3l9 7.7"/><path d="M5.5 9.5V20a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1V9.5"/><path d="M9.5 21v-6h5v6"/></svg><span id="bn-home">Home</span></button>
+    <button class="nav-tab" onclick="goTo('visits')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="16" rx="2.5"/><path d="M3 9h18"/><path d="M8 2.5v4M16 2.5v4"/></svg><span id="bn-visits">Visits</span></button>
+    <button class="nav-tab" onclick="goTo('ai')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 9.4 9.4 0 0 1-3.4-.6L3 21l1.3-3.4A8.4 8.4 0 0 1 3.5 11.5 8.5 8.5 0 0 1 12 3a8.5 8.5 0 0 1 9 8.5Z"/><circle cx="8.5" cy="11.5" r=".7" fill="currentColor" stroke="none"/><circle cx="12" cy="11.5" r=".7" fill="currentColor" stroke="none"/><circle cx="15.5" cy="11.5" r=".7" fill="currentColor" stroke="none"/></svg><span id="bn-ai">AI Advisor</span></button>
+    <button class="nav-tab" onclick="goTo('reports')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h6"/></svg><span id="bn-reports">Reports</span></button>
+    <button class="nav-tab" onclick="goTo('family')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><path d="M3.5 20a5.5 5.5 0 0 1 11 0"/><path d="M16 5.4a3 3 0 0 1 0 5.2"/><path d="M17.2 14.2A5.5 5.5 0 0 1 20.5 20"/></svg><span id="bn-family">Family</span></button>
     
   </div>
 </div>
@@ -667,7 +650,7 @@ textarea.input-field{resize:none;height:80px}
     <div style="padding:12px 20px;font-size:12px;color:var(--text-dim);font-style:italic" id="j-note">Each completed stage opens a service rating. Your ratings feed the hospital's quality reports.</div>
     <div style="height:12px"></div>
   </div>
-  <div class="bottom-nav"><button class="nav-tab" onclick="goTo('home')"><span style="font-size:20px">🏠</span><span>Home</span></button><button class="nav-tab" onclick="goTo('visits')"><span style="font-size:20px">📅</span><span>Visits</span></button><button class="nav-tab" onclick="goTo('ai')"><span style="font-size:20px">🤖</span><span>AI Advisor</span></button><button class="nav-tab" onclick="goTo('family')"><span style="font-size:20px">👨‍👩‍👧</span><span>Family</span></button></div>
+  <div class="bottom-nav"><button class="nav-tab" onclick="goTo('home')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.7 12 3l9 7.7"/><path d="M5.5 9.5V20a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1V9.5"/><path d="M9.5 21v-6h5v6"/></svg><span>Home</span></button><button class="nav-tab" onclick="goTo('visits')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="16" rx="2.5"/><path d="M3 9h18"/><path d="M8 2.5v4M16 2.5v4"/></svg><span>Visits</span></button><button class="nav-tab" onclick="goTo('ai')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 9.4 9.4 0 0 1-3.4-.6L3 21l1.3-3.4A8.4 8.4 0 0 1 3.5 11.5 8.5 8.5 0 0 1 12 3a8.5 8.5 0 0 1 9 8.5Z"/><circle cx="8.5" cy="11.5" r=".7" fill="currentColor" stroke="none"/><circle cx="12" cy="11.5" r=".7" fill="currentColor" stroke="none"/><circle cx="15.5" cy="11.5" r=".7" fill="currentColor" stroke="none"/></svg><span>AI Advisor</span></button><button class="nav-tab" onclick="goTo('reports')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h6"/></svg><span>Reports</span></button><button class="nav-tab" onclick="goTo('family')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><path d="M3.5 20a5.5 5.5 0 0 1 11 0"/><path d="M16 5.4a3 3 0 0 1 0 5.2"/><path d="M17.2 14.2A5.5 5.5 0 0 1 20.5 20"/></svg><span>Family</span></button></div>
 </div>
 
 <!-- ═══════════════════════════════════════════
@@ -743,7 +726,7 @@ textarea.input-field{resize:none;height:80px}
     </div>
     <div style="height:12px"></div>
   </div>
-  <div class="bottom-nav"><button class="nav-tab" onclick="goTo('home')"><span style="font-size:20px">🏠</span><span id="bn-home2">Home</span></button><button class="nav-tab active" onclick="goTo('visits')"><span style="font-size:20px">📅</span><span id="bn-visits2">Visits</span></button><button class="nav-tab" onclick="goTo('ai')"><span style="font-size:20px">🤖</span><span id="bn-ai2">AI Advisor</span></button><button class="nav-tab" onclick="goTo('family')"><span style="font-size:20px">👨‍👩‍👧</span><span id="bn-family2">Family</span></button></div>
+  <div class="bottom-nav"><button class="nav-tab" onclick="goTo('home')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.7 12 3l9 7.7"/><path d="M5.5 9.5V20a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1V9.5"/><path d="M9.5 21v-6h5v6"/></svg><span id="bn-home2">Home</span></button><button class="nav-tab active" onclick="goTo('visits')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="16" rx="2.5"/><path d="M3 9h18"/><path d="M8 2.5v4M16 2.5v4"/></svg><span id="bn-visits2">Visits</span></button><button class="nav-tab" onclick="goTo('ai')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 9.4 9.4 0 0 1-3.4-.6L3 21l1.3-3.4A8.4 8.4 0 0 1 3.5 11.5 8.5 8.5 0 0 1 12 3a8.5 8.5 0 0 1 9 8.5Z"/><circle cx="8.5" cy="11.5" r=".7" fill="currentColor" stroke="none"/><circle cx="12" cy="11.5" r=".7" fill="currentColor" stroke="none"/><circle cx="15.5" cy="11.5" r=".7" fill="currentColor" stroke="none"/></svg><span id="bn-ai2">AI Advisor</span></button><button class="nav-tab" onclick="goTo('reports')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h6"/></svg><span>Reports</span></button><button class="nav-tab" onclick="goTo('family')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><path d="M3.5 20a5.5 5.5 0 0 1 11 0"/><path d="M16 5.4a3 3 0 0 1 0 5.2"/><path d="M17.2 14.2A5.5 5.5 0 0 1 20.5 20"/></svg><span id="bn-family2">Family</span></button></div>
 </div>
 
 <!-- ═══════════════════════════════════════════
@@ -956,7 +939,7 @@ textarea.input-field{resize:none;height:80px}
     </div>
     <div style="height:12px"></div>
   </div>
-  <div class="bottom-nav"><button class="nav-tab" onclick="goTo('home')"><span style="font-size:20px">🏠</span><span>Home</span></button><button class="nav-tab" onclick="goTo('visits')"><span style="font-size:20px">📅</span><span>Visits</span></button><button class="nav-tab" onclick="goTo('ai')"><span style="font-size:20px">🤖</span><span>AI Advisor</span></button><button class="nav-tab" onclick="goTo('family')"><span style="font-size:20px">👨‍👩‍👧</span><span>Family</span></button></div>
+  <div class="bottom-nav"><button class="nav-tab" onclick="goTo('home')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.7 12 3l9 7.7"/><path d="M5.5 9.5V20a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1V9.5"/><path d="M9.5 21v-6h5v6"/></svg><span>Home</span></button><button class="nav-tab" onclick="goTo('visits')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="16" rx="2.5"/><path d="M3 9h18"/><path d="M8 2.5v4M16 2.5v4"/></svg><span>Visits</span></button><button class="nav-tab" onclick="goTo('ai')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 9.4 9.4 0 0 1-3.4-.6L3 21l1.3-3.4A8.4 8.4 0 0 1 3.5 11.5 8.5 8.5 0 0 1 12 3a8.5 8.5 0 0 1 9 8.5Z"/><circle cx="8.5" cy="11.5" r=".7" fill="currentColor" stroke="none"/><circle cx="12" cy="11.5" r=".7" fill="currentColor" stroke="none"/><circle cx="15.5" cy="11.5" r=".7" fill="currentColor" stroke="none"/></svg><span>AI Advisor</span></button><button class="nav-tab" onclick="goTo('reports')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h6"/></svg><span>Reports</span></button><button class="nav-tab" onclick="goTo('family')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><path d="M3.5 20a5.5 5.5 0 0 1 11 0"/><path d="M16 5.4a3 3 0 0 1 0 5.2"/><path d="M17.2 14.2A5.5 5.5 0 0 1 20.5 20"/></svg><span>Family</span></button></div>
 </div>
 
 <!-- ═══════════════════════════════════════════
@@ -1026,7 +1009,7 @@ textarea.input-field{resize:none;height:80px}
     </div>
     <div style="height:12px"></div>
   </div>
-  <div class="bottom-nav"><button class="nav-tab" onclick="goTo('home')"><span style="font-size:20px">🏠</span><span>Home</span></button><button class="nav-tab" onclick="goTo('visits')"><span style="font-size:20px">📅</span><span>Visits</span></button><button class="nav-tab" onclick="goTo('ai')"><span style="font-size:20px">🤖</span><span>AI Advisor</span></button><button class="nav-tab" onclick="goTo('family')"><span style="font-size:20px">👨‍👩‍👧</span><span>Family</span></button></div>
+  <div class="bottom-nav"><button class="nav-tab" onclick="goTo('home')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.7 12 3l9 7.7"/><path d="M5.5 9.5V20a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1V9.5"/><path d="M9.5 21v-6h5v6"/></svg><span>Home</span></button><button class="nav-tab" onclick="goTo('visits')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="16" rx="2.5"/><path d="M3 9h18"/><path d="M8 2.5v4M16 2.5v4"/></svg><span>Visits</span></button><button class="nav-tab" onclick="goTo('ai')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 9.4 9.4 0 0 1-3.4-.6L3 21l1.3-3.4A8.4 8.4 0 0 1 3.5 11.5 8.5 8.5 0 0 1 12 3a8.5 8.5 0 0 1 9 8.5Z"/><circle cx="8.5" cy="11.5" r=".7" fill="currentColor" stroke="none"/><circle cx="12" cy="11.5" r=".7" fill="currentColor" stroke="none"/><circle cx="15.5" cy="11.5" r=".7" fill="currentColor" stroke="none"/></svg><span>AI Advisor</span></button><button class="nav-tab active" onclick="goTo('reports')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h6"/></svg><span>Reports</span></button><button class="nav-tab" onclick="goTo('family')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><path d="M3.5 20a5.5 5.5 0 0 1 11 0"/><path d="M16 5.4a3 3 0 0 1 0 5.2"/><path d="M17.2 14.2A5.5 5.5 0 0 1 20.5 20"/></svg><span>Family</span></button></div>
 </div>
 
 
@@ -1078,7 +1061,7 @@ textarea.input-field{resize:none;height:80px}
     </div>
     <div style="height:12px"></div>
   </div>
-  <div class="bottom-nav"><button class="nav-tab" onclick="goTo('home')"><span style="font-size:20px">🏠</span><span>Home</span></button><button class="nav-tab" onclick="goTo('visits')"><span style="font-size:20px">📅</span><span>Visits</span></button><button class="nav-tab" onclick="goTo('ai')"><span style="font-size:20px">🤖</span><span>AI Advisor</span></button><button class="nav-tab" onclick="goTo('family')"><span style="font-size:20px">👨‍👩‍👧</span><span>Family</span></button></div>
+  <div class="bottom-nav"><button class="nav-tab" onclick="goTo('home')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.7 12 3l9 7.7"/><path d="M5.5 9.5V20a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1V9.5"/><path d="M9.5 21v-6h5v6"/></svg><span>Home</span></button><button class="nav-tab" onclick="goTo('visits')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="16" rx="2.5"/><path d="M3 9h18"/><path d="M8 2.5v4M16 2.5v4"/></svg><span>Visits</span></button><button class="nav-tab" onclick="goTo('ai')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 9.4 9.4 0 0 1-3.4-.6L3 21l1.3-3.4A8.4 8.4 0 0 1 3.5 11.5 8.5 8.5 0 0 1 12 3a8.5 8.5 0 0 1 9 8.5Z"/><circle cx="8.5" cy="11.5" r=".7" fill="currentColor" stroke="none"/><circle cx="12" cy="11.5" r=".7" fill="currentColor" stroke="none"/><circle cx="15.5" cy="11.5" r=".7" fill="currentColor" stroke="none"/></svg><span>AI Advisor</span></button><button class="nav-tab" onclick="goTo('reports')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h6"/></svg><span>Reports</span></button><button class="nav-tab" onclick="goTo('family')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><path d="M3.5 20a5.5 5.5 0 0 1 11 0"/><path d="M16 5.4a3 3 0 0 1 0 5.2"/><path d="M17.2 14.2A5.5 5.5 0 0 1 20.5 20"/></svg><span>Family</span></button></div>
 </div>
 
 <!-- ═══════════════════════════════════════════
@@ -1119,7 +1102,7 @@ textarea.input-field{resize:none;height:80px}
     </div>
     <div style="height:12px"></div>
   </div>
-  <div class="bottom-nav"><button class="nav-tab" onclick="goTo('home')"><span style="font-size:20px">🏠</span><span>Home</span></button><button class="nav-tab" onclick="goTo('visits')"><span style="font-size:20px">📅</span><span>Visits</span></button><button class="nav-tab" onclick="goTo('ai')"><span style="font-size:20px">🤖</span><span>AI</span></button><button class="nav-tab active" onclick="goTo('profile')"><span style="font-size:20px">👤</span><span>Profile</span></button></div>
+  <div class="bottom-nav"><button class="nav-tab" onclick="goTo('home')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.7 12 3l9 7.7"/><path d="M5.5 9.5V20a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1V9.5"/><path d="M9.5 21v-6h5v6"/></svg><span>Home</span></button><button class="nav-tab" onclick="goTo('visits')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="16" rx="2.5"/><path d="M3 9h18"/><path d="M8 2.5v4M16 2.5v4"/></svg><span>Visits</span></button><button class="nav-tab" onclick="goTo('ai')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 9.4 9.4 0 0 1-3.4-.6L3 21l1.3-3.4A8.4 8.4 0 0 1 3.5 11.5 8.5 8.5 0 0 1 12 3a8.5 8.5 0 0 1 9 8.5Z"/><circle cx="8.5" cy="11.5" r=".7" fill="currentColor" stroke="none"/><circle cx="12" cy="11.5" r=".7" fill="currentColor" stroke="none"/><circle cx="15.5" cy="11.5" r=".7" fill="currentColor" stroke="none"/></svg><span>AI</span></button><button class="nav-tab" onclick="goTo('reports')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h6"/></svg><span>Reports</span></button><button class="nav-tab active" onclick="goTo('profile')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.5"/><path d="M5 20a7 7 0 0 1 14 0"/></svg><span>Profile</span></button></div>
 </div>
 
 <!-- ═══════════════════════════════════════════
@@ -1153,7 +1136,7 @@ textarea.input-field{resize:none;height:80px}
     <input type="text" class="chat-input" id="chat-input" placeholder="Ask a health question...">
     <button onclick="sendCustomMsg()" style="background:var(--blue-primary);border:none;border-radius:50%;width:42px;height:42px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;flex-shrink:0">➤</button>
   </div>
-  <div class="bottom-nav"><button class="nav-tab" onclick="goTo('home')"><span style="font-size:20px">🏠</span><span id="bn-home3">Home</span></button><button class="nav-tab" onclick="goTo('visits')"><span style="font-size:20px">📅</span><span>Visits</span></button><button class="nav-tab active" onclick="goTo('ai')"><span style="font-size:20px">🤖</span><span id="bn-ai3">AI Advisor</span></button><button class="nav-tab" onclick="goTo('family')"><span style="font-size:20px">👨‍👩‍👧</span><span>Family</span></button></div>
+  <div class="bottom-nav"><button class="nav-tab" onclick="goTo('home')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.7 12 3l9 7.7"/><path d="M5.5 9.5V20a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1V9.5"/><path d="M9.5 21v-6h5v6"/></svg><span id="bn-home3">Home</span></button><button class="nav-tab" onclick="goTo('visits')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="16" rx="2.5"/><path d="M3 9h18"/><path d="M8 2.5v4M16 2.5v4"/></svg><span>Visits</span></button><button class="nav-tab active" onclick="goTo('ai')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 9.4 9.4 0 0 1-3.4-.6L3 21l1.3-3.4A8.4 8.4 0 0 1 3.5 11.5 8.5 8.5 0 0 1 12 3a8.5 8.5 0 0 1 9 8.5Z"/><circle cx="8.5" cy="11.5" r=".7" fill="currentColor" stroke="none"/><circle cx="12" cy="11.5" r=".7" fill="currentColor" stroke="none"/><circle cx="15.5" cy="11.5" r=".7" fill="currentColor" stroke="none"/></svg><span id="bn-ai3">AI Advisor</span></button><button class="nav-tab" onclick="goTo('reports')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h6"/></svg><span>Reports</span></button><button class="nav-tab" onclick="goTo('family')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><path d="M3.5 20a5.5 5.5 0 0 1 11 0"/><path d="M16 5.4a3 3 0 0 1 0 5.2"/><path d="M17.2 14.2A5.5 5.5 0 0 1 20.5 20"/></svg><span>Family</span></button></div>
 </div>
 
 <!-- ═══════════════════════════════════════════
@@ -1211,7 +1194,7 @@ textarea.input-field{resize:none;height:80px}
     <p style="font-size:11px;color:var(--text-dim);padding:16px 20px;font-style:italic" id="fam-note">Privacy controls put you in charge of your own information.</p>
     <div style="height:8px"></div>
   </div>
-  <div class="bottom-nav"><button class="nav-tab" onclick="goTo('home')"><span style="font-size:20px">🏠</span><span>Home</span></button><button class="nav-tab" onclick="goTo('visits')"><span style="font-size:20px">📅</span><span>Visits</span></button><button class="nav-tab" onclick="goTo('ai')"><span style="font-size:20px">🤖</span><span>AI</span></button><button class="nav-tab active" onclick="goTo('family')"><span style="font-size:20px">👨‍👩‍👧</span><span id="bn-family3">Family</span></button></div>
+  <div class="bottom-nav"><button class="nav-tab" onclick="goTo('home')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.7 12 3l9 7.7"/><path d="M5.5 9.5V20a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1V9.5"/><path d="M9.5 21v-6h5v6"/></svg><span>Home</span></button><button class="nav-tab" onclick="goTo('visits')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="16" rx="2.5"/><path d="M3 9h18"/><path d="M8 2.5v4M16 2.5v4"/></svg><span>Visits</span></button><button class="nav-tab" onclick="goTo('ai')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 9.4 9.4 0 0 1-3.4-.6L3 21l1.3-3.4A8.4 8.4 0 0 1 3.5 11.5 8.5 8.5 0 0 1 12 3a8.5 8.5 0 0 1 9 8.5Z"/><circle cx="8.5" cy="11.5" r=".7" fill="currentColor" stroke="none"/><circle cx="12" cy="11.5" r=".7" fill="currentColor" stroke="none"/><circle cx="15.5" cy="11.5" r=".7" fill="currentColor" stroke="none"/></svg><span>AI</span></button><button class="nav-tab" onclick="goTo('reports')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h6"/></svg><span>Reports</span></button><button class="nav-tab active" onclick="goTo('family')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><path d="M3.5 20a5.5 5.5 0 0 1 11 0"/><path d="M16 5.4a3 3 0 0 1 0 5.2"/><path d="M17.2 14.2A5.5 5.5 0 0 1 20.5 20"/></svg><span id="bn-family3">Family</span></button></div>
 </div>
 
 <!-- ═══════════════════════════════════════════
@@ -1264,7 +1247,7 @@ textarea.input-field{resize:none;height:80px}
       <div style="height:12px"></div>
     </div>
   </div>
-  <div class="bottom-nav"><button class="nav-tab" onclick="goTo('home')"><span style="font-size:20px">🏠</span><span>Home</span></button><button class="nav-tab" onclick="goTo('visits')"><span style="font-size:20px">📅</span><span>Visits</span></button><button class="nav-tab" onclick="goTo('ai')"><span style="font-size:20px">🤖</span><span>AI</span></button><button class="nav-tab" onclick="goTo('family')"><span style="font-size:20px">👨‍👩‍👧</span><span>Family</span></button></div>
+  <div class="bottom-nav"><button class="nav-tab" onclick="goTo('home')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.7 12 3l9 7.7"/><path d="M5.5 9.5V20a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1V9.5"/><path d="M9.5 21v-6h5v6"/></svg><span>Home</span></button><button class="nav-tab" onclick="goTo('visits')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="16" rx="2.5"/><path d="M3 9h18"/><path d="M8 2.5v4M16 2.5v4"/></svg><span>Visits</span></button><button class="nav-tab" onclick="goTo('ai')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 9.4 9.4 0 0 1-3.4-.6L3 21l1.3-3.4A8.4 8.4 0 0 1 3.5 11.5 8.5 8.5 0 0 1 12 3a8.5 8.5 0 0 1 9 8.5Z"/><circle cx="8.5" cy="11.5" r=".7" fill="currentColor" stroke="none"/><circle cx="12" cy="11.5" r=".7" fill="currentColor" stroke="none"/><circle cx="15.5" cy="11.5" r=".7" fill="currentColor" stroke="none"/></svg><span>AI</span></button><button class="nav-tab" onclick="goTo('reports')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h6"/></svg><span>Reports</span></button><button class="nav-tab" onclick="goTo('family')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><path d="M3.5 20a5.5 5.5 0 0 1 11 0"/><path d="M16 5.4a3 3 0 0 1 0 5.2"/><path d="M17.2 14.2A5.5 5.5 0 0 1 20.5 20"/></svg><span>Family</span></button></div>
 </div>
 
 <!-- ═══════════════════════════════════════════
@@ -1295,7 +1278,7 @@ textarea.input-field{resize:none;height:80px}
     <div class="notif-card"><div class="notif-icon" style="background:rgba(156,39,176,.15)">👨‍👩‍👧</div><div><p style="font-size:14px;font-weight:600;color:var(--text)">Family member joined</p><p style="font-size:12px;color:var(--text-muted)">Samia Ibrahim now follows your care · 09:30</p></div></div>
     <div style="height:12px"></div>
   </div>
-  <div class="bottom-nav"><button class="nav-tab" onclick="goTo('home')"><span style="font-size:20px">🏠</span><span>Home</span></button><button class="nav-tab" onclick="goTo('visits')"><span style="font-size:20px">📅</span><span>Visits</span></button><button class="nav-tab" onclick="goTo('ai')"><span style="font-size:20px">🤖</span><span>AI Advisor</span></button><button class="nav-tab" onclick="goTo('family')"><span style="font-size:20px">👨‍👩‍👧</span><span>Family</span></button></div>
+  <div class="bottom-nav"><button class="nav-tab" onclick="goTo('home')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.7 12 3l9 7.7"/><path d="M5.5 9.5V20a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1V9.5"/><path d="M9.5 21v-6h5v6"/></svg><span>Home</span></button><button class="nav-tab" onclick="goTo('visits')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="16" rx="2.5"/><path d="M3 9h18"/><path d="M8 2.5v4M16 2.5v4"/></svg><span>Visits</span></button><button class="nav-tab" onclick="goTo('ai')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 9.4 9.4 0 0 1-3.4-.6L3 21l1.3-3.4A8.4 8.4 0 0 1 3.5 11.5 8.5 8.5 0 0 1 12 3a8.5 8.5 0 0 1 9 8.5Z"/><circle cx="8.5" cy="11.5" r=".7" fill="currentColor" stroke="none"/><circle cx="12" cy="11.5" r=".7" fill="currentColor" stroke="none"/><circle cx="15.5" cy="11.5" r=".7" fill="currentColor" stroke="none"/></svg><span>AI Advisor</span></button><button class="nav-tab" onclick="goTo('reports')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h6"/></svg><span>Reports</span></button><button class="nav-tab" onclick="goTo('family')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><path d="M3.5 20a5.5 5.5 0 0 1 11 0"/><path d="M16 5.4a3 3 0 0 1 0 5.2"/><path d="M17.2 14.2A5.5 5.5 0 0 1 20.5 20"/></svg><span>Family</span></button></div>
 </div>
 
 <!-- ═══════════════════════════════════════════
@@ -1327,7 +1310,7 @@ textarea.input-field{resize:none;height:80px}
     </div>
     <div style="height:12px"></div>
   </div>
-  <div class="bottom-nav"><button class="nav-tab" onclick="goTo('home')"><span style="font-size:20px">🏠</span><span>Home</span></button><button class="nav-tab" onclick="goTo('visits')"><span style="font-size:20px">📅</span><span>Visits</span></button><button class="nav-tab" onclick="goTo('ai')"><span style="font-size:20px">🤖</span><span>AI Advisor</span></button><button class="nav-tab" onclick="goTo('family')"><span style="font-size:20px">👨‍👩‍👧</span><span>Family</span></button></div>
+  <div class="bottom-nav"><button class="nav-tab" onclick="goTo('home')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.7 12 3l9 7.7"/><path d="M5.5 9.5V20a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1V9.5"/><path d="M9.5 21v-6h5v6"/></svg><span>Home</span></button><button class="nav-tab" onclick="goTo('visits')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="16" rx="2.5"/><path d="M3 9h18"/><path d="M8 2.5v4M16 2.5v4"/></svg><span>Visits</span></button><button class="nav-tab" onclick="goTo('ai')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 9.4 9.4 0 0 1-3.4-.6L3 21l1.3-3.4A8.4 8.4 0 0 1 3.5 11.5 8.5 8.5 0 0 1 12 3a8.5 8.5 0 0 1 9 8.5Z"/><circle cx="8.5" cy="11.5" r=".7" fill="currentColor" stroke="none"/><circle cx="12" cy="11.5" r=".7" fill="currentColor" stroke="none"/><circle cx="15.5" cy="11.5" r=".7" fill="currentColor" stroke="none"/></svg><span>AI Advisor</span></button><button class="nav-tab" onclick="goTo('reports')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h6"/></svg><span>Reports</span></button><button class="nav-tab" onclick="goTo('family')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><path d="M3.5 20a5.5 5.5 0 0 1 11 0"/><path d="M16 5.4a3 3 0 0 1 0 5.2"/><path d="M17.2 14.2A5.5 5.5 0 0 1 20.5 20"/></svg><span>Family</span></button></div>
 </div>
 
 <!-- ═══════════════════════════════════════════
@@ -1361,15 +1344,9 @@ textarea.input-field{resize:none;height:80px}
         <p style="font-size:13px;color:var(--text);line-height:1.65" id="diag_summary_text">Your heart's blood supply was briefly reduced by a narrowed coronary artery. A catheterization reopened the artery and restored normal blood flow. You are now being monitored while you recover — your vital signs are stable and improving.</p>
       </div>
     </div>
-    <div class="section-title" id="diag_explore_title">EXPLORE</div>
-    <div class="diag-link" onclick="goTo('reports')">
-      <div class="diag-link-ico">📄</div>
-      <div style="flex:1"><p style="font-size:14px;font-weight:700;color:var(--navy)" id="diag_reports">Test Results &amp; Reports</p><p style="font-size:11px;color:var(--text-muted)" id="diag_reports_sub">Lab, ECG &amp; imaging</p></div>
-      <span style="color:var(--blue);font-size:18px">›</span>
-    </div>
     <div style="height:12px"></div>
   </div>
-  <div class="bottom-nav"><button class="nav-tab" onclick="goTo('home')"><span style="font-size:20px">🏠</span><span>Home</span></button><button class="nav-tab" onclick="goTo('visits')"><span style="font-size:20px">📅</span><span>Visits</span></button><button class="nav-tab" onclick="goTo('ai')"><span style="font-size:20px">🤖</span><span>AI Advisor</span></button><button class="nav-tab" onclick="goTo('family')"><span style="font-size:20px">👨‍👩‍👧</span><span>Family</span></button></div>
+  <div class="bottom-nav"><button class="nav-tab" onclick="goTo('home')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.7 12 3l9 7.7"/><path d="M5.5 9.5V20a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1V9.5"/><path d="M9.5 21v-6h5v6"/></svg><span>Home</span></button><button class="nav-tab" onclick="goTo('visits')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="16" rx="2.5"/><path d="M3 9h18"/><path d="M8 2.5v4M16 2.5v4"/></svg><span>Visits</span></button><button class="nav-tab" onclick="goTo('ai')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 9.4 9.4 0 0 1-3.4-.6L3 21l1.3-3.4A8.4 8.4 0 0 1 3.5 11.5 8.5 8.5 0 0 1 12 3a8.5 8.5 0 0 1 9 8.5Z"/><circle cx="8.5" cy="11.5" r=".7" fill="currentColor" stroke="none"/><circle cx="12" cy="11.5" r=".7" fill="currentColor" stroke="none"/><circle cx="15.5" cy="11.5" r=".7" fill="currentColor" stroke="none"/></svg><span>AI Advisor</span></button><button class="nav-tab" onclick="goTo('reports')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h6"/></svg><span>Reports</span></button><button class="nav-tab" onclick="goTo('family')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><path d="M3.5 20a5.5 5.5 0 0 1 11 0"/><path d="M16 5.4a3 3 0 0 1 0 5.2"/><path d="M17.2 14.2A5.5 5.5 0 0 1 20.5 20"/></svg><span>Family</span></button></div>
 </div>
 
 <!-- ═══════════════════════════════════════════
@@ -1386,25 +1363,6 @@ textarea.input-field{resize:none;height:80px}
     <div style="padding:14px 20px 4px;display:flex;gap:12px;align-items:center">
       <div style="width:46px;height:46px;border-radius:14px;background:var(--blue-pale);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0">💡</div>
       <p style="font-size:13px;color:var(--text-muted);line-height:1.5" id="dev_sub">Share your suggestions and opinions to help us improve the hospital.</p>
-    </div>
-    <div class="dev-survey" id="devSurvey">
-      <div class="sv-eyebrow" id="sv_eyebrow">QUICK SURVEY · 30 SECONDS</div>
-      <div class="sv-q" id="sv_q1">How satisfied are you with your care today?</div>
-      <div class="sv-opts emoji" data-q="1">
-        <div class="so-btn" onclick="pickSurvey(this)"><span class="emo">😞</span></div>
-        <div class="so-btn" onclick="pickSurvey(this)"><span class="emo">😐</span></div>
-        <div class="so-btn" onclick="pickSurvey(this)"><span class="emo">🙂</span></div>
-        <div class="so-btn" onclick="pickSurvey(this)"><span class="emo">😀</span></div>
-        <div class="so-btn" onclick="pickSurvey(this)"><span class="emo">🤩</span></div>
-      </div>
-      <div class="sv-q" id="sv_q2">Would you recommend us to family &amp; friends?</div>
-      <div class="sv-opts" data-q="2">
-        <div class="so-btn" onclick="pickSurvey(this)" id="sv_no">No</div>
-        <div class="so-btn" onclick="pickSurvey(this)" id="sv_maybe">Maybe</div>
-        <div class="so-btn" onclick="pickSurvey(this)" id="sv_yes">Yes</div>
-      </div>
-      <button class="btn-primary" style="margin-top:12px" onclick="submitSurvey()" id="sv_submit">Submit Survey</button>
-      <div class="sv-thanks" id="sv_thanks">🎉 Thank you for your feedback!</div>
     </div>
     <div style="padding:8px 16px">
       <div class="input-group">
@@ -1424,22 +1382,9 @@ textarea.input-field{resize:none;height:80px}
       </div>
       <button class="btn-primary" onclick="submitDevelopment()" id="dev_submit">Submit Suggestion</button>
     </div>
-    <div class="section-title" id="dev_popular_title">POPULAR SUGGESTIONS</div>
-    <div class="dev-suggestion">
-      <div class="dev-upvote" onclick="upvote(this)">▲<span>42</span><small id="dev_votes1">votes</small></div>
-      <div style="flex:1"><p style="font-size:13px;font-weight:600;color:var(--navy)" id="dev_sug1">More seating in the outpatient waiting area</p><p style="font-size:11px;color:var(--text-muted)" id="dev_sug1_cat">Facilities</p></div>
-    </div>
-    <div class="dev-suggestion">
-      <div class="dev-upvote" onclick="upvote(this)">▲<span>31</span><small id="dev_votes2">votes</small></div>
-      <div style="flex:1"><p style="font-size:13px;font-weight:600;color:var(--navy)" id="dev_sug2">Add Arabic audio guidance in the app</p><p style="font-size:11px;color:var(--text-muted)" id="dev_sug2_cat">Mobile App</p></div>
-    </div>
-    <div class="dev-suggestion">
-      <div class="dev-upvote" onclick="upvote(this)">▲<span>27</span><small id="dev_votes3">votes</small></div>
-      <div style="flex:1"><p style="font-size:13px;font-weight:600;color:var(--navy)" id="dev_sug3">Clearer signage to the radiology department</p><p style="font-size:11px;color:var(--text-muted)" id="dev_sug3_cat">Facilities</p></div>
-    </div>
     <div style="height:12px"></div>
   </div>
-  <div class="bottom-nav"><button class="nav-tab" onclick="goTo('home')"><span style="font-size:20px">🏠</span><span>Home</span></button><button class="nav-tab" onclick="goTo('visits')"><span style="font-size:20px">📅</span><span>Visits</span></button><button class="nav-tab" onclick="goTo('ai')"><span style="font-size:20px">🤖</span><span>AI Advisor</span></button><button class="nav-tab" onclick="goTo('family')"><span style="font-size:20px">👨‍👩‍👧</span><span>Family</span></button></div>
+  <div class="bottom-nav"><button class="nav-tab" onclick="goTo('home')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.7 12 3l9 7.7"/><path d="M5.5 9.5V20a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1V9.5"/><path d="M9.5 21v-6h5v6"/></svg><span>Home</span></button><button class="nav-tab" onclick="goTo('visits')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="16" rx="2.5"/><path d="M3 9h18"/><path d="M8 2.5v4M16 2.5v4"/></svg><span>Visits</span></button><button class="nav-tab" onclick="goTo('ai')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 9.4 9.4 0 0 1-3.4-.6L3 21l1.3-3.4A8.4 8.4 0 0 1 3.5 11.5 8.5 8.5 0 0 1 12 3a8.5 8.5 0 0 1 9 8.5Z"/><circle cx="8.5" cy="11.5" r=".7" fill="currentColor" stroke="none"/><circle cx="12" cy="11.5" r=".7" fill="currentColor" stroke="none"/><circle cx="15.5" cy="11.5" r=".7" fill="currentColor" stroke="none"/></svg><span>AI Advisor</span></button><button class="nav-tab" onclick="goTo('reports')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h6"/></svg><span>Reports</span></button><button class="nav-tab" onclick="goTo('family')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><path d="M3.5 20a5.5 5.5 0 0 1 11 0"/><path d="M16 5.4a3 3 0 0 1 0 5.2"/><path d="M17.2 14.2A5.5 5.5 0 0 1 20.5 20"/></svg><span>Family</span></button></div>
 </div>
 
 
@@ -1477,6 +1422,13 @@ function goTo(name){
   updateFab();
 }
 function goBack(){goTo(prevScreen||'home')}
+
+// Navigate to Visits, then open the current (active) visit's care journey.
+// Sequencing the two goTo calls keeps Visits as the back target from the journey.
+function openCurrentVisit(){
+  goTo('visits');
+  goTo('journey');
+}
 
 // ─── ONBOARDING ───
 function nextSlide(){
@@ -2056,18 +2008,6 @@ const EXTRA = {
 function EX(key){ return (EXTRA[currentLang]||EXTRA.en)[key] || (EXTRA.en[key]||key); }
 
 // ─── DEVELOPMENT ───
-function pickSurvey(el){
-  const row = el.parentElement;
-  row.querySelectorAll('.so-btn').forEach(b=>b.classList.remove('sel'));
-  el.classList.add('sel');
-}
-function submitSurvey(){
-  const q1 = document.querySelector('.sv-opts[data-q="1"] .so-btn.sel');
-  const q2 = document.querySelector('.sv-opts[data-q="2"] .so-btn.sel');
-  if(!q1 || !q2){ showToast(EX('sv_incomplete')||'Please answer both questions'); return; }
-  document.querySelectorAll('#devSurvey .sv-q, #devSurvey .sv-opts, #devSurvey #sv_submit, #devSurvey .sv-eyebrow').forEach(n=>n.style.display='none');
-  document.getElementById('sv_thanks').style.display='block';
-}
 function submitDevelopment(){
   const content = document.getElementById('development-content');
   content.innerHTML = `<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px;text-align:center">
@@ -2111,7 +2051,6 @@ function updateFab(){
 // TRANSLATIONS / EXTRA key dictionaries. Keyed by English source.
 const SUPP = {
   ar:{
-    "QUICK SURVEY · 30 SECONDS":"استبيان سريع · 30 ثانية","How satisfied are you with your care today?":"ما مدى رضاك عن الرعاية اليوم؟","Would you recommend us to family & friends?":"هل توصي بنا للعائلة والأصدقاء؟","No":"لا","Maybe":"ربما","Yes":"نعم","Submit Survey":"إرسال الاستبيان","🎉 Thank you for your feedback!":"🎉 شكراً على ملاحظاتك!",
     "TODAY'S RECOVERY":"تعافي اليوم","5 of 8 tasks completed today":"تم إنجاز 5 من 8 مهام اليوم",
     "Completed":"مكتمل","Remaining":"المتبقي","Next dose":"الجرعة التالية","2 days":"يومان","To discharge":"حتى الخروج","Adherence":"الالتزام",
     "Diagnosis":"التشخيص","Treatment Plan":"خطة العلاج","Rating":"التقييم","Development":"التطوير","Entertainment":"الترفيه",
@@ -2176,7 +2115,6 @@ const SUPP = {
     "Facilities":"المرافق","Mobile App":"التطبيق","Powered by AIU":"بدعم من AIU"
   },
   ru:{
-    "QUICK SURVEY · 30 SECONDS":"БЫСТРЫЙ ОПРОС · 30 СЕКУНД","How satisfied are you with your care today?":"Насколько вы довольны уходом сегодня?","Would you recommend us to family & friends?":"Порекомендуете нас семье и друзьям?","No":"Нет","Maybe":"Возможно","Yes":"Да","Submit Survey":"Отправить опрос","🎉 Thank you for your feedback!":"🎉 Спасибо за ваш отзыв!",
     "TODAY'S RECOVERY":"ВОССТАНОВЛЕНИЕ СЕГОДНЯ","5 of 8 tasks completed today":"Выполнено 5 из 8 задач за сегодня",
     "Completed":"Выполнено","Remaining":"Осталось","Next dose":"Следующая доза","2 days":"2 дня","To discharge":"До выписки","Adherence":"Соблюдение",
     "Diagnosis":"Диагноз","Treatment Plan":"План лечения","Rating":"Оценка","Development":"Развитие","Entertainment":"Развлечения",
@@ -2241,7 +2179,6 @@ const SUPP = {
     "Facilities":"Помещения","Mobile App":"Приложение","Powered by AIU":"При поддержке AIU"
   },
   zh:{
-    "QUICK SURVEY · 30 SECONDS":"快速调查 · 30秒","How satisfied are you with your care today?":"您对今天的护理满意吗？","Would you recommend us to family & friends?":"您会向家人和朋友推荐我们吗？","No":"否","Maybe":"也许","Yes":"是","Submit Survey":"提交调查","🎉 Thank you for your feedback!":"🎉 感谢您的反馈！",
     "TODAY'S RECOVERY":"今日康复","5 of 8 tasks completed today":"今日已完成8项中的5项",
     "Completed":"已完成","Remaining":"剩余","Next dose":"下次用药","2 days":"2天","To discharge":"距出院","Adherence":"依从率",
     "Diagnosis":"诊断","Treatment Plan":"治疗计划","Rating":"评价","Development":"发展","Entertainment":"娱乐",
