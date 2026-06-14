@@ -141,6 +141,48 @@ body{background:linear-gradient(160deg,#dceafb 0%,#eef5fd 45%,#e3effb 100%);disp
 .feature-btn.diag .feature-ico{background:rgba(18,157,144,.14)}
 .feature-btn.fb .feature-ico{background:rgba(232,146,12,.14)}
 .feature-btn.dev .feature-ico{background:rgba(46,134,222,.14)}
+.feature-btn.treat .feature-ico{background:rgba(43,168,74,.14)}
+.case-video{margin:0 16px 4px;border-radius:16px;overflow:hidden;border:1px solid var(--border);background:#0c2a4a;position:relative;cursor:pointer;box-shadow:var(--shadow)}
+.case-video .cv-thumb{width:100%;height:172px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;background:linear-gradient(150deg,#1769C0 0%,#0F4C8C 60%,#0c2a4a 100%);color:#fff}
+.case-video .cv-play{width:58px;height:58px;border-radius:50%;background:rgba(255,255,255,.18);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;font-size:24px;border:2px solid rgba(255,255,255,.55)}
+.case-video .cv-cap{font-size:13px;font-weight:600}
+.case-video .cv-sub{font-size:11px;color:rgba(255,255,255,.78);margin-top:-4px}
+.case-video .cv-bar{position:absolute;left:0;right:0;bottom:0;padding:8px 14px;background:rgba(8,28,52,.55);display:flex;justify-content:space-between;align-items:center;font-size:11px;color:#fff}
+.case-video video{width:100%;display:block;background:#000}
+.med-timeline{margin:0 16px 4px;position:relative;padding-left:6px}
+.mt-row{display:flex;gap:12px;position:relative;padding-bottom:14px}
+.mt-row:last-child{padding-bottom:2px}
+.mt-line{position:absolute;left:17px;top:6px;bottom:0;width:2px;background:var(--border2)}
+.mt-row:last-child .mt-line{display:none}
+.mt-dot{width:34px;height:34px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:15px;background:var(--blue-pale);border:2px solid var(--border2);z-index:1}
+.mt-row.done .mt-dot{background:rgba(43,168,74,.16);border-color:var(--green)}
+.mt-row.now .mt-dot{background:var(--blue-primary);border-color:var(--blue-primary);color:#fff;box-shadow:0 0 0 4px rgba(46,134,222,.18)}
+.mt-body{flex:1;background:#fff;border:1px solid var(--border);border-radius:14px;padding:10px 14px;box-shadow:var(--shadow)}
+.mt-row.now .mt-body{border-color:var(--blue-primary)}
+.mt-time{font-size:11px;font-weight:700;color:var(--blue-strong);letter-spacing:.3px}
+.mt-name{font-size:13px;font-weight:600;color:var(--text);margin-top:2px}
+.mt-note{font-size:11px;color:var(--text-muted);margin-top:1px}
+.mt-status{font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;align-self:flex-start}
+/* ─── TREATMENT: TODAY'S RECOVERY HERO ─── */
+.rec-card{margin:10px 16px 4px;background:#fff;border:1px solid var(--border);border-radius:18px;padding:16px;box-shadow:var(--shadow)}
+.rec-top{display:flex;align-items:center;gap:14px}
+.rec-info{flex:1}
+.rec-eyebrow{font-size:10px;font-weight:800;letter-spacing:1px;color:var(--blue-strong)}
+.rec-pct{font-size:26px;font-weight:800;color:var(--navy);line-height:1.1;margin-top:4px}
+.rec-pct span{font-size:15px;font-weight:700;color:var(--text-muted)}
+.rec-sub{font-size:12px;color:var(--text-muted);margin-top:2px}
+.rec-donut{width:84px;height:84px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:conic-gradient(var(--blue-primary) 0 var(--pct,63%),var(--bg-card2) var(--pct,63%) 100%)}
+.rec-donut::after{content:attr(data-val);width:60px;height:60px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;color:var(--navy)}
+.rec-bar{height:9px;border-radius:6px;background:var(--bg-card2);margin-top:14px;overflow:hidden}
+.rec-bar>div{height:100%;border-radius:6px;background:linear-gradient(90deg,var(--blue-light),var(--blue-primary))}
+.rec-legend{display:flex;gap:16px;margin-top:8px;font-size:11px;color:var(--text-muted)}
+.rec-legend span{display:flex;align-items:center;gap:5px}
+.rec-dot{width:9px;height:9px;border-radius:50%;display:inline-block}
+.rec-stats{display:flex;gap:8px;margin:10px 16px 4px}
+.rec-stat{flex:1;background:var(--bg-soft);border:1px solid var(--border);border-radius:14px;padding:10px 8px;text-align:center}
+.rec-stat .rs-ico{font-size:18px}
+.rec-stat .rs-val{font-size:14px;font-weight:800;color:var(--navy);margin-top:2px}
+.rec-stat .rs-lbl{font-size:10px;color:var(--text-muted);margin-top:1px}
 .feature-label{font-size:11px;font-weight:600;color:var(--navy);text-align:center;line-height:1.25}
 .actions-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 16px}
 .action-btn{background:#fff;border:1px solid var(--border);border-radius:16px;padding:16px;display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;transition:.2s;width:100%;font-family:inherit;box-shadow:var(--shadow)}
@@ -260,6 +302,17 @@ textarea.input-field{resize:none;height:80px}
 .dev-upvote{display:flex;flex-direction:column;align-items:center;gap:2px;background:var(--blue-pale);border:1px solid var(--border2);border-radius:10px;padding:6px 10px;color:var(--blue-strong);font-weight:700;font-size:13px;cursor:pointer;flex-shrink:0;transition:.2s}
 .dev-upvote:hover{background:var(--blue);color:#fff;border-color:var(--blue)}
 .dev-upvote small{font-size:9px;font-weight:600}
+/* ─── QUICK SURVEY ─── */
+.dev-survey{background:#fff;border:1px solid var(--border);border-radius:16px;padding:14px 16px;margin:8px 16px;box-shadow:var(--shadow)}
+.dev-survey .sv-eyebrow{font-size:10px;font-weight:800;letter-spacing:1px;color:var(--blue-strong)}
+.dev-survey .sv-q{font-size:13px;font-weight:600;color:var(--navy);margin:10px 0 6px}
+.sv-opts{display:flex;gap:6px}
+.sv-opts.emoji{justify-content:space-between}
+.so-btn{flex:1;text-align:center;border:1px solid var(--border2);border-radius:12px;padding:8px 4px;font-size:12px;font-weight:600;color:var(--text-muted);background:var(--bg-soft);cursor:pointer;transition:.15s}
+.so-btn .emo{font-size:20px;display:block;line-height:1}
+.so-btn:hover{border-color:var(--blue-pale2)}
+.so-btn.sel{background:var(--blue-pale);border-color:var(--blue);color:var(--blue-strong)}
+.sv-thanks{display:none;text-align:center;padding:8px 0;font-size:13px;font-weight:600;color:var(--teal)}
 
 /* ─── AI FLOATING BUTTON ─── */
 .ai-fab{position:absolute;right:16px;bottom:84px;z-index:90;width:58px;height:58px;border-radius:50%;background:linear-gradient(135deg,var(--teal),#0E8276);border:3px solid #fff;box-shadow:0 10px 26px rgba(18,157,144,.5);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:.2s;color:#fff}
@@ -268,6 +321,14 @@ textarea.input-field{resize:none;height:80px}
 .ai-fab .lbl{font-size:8px;font-weight:800;letter-spacing:.03em;margin-top:1px}
 .ai-fab.hidden{display:none}
 [dir=rtl] .ai-fab{right:auto;left:16px}
+/* ─── GLOBAL EMERGENCY / SOS BUTTON (red square) ─── */
+.alert-fab{position:absolute;right:16px;bottom:84px;z-index:91;width:58px;height:58px;border-radius:16px;background:linear-gradient(135deg,#FF4D4D,#D32020);border:3px solid #fff;box-shadow:0 10px 26px rgba(211,32,32,.5);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:.2s;color:#fff;animation:sosPulse 2s infinite}
+.alert-fab:hover{transform:translateY(-3px) scale(1.05)}
+.alert-fab .ico{font-size:22px;line-height:1}
+.alert-fab .lbl{font-size:8px;font-weight:800;letter-spacing:.04em;margin-top:1px}
+.alert-fab.hidden{display:none}
+@keyframes sosPulse{0%,100%{box-shadow:0 10px 26px rgba(211,32,32,.5)}50%{box-shadow:0 10px 26px rgba(211,32,32,.5),0 0 0 8px rgba(211,32,32,.16)}}
+[dir=rtl] .alert-fab{right:auto;left:16px}
 [dir=rtl] .skip-btn{right:auto;left:20px}
 [dir=rtl] .duration-badge{right:auto;left:8px}
 [dir=rtl] .toggle::after{right:auto;left:3px}
@@ -313,7 +374,7 @@ textarea.input-field{resize:none;height:80px}
 .brand-bar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:7px 16px;background:#fff;border-bottom:1px solid var(--border);flex-shrink:0}
 .brand-bar .bb-logo{height:24px;width:89px;background:var(--img-logo) left center/contain no-repeat;flex-shrink:0}
 .brand-bar .bb-right{display:flex;align-items:center;gap:10px}
-.brand-bar .bb-aiu{height:22px;width:32px;background:var(--img-aiu) center/contain no-repeat;flex-shrink:0}
+.brand-bar .bb-aiu{height:46px;width:66px;background:var(--img-aiu) center/contain no-repeat;flex-shrink:0}
 .bg-aiu{background:var(--img-aiu) center/contain no-repeat}
 [dir=rtl] .brand-bar .bb-logo{background-position:right center}
 
@@ -552,27 +613,27 @@ textarea.input-field{resize:none;height:80px}
     <!-- Feature buttons -->
     <div class="section-title" id="h-actions-title">MY HEALTH</div>
     <div class="feature-grid three">
-      <button class="feature-btn ent" onclick="goTo('entertainment')">
-        <div class="feature-ico">🎬</div>
-        <span class="feature-label" id="feat_entertainment">Entertainment</span>
-      </button>
-      <button class="feature-btn alert" onclick="showEmergency()">
-        <div class="feature-ico">🚨</div>
-        <span class="feature-label" id="feat_alert">Alert</span>
-      </button>
       <button class="feature-btn diag" onclick="goTo('diagnosis')">
         <div class="feature-ico">🩺</div>
         <span class="feature-label" id="feat_diagnosis">Diagnosis</span>
       </button>
-    </div>
-    <div class="feature-grid two">
+      <button class="feature-btn treat" onclick="goTo('treatment')">
+        <div class="feature-ico">💊</div>
+        <span class="feature-label" id="feat_treatment">Treatment Plan</span>
+      </button>
       <button class="feature-btn fb" onclick="goTo('feedback')">
         <div class="feature-ico">⭐</div>
-        <span class="feature-label" id="feat_feedback">Feedback</span>
+        <span class="feature-label" id="feat_feedback">Rating</span>
       </button>
+    </div>
+    <div class="feature-grid two">
       <button class="feature-btn dev" onclick="goTo('development')">
         <div class="feature-ico">💡</div>
         <span class="feature-label" id="feat_development">Development</span>
+      </button>
+      <button class="feature-btn ent" onclick="goTo('entertainment')">
+        <div class="feature-ico">🎬</div>
+        <span class="feature-label" id="feat_entertainment">Entertainment</span>
       </button>
     </div>
     <div style="height:16px"></div>
@@ -582,7 +643,7 @@ textarea.input-field{resize:none;height:80px}
     <button class="nav-tab" onclick="goTo('visits')"><span style="font-size:20px">📅</span><span id="bn-visits">Visits</span></button>
     <button class="nav-tab" onclick="goTo('ai')"><span style="font-size:20px">🤖</span><span id="bn-ai">AI Advisor</span></button>
     <button class="nav-tab" onclick="goTo('family')"><span style="font-size:20px">👨‍👩‍👧</span><span id="bn-family">Family</span></button>
-    <button class="nav-tab" onclick="goTo('entertainment')"><span style="font-size:20px">🎮</span><span id="bn-entertain">Relax</span></button>
+    
   </div>
 </div>
 
@@ -606,7 +667,7 @@ textarea.input-field{resize:none;height:80px}
     <div style="padding:12px 20px;font-size:12px;color:var(--text-dim);font-style:italic" id="j-note">Each completed stage opens a service rating. Your ratings feed the hospital's quality reports.</div>
     <div style="height:12px"></div>
   </div>
-  <div class="bottom-nav"><button class="nav-tab" onclick="goTo('home')"><span style="font-size:20px">🏠</span><span>Home</span></button><button class="nav-tab" onclick="goTo('visits')"><span style="font-size:20px">📅</span><span>Visits</span></button><button class="nav-tab" onclick="goTo('ai')"><span style="font-size:20px">🤖</span><span>AI Advisor</span></button><button class="nav-tab" onclick="goTo('family')"><span style="font-size:20px">👨‍👩‍👧</span><span>Family</span></button><button class="nav-tab" onclick="goTo('entertainment')"><span style="font-size:20px">🎮</span><span>Relax</span></button></div>
+  <div class="bottom-nav"><button class="nav-tab" onclick="goTo('home')"><span style="font-size:20px">🏠</span><span>Home</span></button><button class="nav-tab" onclick="goTo('visits')"><span style="font-size:20px">📅</span><span>Visits</span></button><button class="nav-tab" onclick="goTo('ai')"><span style="font-size:20px">🤖</span><span>AI Advisor</span></button><button class="nav-tab" onclick="goTo('family')"><span style="font-size:20px">👨‍👩‍👧</span><span>Family</span></button></div>
 </div>
 
 <!-- ═══════════════════════════════════════════
@@ -682,7 +743,7 @@ textarea.input-field{resize:none;height:80px}
     </div>
     <div style="height:12px"></div>
   </div>
-  <div class="bottom-nav"><button class="nav-tab" onclick="goTo('home')"><span style="font-size:20px">🏠</span><span id="bn-home2">Home</span></button><button class="nav-tab active" onclick="goTo('visits')"><span style="font-size:20px">📅</span><span id="bn-visits2">Visits</span></button><button class="nav-tab" onclick="goTo('ai')"><span style="font-size:20px">🤖</span><span id="bn-ai2">AI Advisor</span></button><button class="nav-tab" onclick="goTo('family')"><span style="font-size:20px">👨‍👩‍👧</span><span id="bn-family2">Family</span></button><button class="nav-tab" onclick="goTo('entertainment')"><span style="font-size:20px">🎮</span><span id="bn-entertain2">Relax</span></button></div>
+  <div class="bottom-nav"><button class="nav-tab" onclick="goTo('home')"><span style="font-size:20px">🏠</span><span id="bn-home2">Home</span></button><button class="nav-tab active" onclick="goTo('visits')"><span style="font-size:20px">📅</span><span id="bn-visits2">Visits</span></button><button class="nav-tab" onclick="goTo('ai')"><span style="font-size:20px">🤖</span><span id="bn-ai2">AI Advisor</span></button><button class="nav-tab" onclick="goTo('family')"><span style="font-size:20px">👨‍👩‍👧</span><span id="bn-family2">Family</span></button></div>
 </div>
 
 <!-- ═══════════════════════════════════════════
@@ -701,6 +762,47 @@ textarea.input-field{resize:none;height:80px}
       <div>
         <p style="font-size:14px;font-weight:600;color:var(--text)">Dr. Amira Fouad</p>
         <p style="font-size:12px;color:var(--text-muted)" id="tr-cardio">Cardiology · Updated Jun 11, 2026</p>
+      </div>
+    </div>
+    <div class="rec-card">
+      <div class="rec-top">
+        <div class="rec-info">
+          <div class="rec-eyebrow" id="rec_eyebrow">TODAY'S RECOVERY</div>
+          <div class="rec-pct">63%<span> Completed</span></div>
+          <div class="rec-sub" id="rec_sub">5 of 8 tasks completed today</div>
+        </div>
+        <div class="rec-donut" data-val="63%" style="--pct:63%"></div>
+      </div>
+      <div class="rec-bar"><div style="width:63%"></div></div>
+      <div class="rec-legend">
+        <span><span class="rec-dot" style="background:var(--blue-primary)"></span><span id="rec_leg_done">Completed</span></span>
+        <span><span class="rec-dot" style="background:var(--bg-card2)"></span><span id="rec_leg_rem">Remaining</span></span>
+      </div>
+    </div>
+    <div class="rec-stats">
+      <div class="rec-stat">
+        <div class="rs-ico">💊</div>
+        <div class="rs-val">2:00 PM</div>
+        <div class="rs-lbl" id="rec_next_dose">Next dose</div>
+      </div>
+      <div class="rec-stat">
+        <div class="rs-ico">🏠</div>
+        <div class="rs-val" id="rec_discharge_val">2 days</div>
+        <div class="rs-lbl" id="rec_discharge">To discharge</div>
+      </div>
+      <div class="rec-stat">
+        <div class="rs-ico">📈</div>
+        <div class="rs-val">92%</div>
+        <div class="rs-lbl" id="rec_adherence">Adherence</div>
+      </div>
+    </div>
+    <div class="section-title" id="tr-video-title">AFTER YOUR SURGERY</div>
+    <div class="case-video" id="trVideoCard" onclick="playCaseVideo('tr')">
+      <div class="cv-thumb" id="trVideoThumb">
+        <div class="cv-play">▶</div>
+        <span class="cv-cap" id="tr_video_cap">Watch: What happens after surgery</span>
+        <span class="cv-sub" id="tr_video_sub">Recovery, wound care &amp; medication · 3:10</span>
+        <div class="cv-bar"><span id="tr_video_tag">🎬 Post-surgery guide</span><span>3:10</span></div>
       </div>
     </div>
     <div class="section-title" id="tr-med-title">MEDICATIONS</div>
@@ -739,6 +841,49 @@ textarea.input-field{resize:none;height:80px}
             <p style="font-size:12px;color:var(--text-muted)" id="tr-clop">Once daily · morning</p>
           </div>
           <span class="badge" style="background:rgba(45,189,173,.15);color:var(--teal)" id="tr-taken">Taken</span>
+        </div>
+      </div>
+    </div>
+    <div class="section-title" id="tr-timeline-title">TODAY'S MEDICINE TIMELINE</div>
+    <div class="med-timeline">
+      <div class="mt-row done">
+        <div class="mt-line"></div>
+        <div class="mt-dot">✓</div>
+        <div class="mt-body">
+          <div class="mt-time">08:00 AM · MORNING</div>
+          <div class="mt-name">Clopidogrel 75 mg</div>
+          <div class="mt-note" id="mt-note1">Taken with breakfast</div>
+          <span class="mt-status badge-green" style="background:rgba(43,168,74,.15);color:var(--green)" id="mt-st-taken">Taken ✓</span>
+        </div>
+      </div>
+      <div class="mt-row done">
+        <div class="mt-line"></div>
+        <div class="mt-dot">✓</div>
+        <div class="mt-body">
+          <div class="mt-time">09:00 AM · MORNING</div>
+          <div class="mt-name">Aspirin 81 mg</div>
+          <div class="mt-note" id="mt-note2">After breakfast</div>
+          <span class="mt-status" style="background:rgba(43,168,74,.15);color:var(--green)" id="mt-st-taken2">Taken ✓</span>
+        </div>
+      </div>
+      <div class="mt-row now">
+        <div class="mt-line"></div>
+        <div class="mt-dot">💊</div>
+        <div class="mt-body">
+          <div class="mt-time">02:00 PM · AFTERNOON</div>
+          <div class="mt-name">Aspirin 81 mg</div>
+          <div class="mt-note" id="mt-note3">Due now · with water</div>
+          <span class="mt-status" style="background:rgba(46,134,222,.16);color:var(--blue-strong)" id="mt-st-due">Due now</span>
+        </div>
+      </div>
+      <div class="mt-row">
+        <div class="mt-line"></div>
+        <div class="mt-dot">🌙</div>
+        <div class="mt-body">
+          <div class="mt-time">09:00 PM · EVENING</div>
+          <div class="mt-name">Atorvastatin 40 mg</div>
+          <div class="mt-note" id="mt-note4">Before bedtime</div>
+          <span class="mt-status" style="background:rgba(232,146,12,.15);color:var(--amber)" id="mt-st-up">Upcoming</span>
         </div>
       </div>
     </div>
@@ -811,7 +956,7 @@ textarea.input-field{resize:none;height:80px}
     </div>
     <div style="height:12px"></div>
   </div>
-  <div class="bottom-nav"><button class="nav-tab" onclick="goTo('home')"><span style="font-size:20px">🏠</span><span>Home</span></button><button class="nav-tab" onclick="goTo('visits')"><span style="font-size:20px">📅</span><span>Visits</span></button><button class="nav-tab" onclick="goTo('ai')"><span style="font-size:20px">🤖</span><span>AI Advisor</span></button><button class="nav-tab" onclick="goTo('family')"><span style="font-size:20px">👨‍👩‍👧</span><span>Family</span></button><button class="nav-tab" onclick="goTo('entertainment')"><span style="font-size:20px">🎮</span><span>Relax</span></button></div>
+  <div class="bottom-nav"><button class="nav-tab" onclick="goTo('home')"><span style="font-size:20px">🏠</span><span>Home</span></button><button class="nav-tab" onclick="goTo('visits')"><span style="font-size:20px">📅</span><span>Visits</span></button><button class="nav-tab" onclick="goTo('ai')"><span style="font-size:20px">🤖</span><span>AI Advisor</span></button><button class="nav-tab" onclick="goTo('family')"><span style="font-size:20px">👨‍👩‍👧</span><span>Family</span></button></div>
 </div>
 
 <!-- ═══════════════════════════════════════════
@@ -881,7 +1026,7 @@ textarea.input-field{resize:none;height:80px}
     </div>
     <div style="height:12px"></div>
   </div>
-  <div class="bottom-nav"><button class="nav-tab" onclick="goTo('home')"><span style="font-size:20px">🏠</span><span>Home</span></button><button class="nav-tab" onclick="goTo('visits')"><span style="font-size:20px">📅</span><span>Visits</span></button><button class="nav-tab" onclick="goTo('ai')"><span style="font-size:20px">🤖</span><span>AI Advisor</span></button><button class="nav-tab" onclick="goTo('family')"><span style="font-size:20px">👨‍👩‍👧</span><span>Family</span></button><button class="nav-tab" onclick="goTo('entertainment')"><span style="font-size:20px">🎮</span><span>Relax</span></button></div>
+  <div class="bottom-nav"><button class="nav-tab" onclick="goTo('home')"><span style="font-size:20px">🏠</span><span>Home</span></button><button class="nav-tab" onclick="goTo('visits')"><span style="font-size:20px">📅</span><span>Visits</span></button><button class="nav-tab" onclick="goTo('ai')"><span style="font-size:20px">🤖</span><span>AI Advisor</span></button><button class="nav-tab" onclick="goTo('family')"><span style="font-size:20px">👨‍👩‍👧</span><span>Family</span></button></div>
 </div>
 
 
@@ -933,7 +1078,7 @@ textarea.input-field{resize:none;height:80px}
     </div>
     <div style="height:12px"></div>
   </div>
-  <div class="bottom-nav"><button class="nav-tab" onclick="goTo('home')"><span style="font-size:20px">🏠</span><span>Home</span></button><button class="nav-tab" onclick="goTo('visits')"><span style="font-size:20px">📅</span><span>Visits</span></button><button class="nav-tab" onclick="goTo('ai')"><span style="font-size:20px">🤖</span><span>AI Advisor</span></button><button class="nav-tab" onclick="goTo('family')"><span style="font-size:20px">👨‍👩‍👧</span><span>Family</span></button><button class="nav-tab" onclick="goTo('entertainment')"><span style="font-size:20px">🎮</span><span>Relax</span></button></div>
+  <div class="bottom-nav"><button class="nav-tab" onclick="goTo('home')"><span style="font-size:20px">🏠</span><span>Home</span></button><button class="nav-tab" onclick="goTo('visits')"><span style="font-size:20px">📅</span><span>Visits</span></button><button class="nav-tab" onclick="goTo('ai')"><span style="font-size:20px">🤖</span><span>AI Advisor</span></button><button class="nav-tab" onclick="goTo('family')"><span style="font-size:20px">👨‍👩‍👧</span><span>Family</span></button></div>
 </div>
 
 <!-- ═══════════════════════════════════════════
@@ -974,7 +1119,7 @@ textarea.input-field{resize:none;height:80px}
     </div>
     <div style="height:12px"></div>
   </div>
-  <div class="bottom-nav"><button class="nav-tab" onclick="goTo('home')"><span style="font-size:20px">🏠</span><span>Home</span></button><button class="nav-tab" onclick="goTo('visits')"><span style="font-size:20px">📅</span><span>Visits</span></button><button class="nav-tab" onclick="goTo('ai')"><span style="font-size:20px">🤖</span><span>AI</span></button><button class="nav-tab active" onclick="goTo('profile')"><span style="font-size:20px">👤</span><span>Profile</span></button><button class="nav-tab" onclick="goTo('entertainment')"><span style="font-size:20px">🎮</span><span>Relax</span></button></div>
+  <div class="bottom-nav"><button class="nav-tab" onclick="goTo('home')"><span style="font-size:20px">🏠</span><span>Home</span></button><button class="nav-tab" onclick="goTo('visits')"><span style="font-size:20px">📅</span><span>Visits</span></button><button class="nav-tab" onclick="goTo('ai')"><span style="font-size:20px">🤖</span><span>AI</span></button><button class="nav-tab active" onclick="goTo('profile')"><span style="font-size:20px">👤</span><span>Profile</span></button></div>
 </div>
 
 <!-- ═══════════════════════════════════════════
@@ -1008,7 +1153,7 @@ textarea.input-field{resize:none;height:80px}
     <input type="text" class="chat-input" id="chat-input" placeholder="Ask a health question...">
     <button onclick="sendCustomMsg()" style="background:var(--blue-primary);border:none;border-radius:50%;width:42px;height:42px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;flex-shrink:0">➤</button>
   </div>
-  <div class="bottom-nav"><button class="nav-tab" onclick="goTo('home')"><span style="font-size:20px">🏠</span><span id="bn-home3">Home</span></button><button class="nav-tab" onclick="goTo('visits')"><span style="font-size:20px">📅</span><span>Visits</span></button><button class="nav-tab active" onclick="goTo('ai')"><span style="font-size:20px">🤖</span><span id="bn-ai3">AI Advisor</span></button><button class="nav-tab" onclick="goTo('family')"><span style="font-size:20px">👨‍👩‍👧</span><span>Family</span></button><button class="nav-tab" onclick="goTo('entertainment')"><span style="font-size:20px">🎮</span><span>Relax</span></button></div>
+  <div class="bottom-nav"><button class="nav-tab" onclick="goTo('home')"><span style="font-size:20px">🏠</span><span id="bn-home3">Home</span></button><button class="nav-tab" onclick="goTo('visits')"><span style="font-size:20px">📅</span><span>Visits</span></button><button class="nav-tab active" onclick="goTo('ai')"><span style="font-size:20px">🤖</span><span id="bn-ai3">AI Advisor</span></button><button class="nav-tab" onclick="goTo('family')"><span style="font-size:20px">👨‍👩‍👧</span><span>Family</span></button></div>
 </div>
 
 <!-- ═══════════════════════════════════════════
@@ -1066,7 +1211,7 @@ textarea.input-field{resize:none;height:80px}
     <p style="font-size:11px;color:var(--text-dim);padding:16px 20px;font-style:italic" id="fam-note">Privacy controls put you in charge of your own information.</p>
     <div style="height:8px"></div>
   </div>
-  <div class="bottom-nav"><button class="nav-tab" onclick="goTo('home')"><span style="font-size:20px">🏠</span><span>Home</span></button><button class="nav-tab" onclick="goTo('visits')"><span style="font-size:20px">📅</span><span>Visits</span></button><button class="nav-tab" onclick="goTo('ai')"><span style="font-size:20px">🤖</span><span>AI</span></button><button class="nav-tab active" onclick="goTo('family')"><span style="font-size:20px">👨‍👩‍👧</span><span id="bn-family3">Family</span></button><button class="nav-tab" onclick="goTo('entertainment')"><span style="font-size:20px">🎮</span><span>Relax</span></button></div>
+  <div class="bottom-nav"><button class="nav-tab" onclick="goTo('home')"><span style="font-size:20px">🏠</span><span>Home</span></button><button class="nav-tab" onclick="goTo('visits')"><span style="font-size:20px">📅</span><span>Visits</span></button><button class="nav-tab" onclick="goTo('ai')"><span style="font-size:20px">🤖</span><span>AI</span></button><button class="nav-tab active" onclick="goTo('family')"><span style="font-size:20px">👨‍👩‍👧</span><span id="bn-family3">Family</span></button></div>
 </div>
 
 <!-- ═══════════════════════════════════════════
@@ -1119,7 +1264,7 @@ textarea.input-field{resize:none;height:80px}
       <div style="height:12px"></div>
     </div>
   </div>
-  <div class="bottom-nav"><button class="nav-tab" onclick="goTo('home')"><span style="font-size:20px">🏠</span><span>Home</span></button><button class="nav-tab" onclick="goTo('visits')"><span style="font-size:20px">📅</span><span>Visits</span></button><button class="nav-tab" onclick="goTo('ai')"><span style="font-size:20px">🤖</span><span>AI</span></button><button class="nav-tab" onclick="goTo('family')"><span style="font-size:20px">👨‍👩‍👧</span><span>Family</span></button><button class="nav-tab active" onclick="goTo('entertainment')"><span style="font-size:20px">🎮</span><span>Relax</span></button></div>
+  <div class="bottom-nav"><button class="nav-tab" onclick="goTo('home')"><span style="font-size:20px">🏠</span><span>Home</span></button><button class="nav-tab" onclick="goTo('visits')"><span style="font-size:20px">📅</span><span>Visits</span></button><button class="nav-tab" onclick="goTo('ai')"><span style="font-size:20px">🤖</span><span>AI</span></button><button class="nav-tab" onclick="goTo('family')"><span style="font-size:20px">👨‍👩‍👧</span><span>Family</span></button></div>
 </div>
 
 <!-- ═══════════════════════════════════════════
@@ -1150,7 +1295,7 @@ textarea.input-field{resize:none;height:80px}
     <div class="notif-card"><div class="notif-icon" style="background:rgba(156,39,176,.15)">👨‍👩‍👧</div><div><p style="font-size:14px;font-weight:600;color:var(--text)">Family member joined</p><p style="font-size:12px;color:var(--text-muted)">Samia Ibrahim now follows your care · 09:30</p></div></div>
     <div style="height:12px"></div>
   </div>
-  <div class="bottom-nav"><button class="nav-tab" onclick="goTo('home')"><span style="font-size:20px">🏠</span><span>Home</span></button><button class="nav-tab" onclick="goTo('visits')"><span style="font-size:20px">📅</span><span>Visits</span></button><button class="nav-tab" onclick="goTo('ai')"><span style="font-size:20px">🤖</span><span>AI Advisor</span></button><button class="nav-tab" onclick="goTo('family')"><span style="font-size:20px">👨‍👩‍👧</span><span>Family</span></button><button class="nav-tab" onclick="goTo('entertainment')"><span style="font-size:20px">🎮</span><span>Relax</span></button></div>
+  <div class="bottom-nav"><button class="nav-tab" onclick="goTo('home')"><span style="font-size:20px">🏠</span><span>Home</span></button><button class="nav-tab" onclick="goTo('visits')"><span style="font-size:20px">📅</span><span>Visits</span></button><button class="nav-tab" onclick="goTo('ai')"><span style="font-size:20px">🤖</span><span>AI Advisor</span></button><button class="nav-tab" onclick="goTo('family')"><span style="font-size:20px">👨‍👩‍👧</span><span>Family</span></button></div>
 </div>
 
 <!-- ═══════════════════════════════════════════
@@ -1182,7 +1327,7 @@ textarea.input-field{resize:none;height:80px}
     </div>
     <div style="height:12px"></div>
   </div>
-  <div class="bottom-nav"><button class="nav-tab" onclick="goTo('home')"><span style="font-size:20px">🏠</span><span>Home</span></button><button class="nav-tab" onclick="goTo('visits')"><span style="font-size:20px">📅</span><span>Visits</span></button><button class="nav-tab" onclick="goTo('ai')"><span style="font-size:20px">🤖</span><span>AI Advisor</span></button><button class="nav-tab" onclick="goTo('family')"><span style="font-size:20px">👨‍👩‍👧</span><span>Family</span></button><button class="nav-tab" onclick="goTo('entertainment')"><span style="font-size:20px">🎮</span><span>Relax</span></button></div>
+  <div class="bottom-nav"><button class="nav-tab" onclick="goTo('home')"><span style="font-size:20px">🏠</span><span>Home</span></button><button class="nav-tab" onclick="goTo('visits')"><span style="font-size:20px">📅</span><span>Visits</span></button><button class="nav-tab" onclick="goTo('ai')"><span style="font-size:20px">🤖</span><span>AI Advisor</span></button><button class="nav-tab" onclick="goTo('family')"><span style="font-size:20px">👨‍👩‍👧</span><span>Family</span></button></div>
 </div>
 
 <!-- ═══════════════════════════════════════════
@@ -1201,6 +1346,15 @@ textarea.input-field{resize:none;height:80px}
       <p style="font-size:20px;font-weight:800;color:#fff;margin-top:4px" id="diag_condition">Acute Coronary Syndrome</p>
       <p style="font-size:12px;color:rgba(255,255,255,.85);margin-top:6px" id="diag_meta">Cardiology · Dr. Amira Fouad · Admitted Jun 11, 2026</p>
     </div>
+    <div class="section-title" id="diag_video_title">YOUR CASE EXPLAINED</div>
+    <div class="case-video" id="diagVideoCard" onclick="playCaseVideo('diag')">
+      <div class="cv-thumb" id="diagVideoThumb">
+        <div class="cv-play">▶</div>
+        <span class="cv-cap" id="diag_video_cap">Watch: Understanding your case</span>
+        <span class="cv-sub" id="diag_video_sub">Dr. Amira Fouad · 2:45 · with subtitles</span>
+        <div class="cv-bar"><span id="diag_video_tag">🎬 Personalised explainer</span><span>2:45</span></div>
+      </div>
+    </div>
     <div class="section-title" id="diag_summary_title">WHAT THIS MEANS</div>
     <div style="margin:0 16px">
       <div class="card">
@@ -1208,24 +1362,14 @@ textarea.input-field{resize:none;height:80px}
       </div>
     </div>
     <div class="section-title" id="diag_explore_title">EXPLORE</div>
-    <div class="diag-link" onclick="goTo('treatment')">
-      <div class="diag-link-ico" style="background:rgba(18,157,144,.14)">💊</div>
-      <div style="flex:1"><p style="font-size:14px;font-weight:700;color:var(--navy)" id="diag_treatment">Treatment Plan</p><p style="font-size:11px;color:var(--text-muted)" id="diag_treatment_sub">Medications &amp; daily goals</p></div>
-      <span style="color:var(--blue);font-size:18px">›</span>
-    </div>
     <div class="diag-link" onclick="goTo('reports')">
       <div class="diag-link-ico">📄</div>
       <div style="flex:1"><p style="font-size:14px;font-weight:700;color:var(--navy)" id="diag_reports">Test Results &amp; Reports</p><p style="font-size:11px;color:var(--text-muted)" id="diag_reports_sub">Lab, ECG &amp; imaging</p></div>
       <span style="color:var(--blue);font-size:18px">›</span>
     </div>
-    <div class="diag-link" onclick="goTo('ai')">
-      <div class="diag-link-ico" style="background:rgba(18,157,144,.14)">🤖</div>
-      <div style="flex:1"><p style="font-size:14px;font-weight:700;color:var(--navy)" id="diag_ask">Ask the AI Advisor</p><p style="font-size:11px;color:var(--text-muted)" id="diag_ask_sub">Understand your condition in plain language</p></div>
-      <span style="color:var(--blue);font-size:18px">›</span>
-    </div>
     <div style="height:12px"></div>
   </div>
-  <div class="bottom-nav"><button class="nav-tab" onclick="goTo('home')"><span style="font-size:20px">🏠</span><span>Home</span></button><button class="nav-tab" onclick="goTo('visits')"><span style="font-size:20px">📅</span><span>Visits</span></button><button class="nav-tab" onclick="goTo('ai')"><span style="font-size:20px">🤖</span><span>AI Advisor</span></button><button class="nav-tab" onclick="goTo('family')"><span style="font-size:20px">👨‍👩‍👧</span><span>Family</span></button><button class="nav-tab" onclick="goTo('entertainment')"><span style="font-size:20px">🎮</span><span>Relax</span></button></div>
+  <div class="bottom-nav"><button class="nav-tab" onclick="goTo('home')"><span style="font-size:20px">🏠</span><span>Home</span></button><button class="nav-tab" onclick="goTo('visits')"><span style="font-size:20px">📅</span><span>Visits</span></button><button class="nav-tab" onclick="goTo('ai')"><span style="font-size:20px">🤖</span><span>AI Advisor</span></button><button class="nav-tab" onclick="goTo('family')"><span style="font-size:20px">👨‍👩‍👧</span><span>Family</span></button></div>
 </div>
 
 <!-- ═══════════════════════════════════════════
@@ -1242,6 +1386,25 @@ textarea.input-field{resize:none;height:80px}
     <div style="padding:14px 20px 4px;display:flex;gap:12px;align-items:center">
       <div style="width:46px;height:46px;border-radius:14px;background:var(--blue-pale);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0">💡</div>
       <p style="font-size:13px;color:var(--text-muted);line-height:1.5" id="dev_sub">Share your suggestions and opinions to help us improve the hospital.</p>
+    </div>
+    <div class="dev-survey" id="devSurvey">
+      <div class="sv-eyebrow" id="sv_eyebrow">QUICK SURVEY · 30 SECONDS</div>
+      <div class="sv-q" id="sv_q1">How satisfied are you with your care today?</div>
+      <div class="sv-opts emoji" data-q="1">
+        <div class="so-btn" onclick="pickSurvey(this)"><span class="emo">😞</span></div>
+        <div class="so-btn" onclick="pickSurvey(this)"><span class="emo">😐</span></div>
+        <div class="so-btn" onclick="pickSurvey(this)"><span class="emo">🙂</span></div>
+        <div class="so-btn" onclick="pickSurvey(this)"><span class="emo">😀</span></div>
+        <div class="so-btn" onclick="pickSurvey(this)"><span class="emo">🤩</span></div>
+      </div>
+      <div class="sv-q" id="sv_q2">Would you recommend us to family &amp; friends?</div>
+      <div class="sv-opts" data-q="2">
+        <div class="so-btn" onclick="pickSurvey(this)" id="sv_no">No</div>
+        <div class="so-btn" onclick="pickSurvey(this)" id="sv_maybe">Maybe</div>
+        <div class="so-btn" onclick="pickSurvey(this)" id="sv_yes">Yes</div>
+      </div>
+      <button class="btn-primary" style="margin-top:12px" onclick="submitSurvey()" id="sv_submit">Submit Survey</button>
+      <div class="sv-thanks" id="sv_thanks">🎉 Thank you for your feedback!</div>
     </div>
     <div style="padding:8px 16px">
       <div class="input-group">
@@ -1276,14 +1439,14 @@ textarea.input-field{resize:none;height:80px}
     </div>
     <div style="height:12px"></div>
   </div>
-  <div class="bottom-nav"><button class="nav-tab" onclick="goTo('home')"><span style="font-size:20px">🏠</span><span>Home</span></button><button class="nav-tab" onclick="goTo('visits')"><span style="font-size:20px">📅</span><span>Visits</span></button><button class="nav-tab" onclick="goTo('ai')"><span style="font-size:20px">🤖</span><span>AI Advisor</span></button><button class="nav-tab" onclick="goTo('family')"><span style="font-size:20px">👨‍👩‍👧</span><span>Family</span></button><button class="nav-tab" onclick="goTo('entertainment')"><span style="font-size:20px">🎮</span><span>Relax</span></button></div>
+  <div class="bottom-nav"><button class="nav-tab" onclick="goTo('home')"><span style="font-size:20px">🏠</span><span>Home</span></button><button class="nav-tab" onclick="goTo('visits')"><span style="font-size:20px">📅</span><span>Visits</span></button><button class="nav-tab" onclick="goTo('ai')"><span style="font-size:20px">🤖</span><span>AI Advisor</span></button><button class="nav-tab" onclick="goTo('family')"><span style="font-size:20px">👨‍👩‍👧</span><span>Family</span></button></div>
 </div>
 
 
 <!-- TOAST -->
 <div id="toast" style="position:absolute;bottom:100px;left:50%;transform:translateX(-50%);background:rgba(45,189,173,.9);color:#fff;padding:10px 20px;border-radius:24px;font-size:13px;font-weight:600;opacity:0;transition:.3s;pointer-events:none;white-space:nowrap;z-index:300">Message</div>
 
-<button class="ai-fab hidden" id="aiFab" onclick="goTo('ai')" title="AI Advisor"><span class="ico">🤖</span><span class="lbl" id="fab-lbl">AI</span></button>
+<button class="alert-fab hidden" id="alertFab" onclick="showEmergency()" title="Contact Doctor"><span class="ico">🩺</span><span class="lbl" id="alert-fab-lbl">Doctor</span></button>
 </div><!-- /phone-wrap -->
 
 <script>
@@ -1354,6 +1517,27 @@ function setLang(l){
 
 // ─── EMERGENCY ───
 function showEmergency(){document.getElementById('emergencyModal').classList.add('open')}
+// ─── CASE / RECOVERY VIDEOS ───
+const caseVideoSrc={
+  diag:'assets/diagnosis-case.mp4',   // patient-case explainer (wired to hospital media server)
+  tr:'assets/after-surgery.mp4'       // post-surgery process explainer
+};
+function playCaseVideo(key){
+  const thumb=document.getElementById(key==='diag'?'diagVideoThumb':'trVideoThumb');
+  if(!thumb||thumb.dataset.playing)return;
+  thumb.dataset.playing='1';
+  const v=document.createElement('video');
+  v.controls=true;v.autoplay=true;v.playsInline=true;v.src=caseVideoSrc[key];
+  v.onerror=function(){
+    thumb.style.display='flex';
+    if(v.parentNode)v.parentNode.removeChild(v);
+    thumb.dataset.playing='';
+    var msgs={en:'Video will be available shortly',ar:'سيتوفر الفيديو قريباً',ru:'Видео скоро будет доступно',zh:'视频即将上线'};
+    showToast(msgs[currentLang]||msgs.en);
+  };
+  thumb.style.display='none';
+  thumb.parentNode.appendChild(v);
+}
 function closeModal(){document.getElementById('emergencyModal').classList.remove('open')}
 
 // ─── AI CHAT ───
@@ -1872,6 +2056,18 @@ const EXTRA = {
 function EX(key){ return (EXTRA[currentLang]||EXTRA.en)[key] || (EXTRA.en[key]||key); }
 
 // ─── DEVELOPMENT ───
+function pickSurvey(el){
+  const row = el.parentElement;
+  row.querySelectorAll('.so-btn').forEach(b=>b.classList.remove('sel'));
+  el.classList.add('sel');
+}
+function submitSurvey(){
+  const q1 = document.querySelector('.sv-opts[data-q="1"] .so-btn.sel');
+  const q2 = document.querySelector('.sv-opts[data-q="2"] .so-btn.sel');
+  if(!q1 || !q2){ showToast(EX('sv_incomplete')||'Please answer both questions'); return; }
+  document.querySelectorAll('#devSurvey .sv-q, #devSurvey .sv-opts, #devSurvey #sv_submit, #devSurvey .sv-eyebrow').forEach(n=>n.style.display='none');
+  document.getElementById('sv_thanks').style.display='block';
+}
 function submitDevelopment(){
   const content = document.getElementById('development-content');
   content.innerHTML = `<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px;text-align:center">
@@ -1898,12 +2094,13 @@ function payNow(){ showToast(EX('pay_redirect')); }
 
 // ─── AI FLOATING BUTTON ───
 function updateFab(){
-  const fab = document.getElementById('aiFab');
-  if(!fab) return;
-  const hide = (currentScreen==='onboard'||currentScreen==='login'||currentScreen==='ai');
-  fab.classList.toggle('hidden', hide);
-  const lbl = document.getElementById('fab-lbl');
-  if(lbl) lbl.textContent = EX('fab_lbl');
+  const onAuth = (currentScreen==='onboard'||currentScreen==='login');
+  const alertFab = document.getElementById('alertFab');
+  if(alertFab){
+    alertFab.classList.toggle('hidden', onAuth);
+    const al = document.getElementById('alert-fab-lbl');
+    if(al) al.textContent = EX('alert_fab_lbl')||'Doctor';
+  }
 }
 
 
@@ -1914,6 +2111,24 @@ function updateFab(){
 // TRANSLATIONS / EXTRA key dictionaries. Keyed by English source.
 const SUPP = {
   ar:{
+    "QUICK SURVEY · 30 SECONDS":"استبيان سريع · 30 ثانية","How satisfied are you with your care today?":"ما مدى رضاك عن الرعاية اليوم؟","Would you recommend us to family & friends?":"هل توصي بنا للعائلة والأصدقاء؟","No":"لا","Maybe":"ربما","Yes":"نعم","Submit Survey":"إرسال الاستبيان","🎉 Thank you for your feedback!":"🎉 شكراً على ملاحظاتك!",
+    "TODAY'S RECOVERY":"تعافي اليوم","5 of 8 tasks completed today":"تم إنجاز 5 من 8 مهام اليوم",
+    "Completed":"مكتمل","Remaining":"المتبقي","Next dose":"الجرعة التالية","2 days":"يومان","To discharge":"حتى الخروج","Adherence":"الالتزام",
+    "Diagnosis":"التشخيص","Treatment Plan":"خطة العلاج","Rating":"التقييم","Development":"التطوير","Entertainment":"الترفيه",
+    "YOUR CASE EXPLAINED":"شرح حالتك",
+    "Watch: Understanding your case":"شاهد: فهم حالتك",
+    "Dr. Amira Fouad · 2:45 · with subtitles":"د. أميرة فؤاد · 2:45 · مع ترجمة",
+    "🎬 Personalised explainer":"🎬 شرح مخصص لحالتك",
+    "AFTER YOUR SURGERY":"بعد عمليتك الجراحية",
+    "Watch: What happens after surgery":"شاهد: ما الذي يحدث بعد الجراحة",
+    "Recovery, wound care & medication · 3:10":"التعافي والعناية بالجرح والدواء · 3:10",
+    "🎬 Post-surgery guide":"🎬 دليل ما بعد الجراحة",
+    "TODAY'S MEDICINE TIMELINE":"الجدول الزمني لأدوية اليوم",
+    "Taken with breakfast":"أُخذ مع الإفطار","After breakfast":"بعد الإفطار",
+    "Due now · with water":"موعده الآن · مع الماء","Before bedtime":"قبل النوم",
+    "Taken ✓":"تم أخذه ✓","Due now":"موعده الآن","Upcoming":"قادم",
+    "08:00 AM · MORNING":"08:00 ص · صباحاً","09:00 AM · MORNING":"09:00 ص · صباحاً",
+    "02:00 PM · AFTERNOON":"02:00 م · ظهراً","09:00 PM · EVENING":"09:00 م · مساءً",
     "RECORDS":"السجلات",
     "Reports":"التقارير",
     "Health":"الصحة",
@@ -1961,6 +2176,24 @@ const SUPP = {
     "Facilities":"المرافق","Mobile App":"التطبيق","Powered by AIU":"بدعم من AIU"
   },
   ru:{
+    "QUICK SURVEY · 30 SECONDS":"БЫСТРЫЙ ОПРОС · 30 СЕКУНД","How satisfied are you with your care today?":"Насколько вы довольны уходом сегодня?","Would you recommend us to family & friends?":"Порекомендуете нас семье и друзьям?","No":"Нет","Maybe":"Возможно","Yes":"Да","Submit Survey":"Отправить опрос","🎉 Thank you for your feedback!":"🎉 Спасибо за ваш отзыв!",
+    "TODAY'S RECOVERY":"ВОССТАНОВЛЕНИЕ СЕГОДНЯ","5 of 8 tasks completed today":"Выполнено 5 из 8 задач за сегодня",
+    "Completed":"Выполнено","Remaining":"Осталось","Next dose":"Следующая доза","2 days":"2 дня","To discharge":"До выписки","Adherence":"Соблюдение",
+    "Diagnosis":"Диагноз","Treatment Plan":"План лечения","Rating":"Оценка","Development":"Развитие","Entertainment":"Развлечения",
+    "YOUR CASE EXPLAINED":"О ВАШЕМ СЛУЧАЕ",
+    "Watch: Understanding your case":"Видео: о вашем случае",
+    "Dr. Amira Fouad · 2:45 · with subtitles":"Д-р Амира Фуад · 2:45 · с субтитрами",
+    "🎬 Personalised explainer":"🎬 Персональное видео",
+    "AFTER YOUR SURGERY":"ПОСЛЕ ОПЕРАЦИИ",
+    "Watch: What happens after surgery":"Видео: что происходит после операции",
+    "Recovery, wound care & medication · 3:10":"Восстановление, уход за раной и лекарства · 3:10",
+    "🎬 Post-surgery guide":"🎬 Руководство после операции",
+    "TODAY'S MEDICINE TIMELINE":"ГРАФИК ПРИЁМА ЛЕКАРСТВ НА СЕГОДНЯ",
+    "Taken with breakfast":"Принято с завтраком","After breakfast":"После завтрака",
+    "Due now · with water":"Сейчас · с водой","Before bedtime":"Перед сном",
+    "Taken ✓":"Принято ✓","Due now":"Сейчас","Upcoming":"Предстоит",
+    "08:00 AM · MORNING":"08:00 · УТРО","09:00 AM · MORNING":"09:00 · УТРО",
+    "02:00 PM · AFTERNOON":"14:00 · ДЕНЬ","09:00 PM · EVENING":"21:00 · ВЕЧЕР",
     "RECORDS":"ЗАПИСИ",
     "Reports":"Отчёты",
     "Health":"Здоровье",
@@ -2008,6 +2241,24 @@ const SUPP = {
     "Facilities":"Помещения","Mobile App":"Приложение","Powered by AIU":"При поддержке AIU"
   },
   zh:{
+    "QUICK SURVEY · 30 SECONDS":"快速调查 · 30秒","How satisfied are you with your care today?":"您对今天的护理满意吗？","Would you recommend us to family & friends?":"您会向家人和朋友推荐我们吗？","No":"否","Maybe":"也许","Yes":"是","Submit Survey":"提交调查","🎉 Thank you for your feedback!":"🎉 感谢您的反馈！",
+    "TODAY'S RECOVERY":"今日康复","5 of 8 tasks completed today":"今日已完成8项中的5项",
+    "Completed":"已完成","Remaining":"剩余","Next dose":"下次用药","2 days":"2天","To discharge":"距出院","Adherence":"依从率",
+    "Diagnosis":"诊断","Treatment Plan":"治疗计划","Rating":"评价","Development":"发展","Entertainment":"娱乐",
+    "YOUR CASE EXPLAINED":"病情说明",
+    "Watch: Understanding your case":"观看：了解您的病情",
+    "Dr. Amira Fouad · 2:45 · with subtitles":"阿米拉·福阿德医生 · 2:45 · 含字幕",
+    "🎬 Personalised explainer":"🎬 个性化讲解",
+    "AFTER YOUR SURGERY":"术后须知",
+    "Watch: What happens after surgery":"观看：术后会发生什么",
+    "Recovery, wound care & medication · 3:10":"康复、伤口护理与用药 · 3:10",
+    "🎬 Post-surgery guide":"🎬 术后指南",
+    "TODAY'S MEDICINE TIMELINE":"今日用药时间表",
+    "Taken with breakfast":"随早餐服用","After breakfast":"早餐后",
+    "Due now · with water":"现在服用 · 配水","Before bedtime":"睡前",
+    "Taken ✓":"已服用 ✓","Due now":"现在服用","Upcoming":"即将到来",
+    "08:00 AM · MORNING":"上午08:00 · 早晨","09:00 AM · MORNING":"上午09:00 · 早晨",
+    "02:00 PM · AFTERNOON":"下午02:00 · 午后","09:00 PM · EVENING":"晚上09:00 · 晚间",
     "RECORDS":"记录",
     "Reports":"报告",
     "Health":"健康",
