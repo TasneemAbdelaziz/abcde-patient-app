@@ -235,6 +235,23 @@ body{background:linear-gradient(160deg,#dceafb 0%,#eef5fd 45%,#e3effb 100%);disp
 /* ─── LANG SHEET ─── */
 .lang-sheet{position:absolute;bottom:0;left:0;right:0;background:#fff;border-radius:24px 24px 0 0;border-top:1px solid var(--border2);z-index:200;transform:translateY(100%);transition:.35s;box-shadow:0 -12px 40px rgba(20,59,102,.18)}
 .lang-sheet.open{transform:translateY(0)}
+/* ── Rating bottom sheet (app-theme) ── */
+.rate-backdrop{position:absolute;inset:0;background:rgba(20,40,70,.55);z-index:150;opacity:0;pointer-events:none;transition:.3s;backdrop-filter:blur(2px)}
+.rate-backdrop.open{opacity:1;pointer-events:all}
+.rate-sheet{position:absolute;bottom:0;left:0;right:0;background:var(--bg-card);border-radius:26px 26px 0 0;border-top:1px solid var(--border2);z-index:200;transform:translateY(100%);transition:.35s cubic-bezier(.22,1,.36,1);box-shadow:0 -14px 40px rgba(20,59,102,.20);padding:8px 22px 26px}
+.rate-sheet.open{transform:translateY(0)}
+.rate-handle{width:42px;height:5px;border-radius:3px;background:var(--border2);margin:6px auto 16px}
+.rate-heading{font-size:21px;font-weight:700;color:var(--navy);margin:0 0 6px}
+.rate-sub{font-size:13.5px;color:var(--text-muted);margin:0 0 18px;line-height:1.5}
+.rate-stars{display:flex;justify-content:center;gap:12px;margin:0 0 20px}
+.rate-star{font-size:40px;color:var(--border2);cursor:pointer;transition:.15s;line-height:1}
+.rate-star.filled{color:var(--amber)}
+.rate-textarea{width:100%;box-sizing:border-box;height:84px;resize:none;border:1px solid var(--border2);border-radius:14px;padding:12px 14px;font-family:inherit;font-size:13.5px;color:var(--text);background:var(--bg-card);outline:none}
+.rate-textarea:focus{border-color:var(--blue-primary)}
+.rate-submit{width:100%;margin-top:16px;background:var(--blue-primary);color:#fff;border:none;border-radius:14px;padding:15px;font-size:15px;font-weight:600;font-family:inherit;cursor:pointer;transition:.15s;box-shadow:0 6px 16px rgba(46,134,222,.28)}
+.rate-submit:active{transform:scale(.98)}
+.rate-later{width:100%;margin-top:10px;background:var(--bg-card);color:var(--text-muted);border:1px solid var(--border2);border-radius:14px;padding:14px;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;transition:.15s}
+.rate-later:active{background:var(--bg-soft)}
 .lang-option{display:flex;align-items:center;gap:14px;padding:16px 24px;cursor:pointer;border:none;background:none;width:100%;font-family:inherit;font-size:15px;color:var(--text);transition:.2s}
 .lang-option:hover{background:var(--blue-pale)}
 .lang-flag{font-size:24px}
@@ -442,6 +459,12 @@ textarea.input-field{resize:none;height:80px}
   <button class="lang-option" onclick="setLang('ru')"><span class="lang-flag">🇷🇺</span><span>Русский</span><span class="lang-check" id="lc-ru" style="display:none">✓</span></button>
   <button class="lang-option" onclick="setLang('zh')"><span class="lang-flag">🇨🇳</span><span>中文</span><span class="lang-check" id="lc-zh" style="display:none">✓</span></button>
   <div style="height:20px"></div>
+</div>
+
+<!-- RATING BOTTOM SHEET -->
+<div class="rate-backdrop" id="rateBackdrop" onclick="closeRateSheet()"></div>
+<div class="rate-sheet" id="rateSheet">
+  <div id="rate-sheet-content"></div>
 </div>
 
 <!-- EMERGENCY MODAL -->
@@ -1626,36 +1649,45 @@ function submitFeedback(){
   </div>`;
 }
 
-// ─── RATE A SINGLE STAGE ───
+// ─── RATE A SINGLE STAGE (bottom sheet) ───
 let stageStarRating = 0;
 let selectedStageTitle = '';
+function openRateSheet(){
+  document.getElementById('rateBackdrop').classList.add('open');
+  document.getElementById('rateSheet').classList.add('open');
+}
+function closeRateSheet(){
+  document.getElementById('rateBackdrop').classList.remove('open');
+  document.getElementById('rateSheet').classList.remove('open');
+}
 function openStageRating(i){
   const stages = STAGE_DATA[currentLang]||STAGE_DATA.en;
   selectedStageTitle = (stages[i] && stages[i].title) || '';
   stageStarRating = 0;
-  const stars = [1,2,3,4,5].map(n=>`<span class="sr-star" onclick="setStageStar(${n})">★</span>`).join('');
-  document.getElementById('stagerate-content').innerHTML = `<div class="sr-card">
-    <h2 class="sr-heading">${EX('rate_prefix')}${selectedStageTitle}</h2>
-    <p class="sr-sub">${EX('sr_subtitle')}</p>
-    <div class="sr-stars" id="sr-stars">${stars}</div>
-    <textarea class="sr-textarea" id="sr-text" placeholder="${EX('sr_add_comment')}"></textarea>
-    <button class="sr-submit" onclick="submitStageRating()">${EX('submit_rating')}</button>
-    <button class="sr-later" onclick="goBack()">${EX('maybe_later')}</button>
-  </div>`;
-  document.getElementById('sr-top-title').textContent = EX('feat_feedback');
-  goTo('stagerate');
+  const stars = [1,2,3,4,5].map(n=>`<span class="rate-star" onclick="setStageStar(${n})">★</span>`).join('');
+  document.getElementById('rate-sheet-content').innerHTML = `
+    <div class="rate-handle"></div>
+    <h2 class="rate-heading">${EX('rate_prefix')}${selectedStageTitle}</h2>
+    <p class="rate-sub">${EX('sr_subtitle')}</p>
+    <div class="rate-stars" id="sr-stars">${stars}</div>
+    <textarea class="rate-textarea" id="sr-text" placeholder="${EX('sr_add_comment')}"></textarea>
+    <button class="rate-submit" onclick="submitStageRating()">${EX('submit_rating')}</button>
+    <button class="rate-later" onclick="closeRateSheet()">${EX('maybe_later')}</button>`;
+  openRateSheet();
 }
 function setStageStar(n){
   stageStarRating = n;
-  document.querySelectorAll('#sr-stars .sr-star').forEach((s,i)=>s.classList.toggle('filled', i<n));
+  document.querySelectorAll('#sr-stars .rate-star').forEach((s,i)=>s.classList.toggle('filled', i<n));
 }
 function submitStageRating(){
-  document.getElementById('stagerate-content').innerHTML = `<div class="sr-card" style="text-align:center">
-    <div style="font-size:60px;margin-bottom:16px">🙏</div>
-    <h2 class="sr-heading" style="margin-bottom:10px">${T('fb_thanks')}</h2>
-    <p class="sr-sub" style="margin-bottom:22px">${T('fb_thanks_sub')}</p>
-    <button class="sr-submit" onclick="goTo('journey')">${EX('sr_back_journey')}</button>
-  </div>`;
+  document.getElementById('rate-sheet-content').innerHTML = `
+    <div class="rate-handle"></div>
+    <div style="text-align:center;padding:8px 4px 4px">
+      <div style="font-size:56px;margin-bottom:14px">🙏</div>
+      <h2 class="rate-heading" style="margin-bottom:8px">${T('fb_thanks')}</h2>
+      <p class="rate-sub" style="margin-bottom:20px">${T('fb_thanks_sub')}</p>
+      <button class="rate-submit" onclick="closeRateSheet()">${EX('sr_back_journey')}</button>
+    </div>`;
 }
 
 // ─── JOURNEY ───
