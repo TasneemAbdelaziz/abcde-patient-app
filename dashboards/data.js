@@ -6,7 +6,7 @@
    The same roster powers Reception, Nurse, and Doctor so the
    three dashboards tell one connected story (the cardiac /
    catheterization journey from the SRS), centred on the hero
-   patient Ahmed Al-Rashid (Serial ALM-20413), the same demo
+   patient Ahmed Abdel-Rahman (Serial ALM-20413), the same demo
    patient used in the mobile app.
    ============================================================ */
 
@@ -111,17 +111,19 @@ window.RESULTS = {
   },
   'ALM-20399': {
     labs: [
-      { panel: 'Inflammatory markers', at: 'Day2 10:05', items: [
-        { name: 'CRP', value: 142, unit: 'mg/L', low: 0, high: 5, flag: 'high' },
-        { name: 'WBC', value: 16.4, unit: '10⁹/L', low: 4, high: 11, flag: 'high' },
-        { name: 'Lactate', value: 2.6, unit: 'mmol/L', low: 0.5, high: 2.0, flag: 'high' }
+      { panel: 'Cardiac markers', at: 'Day2 10:05', items: [
+        { name: 'BNP', value: 1240, unit: 'pg/mL', low: 0, high: 100, flag: 'high' },
+        { name: 'Troponin I', value: 2.1, unit: 'ng/mL', low: 0, high: 0.04, flag: 'high' },
+        { name: 'Creatinine', value: 1.4, unit: 'mg/dL', low: 0.7, high: 1.3, flag: 'high' }
       ] },
-      { panel: 'Blood cultures', at: 'Day2 10:05', items: [
-        { name: 'Culture (aerobic)', value: 'Pending', unit: '', low: null, high: null }
+      { panel: 'U&E', at: 'Day2 10:05', items: [
+        { name: 'Potassium', value: 4.6, unit: 'mmol/L', low: 3.5, high: 5.1 },
+        { name: 'Sodium', value: 136, unit: 'mmol/L', low: 135, high: 145 }
       ] }
     ],
     radiology: [
-      { study: 'Chest X-ray', report: 'Left basal consolidation — likely hospital-acquired pneumonia.', status: 'final', at: 'Day2 09:00' }
+      { study: 'Echocardiogram', report: 'Anterior akinesia, EF 35%, moderate mitral regurgitation — impaired LV function.', status: 'final', at: 'Day2 09:30' },
+      { study: 'Chest X-ray', report: 'Bilateral perihilar congestion, upper-lobe diversion and small pleural effusions — pulmonary edema.', status: 'final', at: 'Day2 09:00' }
     ]
   }
 };
@@ -180,7 +182,7 @@ window.STAFF = {
   quality:   { name: 'Mervat Gaber',     role: 'Quality Manager',     sub: 'Patient experience & complaints', initials: 'MG' },
   admin:     { name: 'Dr. Hisham Nour',  role: 'Hospital Director',   sub: 'Administration & reporting', initials: 'HN' },
   emergency: { name: 'Amir Zaki',        role: 'Emergency Coordinator', sub: 'Rapid response & escalation', initials: 'AZ' },
-  family:    { name: 'Mariam Al-Rashid', role: 'Family companion',    sub: 'Linked to Ahmed Al-Rashid', initials: 'MA' }
+  family:    { name: 'Mariam Abdel-Rahman', role: 'Family companion',    sub: 'Linked to Ahmed Abdel-Rahman', initials: 'MA' }
 };
 
 /* ---------- hospital ---------- */
@@ -244,8 +246,8 @@ window.DB = {
     {
       serial: 'ALM-20413',
       nationalId: '2680114201537',
-      name: 'Ahmed Al-Rashid',
-      nameAr: 'أحمد الراشد',
+      name: 'Ahmed Abdel-Rahman',
+      nameAr: 'أحمد عبد الرحمن',
       sex: 'M', age: 58, dob: '1968-01-14',
       phone: '0100 114 2015',
       address: 'New Alamein City, Matrouh',
@@ -453,7 +455,7 @@ window.DB = {
       triage: 'emergency',
       insurance: 'insured',
       stage: 'ward',
-      complaint: 'Day 2 post-PCI, now febrile and tachycardic',
+      complaint: 'Day 2 post-PCI, now acutely breathless with falling oxygen',
       allergies: [],
       doctor: 'Dr. Karim Adel',
       department: 'Cardiology Ward',
@@ -463,23 +465,24 @@ window.DB = {
       cardIssued: true,
       vitals: [
         { t: 'Day1 18:00', pulse: 80,  sbp: 124, dbp: 78, spo2: 97, temp: 36.8, rr: 17, news2: 1 },
-        { t: 'Day2 06:00', pulse: 102, sbp: 112, dbp: 70, spo2: 93, temp: 38.2, rr: 22, news2: 7 },
-        { t: 'Day2 10:00', pulse: 110, sbp: 106, dbp: 66, spo2: 92, temp: 38.6, rr: 24, news2: 8 }
+        { t: 'Day2 06:00', pulse: 102, sbp: 112, dbp: 70, spo2: 92, temp: 36.9, rr: 24, news2: 7 },
+        { t: 'Day2 10:00', pulse: 112, sbp: 104, dbp: 64, spo2: 90, temp: 37.0, rr: 28, news2: 8 }
       ],
       riskScore: { value: 'High', tool: 'NEWS2', updated: '2026-06-08', note: 'Deteriorating — escalate' },
       orders: [
-        { id: 'O-3270', type: 'Lab', test: 'Blood cultures, CRP, CBC', dest: 'Lab (via DMS)', status: 'pending', result: null, at: 'Day2 10:05' }
+        { id: 'O-3270', type: 'Lab', test: 'BNP, repeat Troponin, U&E', dest: 'Lab (via DMS)', status: 'pending', result: null, at: 'Day2 10:05' },
+        { id: 'O-3271', type: 'Radiology', test: 'Portable chest X-ray', dest: 'Radiology (Milestone)', status: 'resulted', result: 'Pulmonary congestion / edema', at: 'Day2 09:00' }
       ],
       prescriptions: [
-        { id: 'RX-7600', drug: 'Ceftriaxone', dose: '1 g', route: 'IV', freq: 'BD', status: 'due', lastGiven: 'Day2 06:00' },
-        { id: 'RX-7601', drug: 'Paracetamol', dose: '1 g', route: 'IV', freq: 'QDS PRN', status: 'soon', lastGiven: 'Day1 22:00' },
+        { id: 'RX-7600', drug: 'Furosemide', dose: '40 mg', route: 'IV', freq: 'BD', status: 'due', lastGiven: 'Day2 06:00' },
+        { id: 'RX-7601', drug: 'Nitroglycerin (GTN)', dose: 'Infusion', route: 'IV', freq: 'Titrate to BP', status: 'soon', lastGiven: 'Day1 22:00' },
         { id: 'RX-7602', drug: 'Aspirin', dose: '75 mg', route: 'PO', freq: 'OD', status: 'given', lastGiven: 'Day2 08:00' }
       ],
       problems: [
         { code: 'I21.9', label: 'Recent acute MI (PCI Day 0)', at: '2026-06-06' },
-        { code: 'A41.9', label: 'Suspected sepsis — under investigation', at: '2026-06-08' }
+        { code: 'I50.1', label: 'Acute LV failure — post-MI pulmonary edema', at: '2026-06-08' }
       ],
-      consult: { type: 'Routine', specialty: 'Infectious Diseases', detail: 'Post-op fever workup', status: 'requested' },
+      consult: { type: 'Urgent', specialty: 'Heart Failure (Cardiology)', detail: 'Post-MI LV dysfunction — optimise therapy', status: 'requested' },
       stageHistory: [
         { stage: 'arrival',  at: 'Day0 14:30', by: 'Reception' },
         { stage: 'cath',     at: 'Day0 15:42', by: 'Cath-lab (D2B 72 min)' },
@@ -487,20 +490,19 @@ window.DB = {
         { stage: 'ward',     at: 'Day1 09:00', by: 'Cardiology ward' }
       ],
       clinical: {
-        comorbidities: ['Recent MI (PCI Day 0)', 'Type 2 diabetes'],
-        habits: 'Non-smoker', pastMedical: 'Type 2 diabetes (10 yrs)', pastSurgical: 'None',
+        comorbidities: ['Recent anterior MI (PCI Day 0)', 'Essential hypertension (I10)'],
+        habits: 'Non-smoker', pastMedical: 'Hypertension (8 yrs); ischemic heart disease', pastSurgical: 'None',
         familyHistory: 'Non-contributory', socialHistory: 'Lives with family, Sidi Abdel Rahman',
-        systemsReview: 'Febrile, tachycardic. CVS: post-PCI, stable graft. Resp: mild crackles left base.',
-        padua: { score: 5, result: 'High VTE risk — prophylaxis indicated', factors: ['Acute infection/inflammation (+1)', 'Reduced mobility (+3)', 'Age ≥ 70 (+1)'] },
-        rstp: { staff: 'Nurse', method: 'Wheelchair with monitor', risk: 'Medium', hemodynamic: 'BP 106/66, HR 110 — borderline', respiratory: 'SpO₂ 92% on air, RR 24', neuro: 'Alert, GCS 15', support: 'IV antibiotics, O₂ standby' },
-        antibiotics: [
-          { sample: 'Blood ×2', culture: 'Pending', date: 'Day2 10:05', reason: 'Post-op fever, suspected sepsis', drug: 'Ceftriaxone', dose: '1 g', route: 'IV', duration: '7 days', notes: 'Review with cultures' }
-        ],
+        systemsReview: 'Breathless, tachycardic. CVS: post-PCI, raised JVP, S3 gallop. Resp: bibasal crepitations — pulmonary congestion.',
+        padua: { score: 5, result: 'High VTE risk — prophylaxis indicated', factors: ['Heart / respiratory failure (+1)', 'Reduced mobility (+3)', 'Age ≥ 70 (+1)'] },
+        rstp: { staff: 'Nurse', method: 'Wheelchair with monitor', risk: 'Medium', hemodynamic: 'BP 104/64, HR 112 — borderline', respiratory: 'SpO₂ 90% on O₂, RR 28', neuro: 'Alert, GCS 15', support: 'IV diuretics, O₂ therapy' },
+        antibiotics: [],
         carePlan: [
-          { problem: 'Suspected sepsis (post-op fever)', intervention: 'IV antibiotics, cultures, fluids', outcome: 'Source control, defervescence', timeframe: '48–72 h' }
+          { problem: 'Acute LV failure (post-MI pulmonary edema)', intervention: 'IV diuretics + nitrates, sit up, O₂, fluid restriction', outcome: 'Relieve congestion, SpO₂ ≥ 94%', timeframe: '24–48 h' },
+          { problem: 'Recent anterior MI', intervention: 'Dual antiplatelet, high-dose statin, ACE-inhibitor', outcome: 'Secondary prevention, preserve LV function', timeframe: 'Ongoing' }
         ],
-        nutrition: { assessment: 'Mild risk (MUST 1)', diet: 'Diabetic diet', route: 'Oral', monitoring: 'BM 4×/day' },
-        doctorsOrders: ['IV Ceftriaxone 1 g BD', 'Blood cultures + CRP', '4-hourly vitals — escalate if NEWS2 ≥ 5', 'Fluid balance chart', 'Diabetic diet'],
+        nutrition: { assessment: 'Mild risk (MUST 1)', diet: 'Cardiac diet — low salt, fluid-restricted', route: 'Oral', monitoring: 'Daily weight & fluid balance' },
+        doctorsOrders: ['IV Furosemide 40 mg BD', 'Sit up + O₂ to keep SpO₂ ≥ 94%', '4-hourly vitals — escalate if NEWS2 ≥ 5', 'Strict fluid balance + daily weight', 'Low-salt cardiac diet'],
         audit: { lastEditedBy: 'Fatma El-Sayed', at: '10:05', within15: true }
       }
     },
@@ -555,8 +557,8 @@ window.DB = {
 
   /* ---------- stage feedback (FR-13.1) — rating 1..5 + optional note ---------- */
   feedback: [
-    { id: 'FB-901', serial: 'ALM-20413', patient: 'Ahmed Al-Rashid', stage: 'er',        dept: 'Emergency',  rating: 5, note: 'Seen immediately, the team was reassuring.', at: '08:50', sentiment: 'positive' },
-    { id: 'FB-902', serial: 'ALM-20413', patient: 'Ahmed Al-Rashid', stage: 'diagnosis', dept: 'Cardiology', rating: 4, note: 'Clear explanation of the procedure.', at: '09:30', sentiment: 'positive' },
+    { id: 'FB-901', serial: 'ALM-20413', patient: 'Ahmed Abdel-Rahman', stage: 'er',        dept: 'Emergency',  rating: 5, note: 'Seen immediately, the team was reassuring.', at: '08:50', sentiment: 'positive' },
+    { id: 'FB-902', serial: 'ALM-20413', patient: 'Ahmed Abdel-Rahman', stage: 'diagnosis', dept: 'Cardiology', rating: 4, note: 'Clear explanation of the procedure.', at: '09:30', sentiment: 'positive' },
     { id: 'FB-903', serial: 'ALM-20418', patient: 'Mona Saleh',      stage: 'triage',    dept: 'Emergency',  rating: 2, note: 'Waited a long time before triage.', at: '10:40', sentiment: 'negative' },
     { id: 'FB-904', serial: 'ALM-20402', patient: 'Khaled Mansour',  stage: 'diagnosis', dept: 'Cardiology (Outpatient)', rating: 5, note: 'Doctor was thorough.', at: '11:35', sentiment: 'positive' },
     { id: 'FB-905', serial: 'ALM-20399', patient: 'Yusuf Ibrahim',   stage: 'ward',      dept: 'Cardiology Ward', rating: 3, note: 'Room was comfortable but call bell was slow.', at: 'Day1 20:00', sentiment: 'neutral' },
@@ -580,7 +582,7 @@ window.DB = {
       chain: [
         { order: 0, role: 'Treating physician', who: 'Dr. Karim Adel',  status: 'no-answer', at: '10:58', wait: '60s' },
         { order: 1, role: 'Nursing station',    who: 'Ward B station',   status: 'alerted',   at: '10:59', wait: '60s' },
-        { order: 2, role: 'Family contact',      who: 'Mariam Al-Rashid', status: 'pending',   at: null,    wait: '90s' },
+        { order: 2, role: 'Family contact',      who: 'Mariam Abdel-Rahman', status: 'pending',   at: null,    wait: '90s' },
         { order: 3, role: 'Care center',         who: 'Rapid response',   status: 'pending',   at: null,    wait: '—' }
       ]
     },
@@ -664,7 +666,7 @@ window.DB = {
 
   /* ---------- family / caregiver link (FR-11.x) — ONE companion per patient ---------- */
   familyLink: {
-    companion: { name: 'Mariam Al-Rashid', relation: 'Daughter', initials: 'MA' },
+    companion: { name: 'Mariam Abdel-Rahman', relation: 'Daughter', initials: 'MA' },
     patientSerial: 'ALM-20413',
     active: true,
     permissions: { status: true, alerts: true, book: true, rate: true, sos: true },

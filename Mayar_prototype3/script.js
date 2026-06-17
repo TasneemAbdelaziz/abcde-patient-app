@@ -31,7 +31,7 @@ function enterPatientApp(asGuest){
   }else{
     avatar.textContent='AA';
     greeting.textContent='Welcome back';
-    name.textContent='Ahmed Al‑Rashid';
+    name.textContent='Ahmed Abdel-Rahman';
     room.textContent='Room 204 · Ward B';
     title.textContent='Recovery & Monitoring';
     text.textContent='Acute coronary syndrome · Stage 5 of 8';

@@ -181,7 +181,7 @@
   /* ---- register ---- */
   window.ROLES = window.ROLES || {};
   window.ROLES.family = {
-    label: 'Family', person: 'Mariam Al-Rashid · Companion', icon: 'users', accent: 'teal',
+    label: 'Family', person: 'Mariam Abdel-Rahman · Companion', icon: 'users', accent: 'teal',
     desc: 'Follow the patient’s status, get updates, give consent when needed, and act for them within the permissions you are granted.',
     home: 'status',
     nav: [

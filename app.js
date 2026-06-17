@@ -631,7 +631,7 @@
   function backToLogin(){
     closeSheet();
     guestMode=false;
-    document.getElementById('homeName').textContent='Ahmed Al-Rashid';
+    document.getElementById('homeName').textContent='Ahmed Abdel-Rahman';
     document.getElementById('homeHi').innerHTML='Good morning <span style="font-size:14px">\ud83d\udc4b</span>';
     document.getElementById('homeAvatar').textContent='AA';
     document.getElementById('guestNotice').innerHTML='';
