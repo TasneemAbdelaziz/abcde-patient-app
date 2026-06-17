@@ -3,8 +3,12 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
-use App\Models\PatientCard;
+use App\Http\Requests\Auth\LoginRequest;
+use App\Http\Requests\Auth\QrLoginRequest;
+use App\Http\Requests\Auth\RegisterPatientRequest;
+use App\Http\Resources\PatientResource;
 use App\Models\Patient;
+use App\Models\PatientCard;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -14,16 +18,12 @@ use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
-    /** POST /auth/login — staff by email, patients by phone/serial. */
-    public function login(Request $request): JsonResponse
+    /** POST /auth/login — staff by email, patients by phone/serial/national id. */
+    public function login(LoginRequest $request): JsonResponse
     {
-        $data = $request->validate([
-            'identifier' => ['required', 'string'], // email | phone | patient_serial | username | national_id
-            'password' => ['required', 'string'],
-            'device_name' => ['nullable', 'string'],
-        ]);
-
+        $data = $request->validated();
         $id = $data['identifier'];
+
         $user = User::where('username', $id)
             ->orWhere('email', $id)
             ->orWhere('patient_serial', $id)
@@ -44,13 +44,12 @@ class AuthController extends Controller
     }
 
     /** POST /auth/login/qr — login with a card QR token (FR1.1.2). */
-    public function loginQr(Request $request): JsonResponse
+    public function loginQr(QrLoginRequest $request): JsonResponse
     {
-        $data = $request->validate(['qr_token' => ['required', 'string']]);
+        $token = $request->validated()['qr_token'];
 
-        $card = PatientCard::where('qr_token', $data['qr_token'])->first();
-        $user = $card?->patient?->user
-            ?? User::where('username', $data['qr_token'])->first();
+        $card = PatientCard::where('qr_token', $token)->first();
+        $user = $card?->patient?->user ?? User::where('username', $token)->first();
 
         if (! $user) {
             return $this->fail('Invalid or expired QR code.', 401);
@@ -66,40 +65,15 @@ class AuthController extends Controller
      *  - A guest self-registers and is logged in (a token is returned).
      *  - Reception/admin adds a patient at the desk: the new patient + Serial are
      *    returned and the staff member keeps their own session (no patient token).
+     *
+     * Phone/national-id uniqueness (FR-1.4) is enforced by {@see RegisterPatientRequest}.
      */
-    public function register(Request $request): JsonResponse
+    public function register(RegisterPatientRequest $request): JsonResponse
     {
-        $data = $request->validate([
-            'full_name' => ['required', 'string', 'max:255'],
-            'national_id' => ['nullable', 'string', 'max:20'],
-            'date_of_birth' => ['nullable', 'date'],
-            'gender' => ['nullable', 'in:M,F'],
-            'phone' => ['required', 'string', 'max:30'],
-            'city_district' => ['nullable', 'string', 'max:120'],
-            'preferred_language' => ['nullable', 'in:ar,en,ru,zh'],
-            'decision_maker' => ['nullable', 'string', 'max:255'],
-            'chronic_conditions' => ['nullable', 'string'],
-            'password' => ['nullable', 'string', 'min:6'],
-        ]);
-
-        if (User::where('username', $data['phone'])->exists()) {
-            throw ValidationException::withMessages([
-                'phone' => [__('An account with this phone number already exists.')],
-            ]);
-        }
-
-        // The Serial is built from the national ID and reused across visits, so a
-        // national ID that already exists is caught — nobody gets a second Serial (FR-1.4).
-        if (! empty($data['national_id']) && Patient::where('national_id', $data['national_id'])->exists()) {
-            throw ValidationException::withMessages([
-                'national_id' => [__('A patient with this national ID already exists.')],
-            ]);
-        }
-
-        $serial = $this->nextPatientSerial();
+        $data = $request->validated();
 
         $patient = Patient::create([
-            'patient_serial' => $serial,
+            'patient_serial' => Patient::nextSerial(),
             'national_id' => $data['national_id'] ?? null,
             'full_name' => $data['full_name'],
             'date_of_birth' => $data['date_of_birth'] ?? null,
@@ -121,12 +95,11 @@ class AuthController extends Controller
         ]);
         $patient->update(['user_id' => $user->id]);
 
-        // Reception/admin adding a patient at the desk: return the record + Serial,
-        // and keep the staff member's own session (do not issue a patient token).
+        // Reception/admin at the desk: return the record + Serial, keep their session.
         if ($request->user()?->isStaff()) {
             return $this->ok([
                 'patient_serial' => $patient->patient_serial,
-                'patient' => $patient->fresh(),
+                'patient' => new PatientResource($patient->fresh()),
             ], 'Patient registered.', 201);
         }
 
@@ -175,15 +148,5 @@ class AuthController extends Controller
                 'staff_id' => $user->staff_id,
             ],
         ], 'Authenticated.', $status);
-    }
-
-    private function nextPatientSerial(): string
-    {
-        $last = Patient::where('patient_serial', 'like', 'ALM-%')
-            ->orderByDesc('patient_serial')
-            ->value('patient_serial');
-        $n = $last ? (int) Str::after($last, 'ALM-') : 20500;
-
-        return 'ALM-' . ($n + 1);
     }
 }

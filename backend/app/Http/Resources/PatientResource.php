@@ -22,8 +22,8 @@ class PatientResource extends JsonResource
             'decision_maker' => $this->decision_maker,
             'chronic_conditions' => $this->chronic_conditions,
             'care_points' => $this->whenLoaded('carePoints', fn () => $this->care_points_total),
-            'insurance' => $this->whenLoaded('insurance'),
-            'companion' => $this->whenLoaded('companion'),
+            'insurance' => $this->whenLoaded('insurance', fn () => new InsuranceCoverageResource($this->insurance)),
+            'companion' => $this->whenLoaded('companion', fn () => new FamilyCompanionResource($this->companion)),
             'visits' => VisitResource::collection($this->whenLoaded('visits')),
         ];
     }

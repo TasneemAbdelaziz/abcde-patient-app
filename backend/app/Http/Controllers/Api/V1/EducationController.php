@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\CarePointResource;
 use App\Models\CarePoint;
 use App\Models\EducationContent;
 use Illuminate\Http\JsonResponse;
@@ -43,8 +44,8 @@ class EducationController extends Controller
     /** GET /patients/{serial}/care-points — loyalty balance + ledger (FR14.2.1). */
     public function carePoints(Request $request, string $serial): JsonResponse
     {
-        if (! $this->canAccessPatient($request->user(), $serial)) {
-            return $this->fail('Not allowed.', 403);
+        if ($deny = $this->denyUnlessPatientAccess($request->user(), $serial)) {
+            return $deny;
         }
 
         $ledger = CarePoint::where('patient_serial', $serial)->latest()->get();
@@ -52,7 +53,7 @@ class EducationController extends Controller
         return $this->ok([
             'patient_serial' => $serial,
             'total' => (int) $ledger->sum('points'),
-            'ledger' => $ledger,
+            'ledger' => CarePointResource::collection($ledger),
         ]);
     }
 }

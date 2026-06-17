@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Vitals\StoreVitalsRequest;
+use App\Http\Requests\Vitals\ThresholdsRequest;
+use App\Http\Requests\Vitals\VteRequest;
 use App\Http\Resources\VitalResource;
+use App\Http\Traits\ResolvesVisit;
 use App\Models\Vital;
-use App\Models\Visit;
 use App\Services\News2Service;
 use App\Services\NotificationService;
 use Illuminate\Http\JsonResponse;
@@ -14,6 +17,8 @@ use Illuminate\Support\Facades\Cache;
 
 class VitalsController extends Controller
 {
+    use ResolvesVisit;
+
     public function __construct(
         private readonly News2Service $news2,
         private readonly NotificationService $notifier,
@@ -21,21 +26,10 @@ class VitalsController extends Controller
     }
 
     /** POST /visits/{id}/vitals — nurse records a vitals set (FR5.1). */
-    public function store(Request $request, string $id): JsonResponse
+    public function store(StoreVitalsRequest $request, string $id): JsonResponse
     {
-        $data = $request->validate([
-            'systolic_bp' => ['nullable', 'integer', 'between:40,300'],
-            'diastolic_bp' => ['nullable', 'integer', 'between:20,200'],
-            'pulse' => ['nullable', 'integer', 'between:20,260'],
-            'respiratory_rate' => ['nullable', 'integer', 'between:4,60'],
-            'spo2' => ['nullable', 'integer', 'between:50,100'],
-            'temperature' => ['nullable', 'numeric', 'between:30,45'],
-            'pain_score' => ['nullable', 'integer', 'between:0,10'],
-            'consciousness_avpu' => ['nullable', 'in:A,V,P,U'],
-            'taken_at' => ['nullable', 'date'],
-        ]);
-
-        Visit::findOrFail($id);
+        $data = $request->validated();
+        $visit = $this->visit($id);
 
         $vital = new Vital(array_merge($data, [
             'ticket_no' => $id,
@@ -51,7 +45,7 @@ class VitalsController extends Controller
         // FR5.3.2 — deterioration alert.
         if ($result['risk_level'] !== 'low') {
             $this->notifier->toPatient(
-                Visit::find($id)->patient_serial,
+                $visit->patient_serial,
                 'Clinical team notified of your readings',
                 'alert',
                 'Early-warning score :score (:risk)',
@@ -69,9 +63,9 @@ class VitalsController extends Controller
     /** GET /visits/{id}/vitals — vitals trend (staff or owner). */
     public function index(Request $request, string $id): JsonResponse
     {
-        $visit = Visit::findOrFail($id);
-        if (! $this->canAccessPatient($request->user(), $visit->patient_serial)) {
-            return $this->fail('Not allowed.', 403);
+        $visit = $this->visit($id);
+        if ($deny = $this->denyUnlessPatientAccess($request->user(), $visit->patient_serial)) {
+            return $deny;
         }
 
         return $this->ok(VitalResource::collection(
@@ -82,7 +76,7 @@ class VitalsController extends Controller
     /** GET /visits/{id}/risk-score — latest NEWS2 risk (FR5.3.1). */
     public function riskScore(string $id): JsonResponse
     {
-        $visit = Visit::findOrFail($id);
+        $visit = $this->visit($id);
         $latest = $visit->vitals()->latest('taken_at')->first();
 
         if (! $latest) {
@@ -102,7 +96,7 @@ class VitalsController extends Controller
     /** POST /visits/{id}/risk-score/recompute — recompute scores for all vitals (FR5.3). */
     public function recompute(string $id): JsonResponse
     {
-        $visit = Visit::findOrFail($id);
+        $visit = $this->visit($id);
         $updated = 0;
         foreach ($visit->vitals as $vital) {
             $result = $this->news2->score($vital);
@@ -114,14 +108,10 @@ class VitalsController extends Controller
     }
 
     /** POST /visits/{id}/vte — Padua VTE risk score (FR5.3.3). */
-    public function vte(Request $request, string $id): JsonResponse
+    public function vte(VteRequest $request, string $id): JsonResponse
     {
-        $data = $request->validate([
-            'factors' => ['required', 'array', 'min:1'],
-            'factors.*.factor' => ['required', 'string'],
-            'factors.*.points' => ['required', 'integer', 'min:0', 'max:3'],
-        ]);
-        Visit::findOrFail($id);
+        $data = $request->validated();
+        $this->visit($id);
 
         $score = array_sum(array_column($data['factors'], 'points'));
         $highRisk = $score >= 4;
@@ -136,16 +126,10 @@ class VitalsController extends Controller
     }
 
     /** PUT /visits/{id}/thresholds — doctor sets alerting thresholds (FR5.2.1). */
-    public function thresholds(Request $request, string $id): JsonResponse
+    public function thresholds(ThresholdsRequest $request, string $id): JsonResponse
     {
-        $data = $request->validate([
-            'systolic_bp_min' => ['nullable', 'integer'],
-            'systolic_bp_max' => ['nullable', 'integer'],
-            'pulse_min' => ['nullable', 'integer'],
-            'pulse_max' => ['nullable', 'integer'],
-            'spo2_min' => ['nullable', 'integer'],
-        ]);
-        Visit::findOrFail($id);
+        $data = $request->validated();
+        $this->visit($id);
 
         Cache::forever("thresholds:{$id}", $data);
 

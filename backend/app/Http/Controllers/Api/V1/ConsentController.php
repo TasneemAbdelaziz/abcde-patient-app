@@ -3,43 +3,42 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Consent\ChecklistRequest;
+use App\Http\Requests\Consent\RespondConsentRequest;
+use App\Http\Requests\Consent\StoreConsentRequest;
+use App\Http\Resources\ConsentChecklistResource;
+use App\Http\Traits\ResolvesVisit;
 use App\Models\ConsentChecklist;
-use App\Models\Visit;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 class ConsentController extends Controller
 {
+    use ResolvesVisit;
+
     /** POST /visits/{id}/consents — doctor requests informed consent (FR4.5.1). */
-    public function store(Request $request, string $id): JsonResponse
+    public function store(StoreConsentRequest $request, string $id): JsonResponse
     {
-        $data = $request->validate([
-            'item' => ['required', 'string', 'max:255'],
-        ]);
-        Visit::findOrFail($id);
+        $this->visit($id);
 
         $consent = ConsentChecklist::create([
             'ticket_no' => $id,
             'record_type' => 'consent',
-            'item' => $data['item'],
+            'item' => $request->validated()['item'],
             'requested_at' => now(),
         ]);
 
-        return $this->ok($consent, 'Consent requested.', 201);
+        return $this->ok(new ConsentChecklistResource($consent), 'Consent requested.', 201);
     }
 
     /** POST /consents/{id}/respond — patient or decision-maker responds (FR4.5.1). */
-    public function respond(Request $request, int $id): JsonResponse
+    public function respond(RespondConsentRequest $request, int $id): JsonResponse
     {
-        $data = $request->validate([
-            'decision' => ['required', 'in:given,declined'],
-            'responded_by' => ['nullable', 'string', 'max:255'],
-        ]);
+        $data = $request->validated();
         $consent = ConsentChecklist::findOrFail($id);
 
         $user = $request->user();
-        if (! $this->canAccessPatient($user, $consent->visit?->patient_serial ?? '')) {
-            return $this->fail('Only the patient or their decision-maker may respond.', 403);
+        if ($deny = $this->denyUnlessPatientAccess($user, $consent->visit?->patient_serial, 'Only the patient or their decision-maker may respond.')) {
+            return $deny;
         }
 
         $consent->update([
@@ -48,18 +47,14 @@ class ConsentController extends Controller
             'responded_at' => now(),
         ]);
 
-        return $this->ok($consent, 'Consent response recorded.');
+        return $this->ok(new ConsentChecklistResource($consent), 'Consent response recorded.');
     }
 
     /** POST /visits/{id}/checklists — nurse pre-op / safety time-out (FR4.5.2). */
-    public function checklist(Request $request, string $id): JsonResponse
+    public function checklist(ChecklistRequest $request, string $id): JsonResponse
     {
-        $data = $request->validate([
-            'record_type' => ['required', 'in:preop_checklist,surgical_timeout'],
-            'item' => ['required', 'string', 'max:255'],
-            'decision' => ['nullable', 'in:completed,declined'],
-        ]);
-        Visit::findOrFail($id);
+        $data = $request->validated();
+        $this->visit($id);
 
         $record = ConsentChecklist::create([
             'ticket_no' => $id,
@@ -71,6 +66,6 @@ class ConsentController extends Controller
             'responded_at' => now(),
         ]);
 
-        return $this->ok($record, 'Checklist item recorded.', 201);
+        return $this->ok(new ConsentChecklistResource($record), 'Checklist item recorded.', 201);
     }
 }

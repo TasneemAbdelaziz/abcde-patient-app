@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Str;
 
 class Visit extends Model
 {
@@ -139,5 +140,16 @@ class Visit extends Model
         }
 
         return $this->door_time->diffInMinutes($this->balloon_time);
+    }
+
+    /** Issues the next sequential ticket number (e.g. "#ALM-20501"). */
+    public static function nextTicketNo(): string
+    {
+        $last = static::where('ticket_no', 'like', '#ALM-%')
+            ->orderByDesc('ticket_no')
+            ->value('ticket_no');
+        $n = $last ? (int) Str::after($last, '#ALM-') : 20500;
+
+        return '#ALM-' . ($n + 1);
     }
 }

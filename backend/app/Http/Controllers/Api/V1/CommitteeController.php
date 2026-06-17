@@ -3,23 +3,22 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Committee\AuthorizeCommitteeRequest;
+use App\Http\Requests\Committee\StoreCommitteeReviewRequest;
+use App\Http\Resources\CommitteeReviewResource;
+use App\Http\Traits\ResolvesVisit;
 use App\Models\CommitteeReview;
-use App\Models\Visit;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 class CommitteeController extends Controller
 {
+    use ResolvesVisit;
+
     /** POST /visits/{id}/committee — open a committee review (FR4.4.3 / FR13). */
-    public function store(Request $request, string $id): JsonResponse
+    public function store(StoreCommitteeReviewRequest $request, string $id): JsonResponse
     {
-        $data = $request->validate([
-            'review_type' => ['required', 'in:funding,direct_admission'],
-            'reason' => ['required', 'string'],
-            'members' => ['nullable', 'array'],
-            'members.*' => ['string'],
-        ]);
-        Visit::findOrFail($id);
+        $data = $request->validated();
+        $this->visit($id);
 
         $review = CommitteeReview::create([
             'ticket_no' => $id,
@@ -29,16 +28,13 @@ class CommitteeController extends Controller
             'decision' => 'pending',
         ]);
 
-        return $this->ok($review, 'Committee review opened.', 201);
+        return $this->ok(new CommitteeReviewResource($review), 'Committee review opened.', 201);
     }
 
     /** POST /committee/{id}/authorize — committee records its decision. */
-    public function authorize(Request $request, int $id): JsonResponse
+    public function authorize(AuthorizeCommitteeRequest $request, int $id): JsonResponse
     {
-        $data = $request->validate([
-            'decision' => ['required', 'in:authorized,declined'],
-            'memo' => ['nullable', 'string'],
-        ]);
+        $data = $request->validated();
         $review = CommitteeReview::findOrFail($id);
         $review->update([
             'decision' => $data['decision'],
@@ -47,6 +43,6 @@ class CommitteeController extends Controller
             'decided_at' => now(),
         ]);
 
-        return $this->ok($review, 'Committee decision recorded.');
+        return $this->ok(new CommitteeReviewResource($review), 'Committee decision recorded.');
     }
 }

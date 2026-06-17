@@ -28,6 +28,12 @@ class Prescription extends Model
         return $this->belongsTo(Staff::class, 'doctor_id', 'staff_id');
     }
 
+    /** The formulary entry for this drug (matched by name), for stock/availability. */
+    public function drug(): BelongsTo
+    {
+        return $this->belongsTo(Drug::class, 'drug_name', 'drug_name');
+    }
+
     public function administrations(): HasMany
     {
         return $this->hasMany(MarAdministration::class, 'prescription_id');

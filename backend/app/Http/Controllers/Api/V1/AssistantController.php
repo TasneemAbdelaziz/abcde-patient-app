@@ -3,10 +3,17 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Assistant\ApproveDraftRequest;
+use App\Http\Requests\Assistant\AskRequest;
+use App\Http\Requests\Assistant\DraftRequest;
+use App\Http\Requests\Assistant\TranscribeRequest;
+use App\Http\Requests\Assistant\TranslateRequest;
+use App\Http\Requests\Assistant\TriageSymptomsRequest;
+use App\Http\Resources\DocumentationDraftResource;
+use App\Http\Traits\ResolvesVisit;
 use App\Models\DocumentationDraft;
 use App\Models\Visit;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 /**
  * AI Assistant & Documentation (S6, FR8/FR9).
@@ -18,20 +25,17 @@ use Illuminate\Http\Request;
  */
 class AssistantController extends Controller
 {
+    use ResolvesVisit;
+
     private const RED_FLAGS = [
         'chest pain', 'shortness of breath', 'severe bleeding', 'unconscious',
         'stroke', 'numbness', 'slurred speech', 'crushing', 'fainting',
     ];
 
     /** POST /assistant/ask — patient/family Q&A (FR8.1.1). */
-    public function ask(Request $request): JsonResponse
+    public function ask(AskRequest $request): JsonResponse
     {
-        $data = $request->validate([
-            'question' => ['required', 'string'],
-            'context' => ['nullable', 'string'],
-        ]);
-
-        $redFlag = $this->hasRedFlag($data['question']);
+        $redFlag = $this->hasRedFlag($request->validated()['question']);
 
         return $this->ok([
             'answer' => $redFlag
@@ -44,17 +48,12 @@ class AssistantController extends Controller
     }
 
     /** POST /assistant/triage — symptom triage with urgency banding (FR8.1.2). */
-    public function triage(Request $request): JsonResponse
+    public function triage(TriageSymptomsRequest $request): JsonResponse
     {
-        $data = $request->validate([
-            'symptoms' => ['required', 'string'],
-        ]);
-
-        $redFlag = $this->hasRedFlag($data['symptoms']);
-        $urgency = $redFlag ? 'emergency' : 'routine';
+        $redFlag = $this->hasRedFlag($request->validated()['symptoms']);
 
         return $this->ok([
-            'urgency' => $urgency,
+            'urgency' => $redFlag ? 'emergency' : 'routine',
             'red_flag' => $redFlag,
             'recommended_action' => $redFlag
                 ? __('Seek emergency care immediately or trigger SOS. A clinician has been notified.')
@@ -65,14 +64,11 @@ class AssistantController extends Controller
     }
 
     /** POST /documentation/draft — generate a documentation draft (FR9.1.1). */
-    public function draft(Request $request): JsonResponse
+    public function draft(DraftRequest $request): JsonResponse
     {
-        $data = $request->validate([
-            'ticket_no' => ['nullable', 'string'],
-            'doc_type' => ['required', 'in:discharge_summary,report,note'],
-        ]);
+        $data = $request->validated();
         if ($data['ticket_no'] ?? false) {
-            Visit::findOrFail($data['ticket_no']);
+            $this->visit($data['ticket_no']);
         }
 
         $draft = DocumentationDraft::create([
@@ -83,44 +79,36 @@ class AssistantController extends Controller
             'created_by' => $request->user()->staff_id,
         ]);
 
-        return $this->ok($draft, 'Draft generated — requires clinician approval before it is saved to the record.', 201);
+        return $this->ok(new DocumentationDraftResource($draft), 'Draft generated — requires clinician approval before it is saved to the record.', 201);
     }
 
     /** POST /documentation/{draftId}/approve — clinician approves a draft (FR9.1.2). */
-    public function approve(Request $request, int $draftId): JsonResponse
+    public function approve(ApproveDraftRequest $request, int $draftId): JsonResponse
     {
-        $data = $request->validate(['content' => ['nullable', 'string']]);
         $draft = DocumentationDraft::findOrFail($draftId);
         $draft->update([
-            'content' => $data['content'] ?? $draft->content,
+            'content' => $request->validated()['content'] ?? $draft->content,
             'status' => 'approved',
             'approved_by' => $request->user()->staff_id,
             'approved_at' => now(),
         ]);
 
-        return $this->ok($draft, 'Documentation approved and saved to the record.');
+        return $this->ok(new DocumentationDraftResource($draft), 'Documentation approved and saved to the record.');
     }
 
     /** POST /documentation/transcribe — voice-to-text note (FR9.2.1, stub). */
-    public function transcribe(Request $request): JsonResponse
+    public function transcribe(TranscribeRequest $request): JsonResponse
     {
-        $data = $request->validate([
-            'transcript' => ['nullable', 'string'],
-        ]);
-
         return $this->ok([
-            'text' => $data['transcript'] ?? '[audio transcription unavailable in this build]',
+            'text' => $request->validated()['transcript'] ?? '[audio transcription unavailable in this build]',
             'note' => 'Transcription is a placeholder; connect a speech-to-text model to enable it.',
         ]);
     }
 
     /** POST /documentation/translate — AR/EN/RU translation (FR9.2.2, stub). */
-    public function translate(Request $request): JsonResponse
+    public function translate(TranslateRequest $request): JsonResponse
     {
-        $data = $request->validate([
-            'text' => ['required', 'string'],
-            'target' => ['required', 'in:ar,en,ru,zh'],
-        ]);
+        $data = $request->validated();
 
         return $this->ok([
             'source_text' => $data['text'],

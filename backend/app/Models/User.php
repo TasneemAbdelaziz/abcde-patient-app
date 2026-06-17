@@ -14,6 +14,12 @@ class User extends Authenticatable
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable, HasApiTokens;
 
+    /** All assignable system roles (FR1.3). */
+    public const ROLES = [
+        'patient', 'family', 'doctor', 'nurse', 'reception',
+        'quality', 'director', 'admin', 'emergency',
+    ];
+
     protected $fillable = [
         'name',
         'email',

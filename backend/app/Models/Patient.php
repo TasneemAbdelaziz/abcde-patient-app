@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Str;
 
 class Patient extends Model
 {
@@ -71,5 +72,16 @@ class Patient extends Model
     public function getCarePointsTotalAttribute(): int
     {
         return (int) $this->carePoints()->sum('points');
+    }
+
+    /** Issues the next sequential patient serial (e.g. "ALM-20501"). */
+    public static function nextSerial(): string
+    {
+        $last = static::where('patient_serial', 'like', 'ALM-%')
+            ->orderByDesc('patient_serial')
+            ->value('patient_serial');
+        $n = $last ? (int) Str::after($last, 'ALM-') : 20500;
+
+        return 'ALM-' . ($n + 1);
     }
 }

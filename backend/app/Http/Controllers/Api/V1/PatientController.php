@@ -3,13 +3,18 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Patient\IssueCardRequest;
+use App\Http\Requests\Patient\UpdateAccessibilityRequest;
+use App\Http\Requests\Patient\UpdatePatientPreferencesRequest;
+use App\Http\Resources\AccessibilitySettingResource;
+use App\Http\Resources\PatientCardResource;
 use App\Http\Resources\PatientResource;
 use App\Models\AccessibilitySetting;
 use App\Models\Patient;
 use App\Models\PatientCard;
+use App\Support\Reference;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 
 class PatientController extends Controller
 {
@@ -41,8 +46,8 @@ class PatientController extends Controller
     /** GET /patients/{serial} — full profile (owner or staff). */
     public function show(Request $request, string $serial): JsonResponse
     {
-        if (! $this->canAccessPatient($request->user(), $serial)) {
-            return $this->fail('You may only view your own record.', 403);
+        if ($deny = $this->denyUnlessPatientAccess($request->user(), $serial, 'You may only view your own record.')) {
+            return $deny;
         }
 
         $patient = Patient::with(['insurance', 'companion', 'carePoints'])->findOrFail($serial);
@@ -51,50 +56,33 @@ class PatientController extends Controller
     }
 
     /** PUT /patients/{serial}/preferences — language, decision maker, etc. (FR1.2.2). */
-    public function updatePreferences(Request $request, string $serial): JsonResponse
+    public function updatePreferences(UpdatePatientPreferencesRequest $request, string $serial): JsonResponse
     {
-        if (! $this->canAccessPatient($request->user(), $serial)) {
-            return $this->fail('Not allowed.', 403);
+        if ($deny = $this->denyUnlessPatientAccess($request->user(), $serial)) {
+            return $deny;
         }
 
-        $data = $request->validate([
-            'preferred_language' => ['nullable', 'in:ar,en,ru,zh'],
-            'decision_maker' => ['nullable', 'string', 'max:255'],
-            'phone' => ['nullable', 'string', 'max:30'],
-            'city_district' => ['nullable', 'string', 'max:120'],
-        ]);
-
         $patient = Patient::findOrFail($serial);
-        $patient->update(array_filter($data, fn ($v) => $v !== null));
+        $patient->update(array_filter($request->validated(), fn ($v) => $v !== null));
 
         return $this->ok(new PatientResource($patient->fresh()), 'Preferences updated.');
     }
 
     /** POST /patients/{serial}/cards — issue an ID card with barcode (FR1.2.1, reception). */
-    public function issueCard(Request $request, string $serial): JsonResponse
+    public function issueCard(IssueCardRequest $request, string $serial): JsonResponse
     {
-        $data = $request->validate([
-            'card_type' => ['required', 'in:arrival,booking'],
-        ]);
         Patient::findOrFail($serial);
 
         $card = PatientCard::create([
             'patient_serial' => $serial,
-            'card_type' => $data['card_type'],
-            'barcode' => $this->code('BC'),
-            'qr_token' => $this->code('QR'),
+            'card_type' => $request->validated()['card_type'],
+            'barcode' => Reference::code('BC', 10),
+            'qr_token' => Reference::code('QR', 10),
             'issued_by' => $request->user()->staff_id,
             'issued_at' => now(),
         ]);
 
-        return $this->ok([
-            'id' => $card->id,
-            'patient_serial' => $card->patient_serial,
-            'card_type' => $card->card_type,
-            'barcode' => $card->barcode,
-            'qr_token' => $card->qr_token,
-            'issued_at' => $card->issued_at?->toDateTimeString(),
-        ], 'Card issued.', 201);
+        return $this->ok(new PatientCardResource($card), 'Card issued.', 201);
     }
 
     /** POST /patients/{serial}/qr — (re)issue a login QR token (FR1.1.2, reception). */
@@ -105,8 +93,8 @@ class PatientController extends Controller
         $card = PatientCard::create([
             'patient_serial' => $serial,
             'card_type' => 'arrival',
-            'barcode' => $this->code('BC'),
-            'qr_token' => $this->code('QR'),
+            'barcode' => Reference::code('BC', 10),
+            'qr_token' => Reference::code('QR', 10),
             'issued_by' => $request->user()->staff_id,
             'issued_at' => now(),
         ]);
@@ -117,43 +105,27 @@ class PatientController extends Controller
     /** GET /patients/{serial}/accessibility — accessibility profile (FR16). */
     public function accessibility(Request $request, string $serial): JsonResponse
     {
-        if (! $this->canAccessPatient($request->user(), $serial)) {
-            return $this->fail('Not allowed.', 403);
+        if ($deny = $this->denyUnlessPatientAccess($request->user(), $serial)) {
+            return $deny;
         }
 
         $settings = AccessibilitySetting::firstOrNew(['patient_serial' => $serial]);
 
-        return $this->ok($settings);
+        return $this->ok(new AccessibilitySettingResource($settings));
     }
 
     /** PUT /patients/{serial}/accessibility — update accessibility profile (FR16). */
-    public function updateAccessibility(Request $request, string $serial): JsonResponse
+    public function updateAccessibility(UpdateAccessibilityRequest $request, string $serial): JsonResponse
     {
-        if (! $this->canAccessPatient($request->user(), $serial)) {
-            return $this->fail('Not allowed.', 403);
+        if ($deny = $this->denyUnlessPatientAccess($request->user(), $serial)) {
+            return $deny;
         }
-
-        $data = $request->validate([
-            'high_contrast' => ['nullable', 'boolean'],
-            'screen_reader' => ['nullable', 'boolean'],
-            'text_to_speech' => ['nullable', 'boolean'],
-            'captions' => ['nullable', 'boolean'],
-            'haptics' => ['nullable', 'boolean'],
-            'simple_mode' => ['nullable', 'boolean'],
-            'font_scale' => ['nullable', 'numeric', 'between:0.8,3'],
-            'extra' => ['nullable', 'array'],
-        ]);
 
         $settings = AccessibilitySetting::updateOrCreate(
             ['patient_serial' => $serial],
-            $data
+            $request->validated(),
         );
 
-        return $this->ok($settings, 'Accessibility updated.');
-    }
-
-    private function code(string $prefix): string
-    {
-        return $prefix . '-' . strtoupper(Str::random(10));
+        return $this->ok(new AccessibilitySettingResource($settings), 'Accessibility updated.');
     }
 }

@@ -3,70 +3,73 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Billing\CommitteeReviewRequest;
+use App\Http\Requests\Billing\StorePaymentRequest;
+use App\Http\Requests\Billing\UpdateInsuranceRequest;
+use App\Http\Resources\BillingItemResource;
+use App\Http\Resources\CommitteeReviewResource;
+use App\Http\Resources\InsuranceCoverageResource;
+use App\Http\Resources\PaymentResource;
+use App\Http\Traits\ResolvesVisit;
 use App\Models\CommitteeReview;
 use App\Models\InsuranceCoverage;
 use App\Models\Patient;
 use App\Models\Payment;
-use App\Models\Visit;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class BillingController extends Controller
 {
+    use ResolvesVisit;
+
     /** GET /patients/{serial}/insurance — coverage category (FR13.1.1). */
     public function showInsurance(Request $request, string $serial): JsonResponse
     {
-        if (! $this->canAccessPatient($request->user(), $serial)) {
-            return $this->fail('Not allowed.', 403);
+        if ($deny = $this->denyUnlessPatientAccess($request->user(), $serial)) {
+            return $deny;
         }
 
         $coverage = InsuranceCoverage::where('patient_serial', $serial)->first();
 
-        return $this->ok($coverage ?? ['patient_serial' => $serial, 'coverage_category' => null]);
+        return $this->ok($coverage
+            ? new InsuranceCoverageResource($coverage)
+            : ['patient_serial' => $serial, 'coverage_category' => null]);
     }
 
     /** PATCH /patients/{serial}/insurance — reception sets coverage. */
-    public function updateInsurance(Request $request, string $serial): JsonResponse
+    public function updateInsurance(UpdateInsuranceRequest $request, string $serial): JsonResponse
     {
-        $data = $request->validate([
-            'coverage_category' => ['required', 'in:insured,employer_paid,uninsured_able,uninsured_unable,state,pension,student'],
-            'payer_name' => ['nullable', 'string'],
-            'policy_no' => ['nullable', 'string'],
-            'determined_from' => ['nullable', 'in:national_id,manual'],
-            'notes' => ['nullable', 'string'],
-        ]);
         Patient::findOrFail($serial);
 
         $coverage = InsuranceCoverage::updateOrCreate(
             ['patient_serial' => $serial],
-            $data,
+            $request->validated(),
         );
 
-        return $this->ok($coverage, 'Insurance updated.');
+        return $this->ok(new InsuranceCoverageResource($coverage), 'Insurance updated.');
     }
 
     /** POST /visits/{id}/billing/committee-review — funding committee referral. */
-    public function committeeReview(Request $request, string $id): JsonResponse
+    public function committeeReview(CommitteeReviewRequest $request, string $id): JsonResponse
     {
-        $data = $request->validate(['reason' => ['required', 'string']]);
-        Visit::findOrFail($id);
+        $this->visit($id);
 
         $review = CommitteeReview::create([
             'ticket_no' => $id,
             'review_type' => 'funding',
-            'reason' => $data['reason'],
+            'reason' => $request->validated()['reason'],
             'decision' => 'pending',
         ]);
 
-        return $this->ok($review, 'Referred to the funding committee.', 201);
+        return $this->ok(new CommitteeReviewResource($review), 'Referred to the funding committee.', 201);
     }
 
     /** GET /visits/{id}/financial-file — itemised bill + payments (FR13). */
     public function financialFile(Request $request, string $id): JsonResponse
     {
-        $visit = Visit::with('billingItems', 'payments')->findOrFail($id);
-        if (! $this->canAccessPatient($request->user(), $visit->patient_serial)) {
-            return $this->fail('Not allowed.', 403);
+        $visit = $this->visit($id, ['billingItems', 'payments']);
+        if ($deny = $this->denyUnlessPatientAccess($request->user(), $visit->patient_serial)) {
+            return $deny;
         }
 
         $items = $visit->billingItems;
@@ -76,7 +79,7 @@ class BillingController extends Controller
 
         return $this->ok([
             'ticket_no' => $id,
-            'items' => $items,
+            'items' => BillingItemResource::collection($items),
             'totals' => [
                 'gross' => round($total, 2),
                 'covered_by_insurance' => round($insured, 2),
@@ -84,21 +87,17 @@ class BillingController extends Controller
                 'paid' => round($paid, 2),
                 'outstanding' => round(max(0, ($total - $insured) - $paid), 2),
             ],
-            'payments' => $visit->payments,
+            'payments' => PaymentResource::collection($visit->payments),
         ]);
     }
 
     /** POST /visits/{id}/payments — record a payment (FR13.1.2). */
-    public function pay(Request $request, string $id): JsonResponse
+    public function pay(StorePaymentRequest $request, string $id): JsonResponse
     {
-        $data = $request->validate([
-            'amount' => ['required', 'numeric', 'min:0.01'],
-            'method' => ['required', 'in:cash,card,wallet,state'],
-            'reference' => ['nullable', 'string'],
-        ]);
-        $visit = Visit::findOrFail($id);
-        if (! $this->canAccessPatient($request->user(), $visit->patient_serial)) {
-            return $this->fail('Not allowed.', 403);
+        $data = $request->validated();
+        $visit = $this->visit($id);
+        if ($deny = $this->denyUnlessPatientAccess($request->user(), $visit->patient_serial)) {
+            return $deny;
         }
 
         $payment = Payment::create([
@@ -110,6 +109,6 @@ class BillingController extends Controller
             'paid_at' => now(),
         ]);
 
-        return $this->ok($payment, 'Payment recorded.', 201);
+        return $this->ok(new PaymentResource($payment), 'Payment recorded.', 201);
     }
 }

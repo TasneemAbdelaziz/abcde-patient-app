@@ -3,11 +3,15 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Emergency\AdvanceEmergencyRequest;
+use App\Http\Requests\Emergency\AnswerEmergencyRequest;
+use App\Http\Requests\Emergency\CodeBlueRequest;
+use App\Http\Requests\Emergency\SosRequest;
+use App\Http\Resources\EmergencySosResource;
 use App\Models\EmergencySosLog;
 use App\Services\NotificationService;
+use App\Support\Reference;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 
 class EmergencyController extends Controller
 {
@@ -16,16 +20,13 @@ class EmergencyController extends Controller
     }
 
     /** POST /emergency/sos — patient/family raise an SOS (FR12.2.1). */
-    public function sos(Request $request): JsonResponse
+    public function sos(SosRequest $request): JsonResponse
     {
-        $data = $request->validate([
-            'ticket_no' => ['nullable', 'string'],
-            'location' => ['nullable', 'string'],
-        ]);
+        $data = $request->validated();
         $user = $request->user();
 
         $event = EmergencySosLog::create([
-            'event_id' => 'E-' . strtoupper(Str::random(8)),
+            'event_id' => Reference::code('E'),
             'event_type' => 'sos',
             'ticket_no' => $data['ticket_no'] ?? null,
             'triggered_by' => $user->role === 'family' ? 'family' : 'patient',
@@ -37,19 +38,16 @@ class EmergencyController extends Controller
             $this->notifier->toPatient($user->patient_serial, 'SOS received — help is on the way', 'sos', null, ['event_id' => $event->event_id]);
         }
 
-        return $this->ok($event, 'SOS raised.', 201);
+        return $this->ok(new EmergencySosResource($event), 'SOS raised.', 201);
     }
 
     /** POST /emergency/code-blue — clinical Code Blue activation (FR12.2.2). */
-    public function codeBlue(Request $request): JsonResponse
+    public function codeBlue(CodeBlueRequest $request): JsonResponse
     {
-        $data = $request->validate([
-            'ticket_no' => ['nullable', 'string'],
-            'location' => ['required', 'string'],
-        ]);
+        $data = $request->validated();
 
         $event = EmergencySosLog::create([
-            'event_id' => 'E-' . strtoupper(Str::random(8)),
+            'event_id' => Reference::code('E'),
             'event_type' => 'code_blue',
             'ticket_no' => $data['ticket_no'] ?? null,
             'triggered_by' => 'nurse',
@@ -59,25 +57,21 @@ class EmergencyController extends Controller
             'classification' => 'real_emergency',
         ]);
 
-        return $this->ok($event, 'Code Blue activated.', 201);
+        return $this->ok(new EmergencySosResource($event), 'Code Blue activated.', 201);
     }
 
     /** GET /emergency/active — unresolved events for the response team. */
     public function active(): JsonResponse
     {
-        return $this->ok(
+        return $this->ok(EmergencySosResource::collection(
             EmergencySosLog::whereNull('resolved_at')->orderByDesc('started_at')->get()
-        );
+        ));
     }
 
     /** POST /emergency/{id}/answer — a responder answers an event. */
-    public function answer(Request $request, string $id): JsonResponse
+    public function answer(AnswerEmergencyRequest $request, string $id): JsonResponse
     {
-        $data = $request->validate([
-            'answered_by' => ['nullable', 'string'],
-            'classification' => ['nullable', 'in:real_emergency,heads_up'],
-            'resolve' => ['nullable', 'boolean'],
-        ]);
+        $data = $request->validated();
         $event = EmergencySosLog::findOrFail($id);
         $event->update(array_filter([
             'answered_by' => $data['answered_by'] ?? $request->user()->name,
@@ -85,18 +79,15 @@ class EmergencyController extends Controller
             'resolved_at' => $request->boolean('resolve') ? now() : $event->resolved_at,
         ]));
 
-        return $this->ok($event, 'Event answered.');
+        return $this->ok(new EmergencySosResource($event), 'Event answered.');
     }
 
     /** POST /emergency/{id}/advance — step the escalation chain (FR12). */
-    public function advance(Request $request, string $id): JsonResponse
+    public function advance(AdvanceEmergencyRequest $request, string $id): JsonResponse
     {
-        $data = $request->validate([
-            'step' => ['required', 'in:physician,nursing,family,resolved'],
-        ]);
         $event = EmergencySosLog::findOrFail($id);
 
-        match ($data['step']) {
+        match ($request->validated()['step']) {
             'physician' => $event->physician_alerted_at ??= now(),
             'nursing' => $event->nursing_alerted_at ??= now(),
             'family' => $event->family_alerted_at ??= now(),
@@ -104,7 +95,7 @@ class EmergencyController extends Controller
         };
         $event->save();
 
-        return $this->ok($event, 'Escalation advanced to :step.', 200, ['step' => $data['step']]);
+        return $this->ok(new EmergencySosResource($event), 'Escalation advanced to :step.', 200, ['step' => $request->validated()['step']]);
     }
 
     /** GET /emergency/metrics — SOS response KPIs (FR12, director/emergency). */

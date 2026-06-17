@@ -3,22 +3,20 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Transport\StoreTransportRequest;
+use App\Http\Traits\ResolvesVisit;
 use App\Models\TransportForm;
-use App\Models\Visit;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 class TransportController extends Controller
 {
+    use ResolvesVisit;
+
     /** POST /visits/{id}/transport — internal transport safety form / RSTP (FR4.6.2). */
-    public function store(Request $request, string $id): JsonResponse
+    public function store(StoreTransportRequest $request, string $id): JsonResponse
     {
-        $data = $request->validate([
-            'from_location' => ['required', 'string'],
-            'to_location' => ['required', 'string'],
-            'monitoring' => ['nullable', 'array'],
-        ]);
-        Visit::findOrFail($id);
+        $data = $request->validated();
+        $this->visit($id);
 
         $form = TransportForm::create([
             'ticket_no' => $id,

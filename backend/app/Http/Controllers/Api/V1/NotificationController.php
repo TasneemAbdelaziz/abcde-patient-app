@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\NotificationResource;
 use App\Models\Notification;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -32,7 +33,7 @@ class NotificationController extends Controller
 
         return $this->ok([
             'unread' => $items->whereNull('read_at')->count(),
-            'items' => $items,
+            'items' => NotificationResource::collection($items),
         ]);
     }
 
@@ -50,6 +51,6 @@ class NotificationController extends Controller
 
         $notification->update(['read_at' => now()]);
 
-        return $this->ok($notification, 'Marked as read.');
+        return $this->ok(new NotificationResource($notification), 'Marked as read.');
     }
 }

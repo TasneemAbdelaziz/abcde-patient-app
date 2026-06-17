@@ -3,33 +3,37 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Quality\RateStageRequest;
+use App\Http\Requests\Quality\StoreComplaintRequest;
+use App\Http\Requests\Quality\UpdateComplaintRequest;
+use App\Http\Resources\ComplaintResource;
+use App\Http\Resources\FeedbackRatingResource;
 use App\Models\CarePoint;
 use App\Models\Complaint;
 use App\Models\FeedbackRating;
 use App\Models\JourneyTimeline;
-use App\Models\Visit;
+use App\Support\Reference;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 
 class QualityController extends Controller
 {
     private const POINTS_PER_RATING = 20;
 
     /** POST /stages/{id}/feedback — rate a journey stage, earn care points (FR10.1.1). */
-    public function rateStage(Request $request, int $id): JsonResponse
+    public function rateStage(RateStageRequest $request, int $id): JsonResponse
     {
         $stage = JourneyTimeline::findOrFail($id);
         $visit = $stage->visit;
 
-        if (! $visit || ! $this->canAccessPatient($request->user(), $visit->patient_serial)) {
+        if (! $visit) {
             return $this->fail('Not allowed.', 403);
         }
+        if ($deny = $this->denyUnlessPatientAccess($request->user(), $visit->patient_serial)) {
+            return $deny;
+        }
 
-        $data = $request->validate([
-            'stars' => ['required', 'integer', 'between:1,5'],
-            'comment' => ['nullable', 'string'],
-        ]);
+        $data = $request->validated();
 
         $rating = FeedbackRating::create([
             'ticket_no' => $visit->ticket_no,
@@ -49,23 +53,18 @@ class QualityController extends Controller
         ]);
 
         return $this->ok([
-            'rating' => $rating,
+            'rating' => new FeedbackRatingResource($rating),
             'care_points_awarded' => $points->points,
         ], 'Thanks for your feedback.', 201);
     }
 
     /** POST /complaints — patient reports an issue (FR10.1.2). */
-    public function storeComplaint(Request $request): JsonResponse
+    public function storeComplaint(StoreComplaintRequest $request): JsonResponse
     {
-        $data = $request->validate([
-            'ticket_no' => ['nullable', 'string'],
-            'stage' => ['nullable', 'string'],
-            'complaint_text' => ['required', 'string'],
-            'routed_to_dept' => ['nullable', 'string'],
-        ]);
+        $data = $request->validated();
 
         $complaint = Complaint::create([
-            'complaint_no' => 'C-' . strtoupper(Str::random(6)),
+            'complaint_no' => Reference::code('C', 6),
             'ticket_no' => $data['ticket_no'] ?? null,
             'submitted_at' => now(),
             'stage' => $data['stage'] ?? null,
@@ -74,7 +73,7 @@ class QualityController extends Controller
             'status' => 'open',
         ]);
 
-        return $this->ok($complaint, 'Complaint submitted.', 201);
+        return $this->ok(new ComplaintResource($complaint), 'Complaint submitted.', 201);
     }
 
     /** GET /complaints — quality team queue (FR10.2.1). */
@@ -83,21 +82,15 @@ class QualityController extends Controller
         $complaints = Complaint::query()
             ->when($request->filled('status'), fn ($q) => $q->where('status', $request->status))
             ->orderByDesc('submitted_at')
-            ->get()
-            ->map(fn ($c) => array_merge($c->toArray(), [
-                'answered_within_sla' => $c->answered_within_sla,
-            ]));
+            ->get();
 
-        return $this->ok($complaints);
+        return $this->ok(ComplaintResource::collection($complaints));
     }
 
     /** PATCH /complaints/{id} — quality responds/escalates/closes (FR10.2.1, ≤6h SLA). */
-    public function updateComplaint(Request $request, string $id): JsonResponse
+    public function updateComplaint(UpdateComplaintRequest $request, string $id): JsonResponse
     {
-        $data = $request->validate([
-            'status' => ['required', 'in:open,responded,escalated,closed'],
-            'routed_to_dept' => ['nullable', 'string'],
-        ]);
+        $data = $request->validated();
         $complaint = Complaint::findOrFail($id);
         $complaint->update(array_filter([
             'status' => $data['status'],
@@ -107,18 +100,18 @@ class QualityController extends Controller
                 : $complaint->responded_at,
         ]));
 
-        return $this->ok($complaint, 'Complaint updated.');
+        return $this->ok(new ComplaintResource($complaint), 'Complaint updated.');
     }
 
     /** GET /feedback — all ratings for the quality team. */
     public function indexFeedback(Request $request): JsonResponse
     {
-        return $this->ok(
+        return $this->ok(FeedbackRatingResource::collection(
             FeedbackRating::query()
                 ->when($request->filled('stage'), fn ($q) => $q->where('stage', $request->stage))
                 ->orderByDesc('rated_at')
                 ->get()
-        );
+        ));
     }
 
     /** GET /quality/dashboard — satisfaction, SLA, sentiment summary (FR10.2.2). */

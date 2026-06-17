@@ -3,32 +3,35 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Visit\AdvanceVisitRequest;
+use App\Http\Requests\Visit\CathTypeRequest;
+use App\Http\Requests\Visit\StoreCarePlanRequest;
+use App\Http\Requests\Visit\StoreVisitRequest;
+use App\Http\Requests\Visit\TriageVisitRequest;
+use App\Http\Resources\CarePlanResource;
 use App\Http\Resources\VisitResource;
+use App\Http\Traits\ResolvesVisit;
 use App\Models\CarePlan;
 use App\Models\JourneyTimeline;
 use App\Models\Visit;
 use App\Services\NotificationService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 
 class VisitController extends Controller
 {
+    use ResolvesVisit;
+
     public function __construct(private readonly NotificationService $notifier)
     {
     }
 
     /** POST /visits — open a ticket/file for a patient (reception, FR4.1.1). */
-    public function store(Request $request): JsonResponse
+    public function store(StoreVisitRequest $request): JsonResponse
     {
-        $data = $request->validate([
-            'patient_serial' => ['required', 'string', 'exists:patients,patient_serial'],
-            'arrival_type' => ['required', 'in:emergency,scheduled,cold,referred'],
-            'dept_code' => ['nullable', 'string', 'exists:departments,dept_code'],
-            'location_code' => ['nullable', 'string', 'exists:locations,location_code'],
-        ]);
+        $data = $request->validated();
 
-        $ticket = $this->nextTicketNo();
+        $ticket = Visit::nextTicketNo();
         $visit = Visit::create([
             'ticket_no' => $ticket,
             'patient_serial' => $data['patient_serial'],
@@ -50,15 +53,14 @@ class VisitController extends Controller
     /** GET /visits/{id} — role-filtered visit view. */
     public function show(Request $request, string $id): JsonResponse
     {
-        $visit = Visit::with([
+        $visit = $this->visit($id, [
             'patient', 'doctor', 'department', 'location', 'timeline',
-            'vitals', 'diagnoses', 'prescriptions', 'labResults',
+            'vitals', 'diagnoses', 'prescriptions.drug', 'labResults',
             'radiologyResults', 'carePlan',
-        ])->findOrFail($id);
+        ]);
 
-        $user = $request->user();
-        if (! $user->isStaff() && ! $this->canAccessPatient($user, $visit->patient_serial)) {
-            return $this->fail('Not allowed.', 403);
+        if ($deny = $this->denyUnlessPatientAccess($request->user(), $visit->patient_serial)) {
+            return $deny;
         }
 
         return $this->ok(new VisitResource($visit));
@@ -80,16 +82,11 @@ class VisitController extends Controller
     }
 
     /** POST /visits/{id}/triage — nurse classifies and routes (FR4.1.1). */
-    public function triage(Request $request, string $id): JsonResponse
+    public function triage(TriageVisitRequest $request, string $id): JsonResponse
     {
-        $data = $request->validate([
-            'triage_classification' => ['required', 'in:cold,emergency,critical'],
-            'dept_code' => ['nullable', 'string', 'exists:departments,dept_code'],
-            'location_code' => ['nullable', 'string', 'exists:locations,location_code'],
-            'note' => ['nullable', 'string'],
-        ]);
+        $data = $request->validated();
+        $visit = $this->visit($id);
 
-        $visit = Visit::findOrFail($id);
         $visit->update(array_filter([
             'triage_classification' => $data['triage_classification'],
             'dept_code' => $data['dept_code'] ?? $visit->dept_code,
@@ -104,16 +101,11 @@ class VisitController extends Controller
     }
 
     /** POST /visits/{id}/advance — move the journey to the next/target stage (FR4.2.1). */
-    public function advance(Request $request, string $id): JsonResponse
+    public function advance(AdvanceVisitRequest $request, string $id): JsonResponse
     {
-        $data = $request->validate([
-            'stage' => ['nullable', 'in:' . implode(',', Visit::STAGES)],
-            'note' => ['nullable', 'string'],
-            'location_code' => ['nullable', 'string', 'exists:locations,location_code'],
-            'balloon_time' => ['nullable', 'date'],
-        ]);
+        $data = $request->validated();
+        $visit = $this->visit($id);
 
-        $visit = Visit::findOrFail($id);
         $stage = $data['stage'] ?? $this->nextStage($visit->current_stage);
         if (! $stage) {
             return $this->fail('Visit is already at the final stage.', 422);
@@ -139,14 +131,11 @@ class VisitController extends Controller
     }
 
     /** POST /visits/{id}/cath-type — doctor selects catheterization type (FR4.2.3). */
-    public function cathType(Request $request, string $id): JsonResponse
+    public function cathType(CathTypeRequest $request, string $id): JsonResponse
     {
-        $data = $request->validate([
-            'catheterization_type' => ['required', 'in:cerebral,cardiac,peripheral,interventional_radiology'],
-        ]);
-        $visit = Visit::findOrFail($id);
-        $visit->update(['catheterization_type' => $data['catheterization_type']]);
-        $this->recordStage($visit, $visit->current_stage, $request, "Cath type: {$data['catheterization_type']}");
+        $visit = $this->visit($id);
+        $visit->update(['catheterization_type' => $request->validated()['catheterization_type']]);
+        $this->recordStage($visit, $visit->current_stage, $request, "Cath type: {$visit->catheterization_type}");
 
         return $this->ok(new VisitResource($visit->fresh()), 'Catheterization type set.');
     }
@@ -154,28 +143,22 @@ class VisitController extends Controller
     /** GET /visits/{id}/care-plan — latest care plan (FR4.6.1). */
     public function showCarePlan(string $id): JsonResponse
     {
-        $visit = Visit::findOrFail($id);
+        $visit = $this->visit($id);
 
-        return $this->ok($visit->carePlan);
+        return $this->ok($visit->carePlan ? new CarePlanResource($visit->carePlan) : null);
     }
 
     /** POST /visits/{id}/care-plan — create/update care plan (doctor, FR4.6.1). */
-    public function storeCarePlan(Request $request, string $id): JsonResponse
+    public function storeCarePlan(StoreCarePlanRequest $request, string $id): JsonResponse
     {
-        $data = $request->validate([
-            'problem_list' => ['nullable', 'string'],
-            'plan' => ['required', 'string'],
-            'outcomes' => ['nullable', 'string'],
-            'timeframe' => ['nullable', 'string'],
-        ]);
-        Visit::findOrFail($id);
+        $this->visit($id);
 
-        $plan = CarePlan::create(array_merge($data, [
+        $plan = CarePlan::create(array_merge($request->validated(), [
             'ticket_no' => $id,
             'created_by' => $request->user()->staff_id,
         ]));
 
-        return $this->ok($plan, 'Care plan saved.', 201);
+        return $this->ok(new CarePlanResource($plan), 'Care plan saved.', 201);
     }
 
     private function recordStage(Visit $visit, string $stage, Request $request, ?string $note): void
@@ -198,15 +181,5 @@ class VisitController extends Controller
         }
 
         return $stages[$idx + 1] ?? null;
-    }
-
-    private function nextTicketNo(): string
-    {
-        $last = Visit::where('ticket_no', 'like', '#ALM-%')
-            ->orderByDesc('ticket_no')
-            ->value('ticket_no');
-        $n = $last ? (int) Str::after($last, '#ALM-') : 20500;
-
-        return '#ALM-' . ($n + 1);
     }
 }

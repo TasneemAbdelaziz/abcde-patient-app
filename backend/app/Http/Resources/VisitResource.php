@@ -30,11 +30,11 @@ class VisitResource extends JsonResource
             'location' => $this->whenLoaded('location'),
             'timeline' => $this->whenLoaded('timeline'),
             'vitals' => VitalResource::collection($this->whenLoaded('vitals')),
-            'diagnoses' => $this->whenLoaded('diagnoses'),
-            'prescriptions' => $this->whenLoaded('prescriptions'),
-            'lab_results' => $this->whenLoaded('labResults'),
-            'radiology_results' => $this->whenLoaded('radiologyResults'),
-            'care_plan' => $this->whenLoaded('carePlan'),
+            'diagnoses' => DiagnosisResource::collection($this->whenLoaded('diagnoses')),
+            'prescriptions' => PrescriptionResource::collection($this->whenLoaded('prescriptions')),
+            'lab_results' => LabResultResource::collection($this->whenLoaded('labResults')),
+            'radiology_results' => RadiologyResultResource::collection($this->whenLoaded('radiologyResults')),
+            'care_plan' => $this->whenLoaded('carePlan', fn () => new CarePlanResource($this->carePlan)),
         ];
     }
 }
