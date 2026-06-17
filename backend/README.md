@@ -75,13 +75,20 @@ to allow bootstrapping, then becomes **admin-only**.
 ## Authentication
 
 Token auth via Sanctum. `POST /auth/login` with `{ identifier, password }`
-(identifier = email / phone / patient serial). Send the returned token as
-`Authorization: Bearer <token>`.
+(identifier = email / phone / patient serial / **national ID**). Send the
+returned token as `Authorization: Bearer <token>`. The response — and
+`GET /auth/me` — include the patient's `national_id`.
 
 ```bash
+# Staff by email
 curl -X POST http://127.0.0.1:8000/api/v1/auth/login \
   -H "Content-Type: application/json" \
   -d '{"identifier":"k.adel@alamein.example","password":"password"}'
+
+# Patient by national ID
+curl -X POST http://127.0.0.1:8000/api/v1/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"identifier":"25803151234567","password":"password"}'
 ```
 
 ### Roles (RBAC)

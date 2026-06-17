@@ -151,6 +151,66 @@
               ]
             },
             {
+              "name": "POST /auth/login (patient by national ID)",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "auth": {
+                  "type": "noauth"
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"identifier\": \"25803151234567\",\n  \"password\": \"password\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/auth/login",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "login"
+                  ]
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Status is a 2xx success', function () {",
+                      "    pm.expect(pm.response.code, 'HTTP ' + pm.response.code).to.be.oneOf([200, 201, 202, 204]);",
+                      "});",
+                      "pm.test('Response body is valid JSON', function () {",
+                      "    pm.response.json();",
+                      "});",
+                      "",
+                      "var d = pm.response.json();",
+                      "if (d && d.data && d.data.token) {",
+                      "  pm.collectionVariables.set('token', d.data.token);",
+                      "  console.log('Patient login — national_id: ' + (d.data.user && d.data.user.national_id));",
+                      "}"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
               "name": "POST /auth/login/qr",
               "request": {
                 "method": "POST",
@@ -670,6 +730,71 @@
             {
               "name": "Profile & Settings",
               "item": [
+                {
+                  "name": "POST /patients/register (reception · staff adds patient)",
+                  "request": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{token}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"full_name\": \"Sara Abdullah\",\n  \"national_id\": \"29507884001191\",\n  \"date_of_birth\": \"1995-07-08\",\n  \"gender\": \"F\",\n  \"phone\": \"0150-788-4001\",\n  \"city_district\": \"New Alamein\",\n  \"preferred_language\": \"ar\",\n  \"decision_maker\": \"self\"\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/patients/register",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "patients",
+                        "register"
+                      ]
+                    },
+                    "description": "Reception/admin adds a patient at the desk. Send the staff bearer token: the new patient and Serial are returned and your own session is kept (no patient token). Next: issue the cards (POST /patients/{serial}/cards) and open the visit (POST /visits)."
+                  },
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test('Status is a 2xx success', function () {",
+                          "    pm.expect(pm.response.code, 'HTTP ' + pm.response.code).to.be.oneOf([200, 201, 202, 204]);",
+                          "});",
+                          "pm.test('Returns the new patient Serial', function () {",
+                          "    var d = pm.response.json();",
+                          "    pm.expect(d.data).to.have.property('patient_serial');",
+                          "    pm.collectionVariables.set('patientSerial', d.data.patient_serial);",
+                          "    console.log('Reception created patient ' + d.data.patient_serial);",
+                          "});"
+                        ]
+                      }
+                    }
+                  ]
+                },
                 {
                   "name": "POST /patients/register",
                   "request": {
@@ -7088,6 +7213,58 @@
                           "});",
                           "pm.test('Response time is under 2000ms', function () {",
                           "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+                          "});",
+                          "pm.test('Response body is valid JSON', function () {",
+                          "    pm.response.json();",
+                          "});"
+                        ]
+                      }
+                    }
+                  ]
+                },
+                {
+                  "name": "PUT /admin/permissions",
+                  "request": {
+                    "method": "PUT",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"matrix\": {\n    \"doctor\": { \"medical_file\": \"edit\", \"vitals\": \"edit\", \"medication\": \"edit\", \"billing\": \"none\" },\n    \"nurse\": { \"medical_file\": \"none\", \"vitals\": \"edit\", \"medication\": \"edit\" },\n    \"reception\": { \"medical_file\": \"none\", \"admin_data\": \"edit\", \"billing\": \"edit\" }\n  }\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/admin/permissions",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "admin",
+                        "permissions"
+                      ]
+                    },
+                    "description": "Save the RBAC permission matrix — who may view/edit each resource per role (FR-1.7)."
+                  },
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test('Status is a 2xx success', function () {",
+                          "    pm.expect(pm.response.code, 'HTTP ' + pm.response.code).to.be.oneOf([200, 201, 202, 204]);",
                           "});",
                           "pm.test('Response body is valid JSON', function () {",
                           "    pm.response.json();",

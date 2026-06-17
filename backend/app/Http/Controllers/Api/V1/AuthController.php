@@ -18,7 +18,7 @@ class AuthController extends Controller
     public function login(Request $request): JsonResponse
     {
         $data = $request->validate([
-            'identifier' => ['required', 'string'], // email | phone | patient_serial | username
+            'identifier' => ['required', 'string'], // email | phone | patient_serial | username | national_id
             'password' => ['required', 'string'],
             'device_name' => ['nullable', 'string'],
         ]);
@@ -27,6 +27,7 @@ class AuthController extends Controller
         $user = User::where('username', $id)
             ->orWhere('email', $id)
             ->orWhere('patient_serial', $id)
+            ->orWhereHas('patient', fn ($q) => $q->where('national_id', $id))
             ->first();
 
         if (! $user || ! Hash::check($data['password'], $user->password)) {
@@ -58,7 +59,14 @@ class AuthController extends Controller
         return $this->issueToken($user, 'qr');
     }
 
-    /** POST /patients/register — self/family/reception registration (FR1.2.1). */
+    /**
+     * POST /patients/register — create a patient (FR-1.2 / FR-1.4).
+     *
+     * Two callers share this endpoint (auth.optional):
+     *  - A guest self-registers and is logged in (a token is returned).
+     *  - Reception/admin adds a patient at the desk: the new patient + Serial are
+     *    returned and the staff member keeps their own session (no patient token).
+     */
     public function register(Request $request): JsonResponse
     {
         $data = $request->validate([
@@ -77,6 +85,14 @@ class AuthController extends Controller
         if (User::where('username', $data['phone'])->exists()) {
             throw ValidationException::withMessages([
                 'phone' => [__('An account with this phone number already exists.')],
+            ]);
+        }
+
+        // The Serial is built from the national ID and reused across visits, so a
+        // national ID that already exists is caught — nobody gets a second Serial (FR-1.4).
+        if (! empty($data['national_id']) && Patient::where('national_id', $data['national_id'])->exists()) {
+            throw ValidationException::withMessages([
+                'national_id' => [__('A patient with this national ID already exists.')],
             ]);
         }
 
@@ -105,6 +121,16 @@ class AuthController extends Controller
         ]);
         $patient->update(['user_id' => $user->id]);
 
+        // Reception/admin adding a patient at the desk: return the record + Serial,
+        // and keep the staff member's own session (do not issue a patient token).
+        if ($request->user()?->isStaff()) {
+            return $this->ok([
+                'patient_serial' => $patient->patient_serial,
+                'patient' => $patient->fresh(),
+            ], 'Patient registered.', 201);
+        }
+
+        // Guest self-registration: log the new patient in.
         return $this->issueToken($user, 'registration', 201);
     }
 
@@ -126,6 +152,7 @@ class AuthController extends Controller
             'name' => $user->name,
             'role' => $user->role,
             'locale' => $user->locale,
+            'national_id' => $user->patient?->national_id,
             'staff' => $user->staff,
             'patient' => $user->patient,
         ]);
@@ -144,6 +171,7 @@ class AuthController extends Controller
                 'role' => $user->role,
                 'locale' => $user->locale,
                 'patient_serial' => $user->patient_serial,
+                'national_id' => $user->patient?->national_id,
                 'staff_id' => $user->staff_id,
             ],
         ], 'Authenticated.', $status);

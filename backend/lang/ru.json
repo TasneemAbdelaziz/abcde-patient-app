@@ -4,6 +4,8 @@
     "Account is disabled.": "Учётная запись отключена.",
     "These credentials do not match our records.": "Эти учётные данные не совпадают с нашими записями.",
     "An account with this phone number already exists.": "Учётная запись с этим номером телефона уже существует.",
+    "A patient with this national ID already exists.": "Пациент с этим национальным идентификатором уже существует.",
+    "Patient registered.": "Пациент зарегистрирован.",
     "Invalid or expired QR code.": "Недействительный или просроченный QR-код.",
     "Preferences updated.": "Настройки обновлены.",
     "Card issued.": "Карта выдана.",

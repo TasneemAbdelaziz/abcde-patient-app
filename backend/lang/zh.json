@@ -4,6 +4,8 @@
     "Account is disabled.": "账户已被禁用。",
     "These credentials do not match our records.": "凭据与我们的记录不匹配。",
     "An account with this phone number already exists.": "该手机号码的账户已存在。",
+    "A patient with this national ID already exists.": "该国民身份号码的患者已存在。",
+    "Patient registered.": "患者已登记。",
     "Invalid or expired QR code.": "二维码无效或已过期。",
     "Preferences updated.": "偏好设置已更新。",
     "Card issued.": "卡片已发放。",

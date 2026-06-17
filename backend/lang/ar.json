@@ -4,6 +4,8 @@
     "Account is disabled.": "الحساب معطّل.",
     "These credentials do not match our records.": "بيانات الدخول هذه لا تطابق سجلاتنا.",
     "An account with this phone number already exists.": "يوجد حساب بهذا رقم الهاتف بالفعل.",
+    "A patient with this national ID already exists.": "يوجد مريض بهذا الرقم القومي بالفعل.",
+    "Patient registered.": "تم تسجيل المريض.",
     "Invalid or expired QR code.": "رمز QR غير صالح أو منتهي الصلاحية.",
     "Preferences updated.": "تم تحديث التفضيلات.",
     "Card issued.": "تم إصدار البطاقة.",

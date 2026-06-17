@@ -41,7 +41,6 @@ Route::prefix('v1')->group(function () {
     // S1 — Auth & registration
     Route::post('/auth/login', [AuthController::class, 'login']);
     Route::post('/auth/login/qr', [AuthController::class, 'loginQr']);
-    Route::post('/patients/register', [AuthController::class, 'register']);
 
     // S2 — Public portal
     Route::get('/public/hospital', [PublicController::class, 'hospital']);
@@ -55,8 +54,12 @@ Route::prefix('v1')->group(function () {
     Route::get('/nav/search', [NavController::class, 'search']);
     Route::get('/nav/route', [NavController::class, 'route']);
 
-    // Data import — open only until an admin exists (bootstrap), then admin-only.
+    // These serve both guests and authenticated staff (the user is resolved when
+    // a bearer token is present, but not required).
     Route::middleware('auth.optional')->group(function () {
+        // Patient registration: a guest self-registers (gets a token); reception or
+        // admin adds a patient on the desk (gets the patient back, keeps their session).
+        Route::post('/patients/register', [AuthController::class, 'register']);
         Route::post('/admin/import', [ImportController::class, 'upload']);
         Route::post('/admin/import/seed', [ImportController::class, 'seed']);
         // Guests or patients may request an appointment.
