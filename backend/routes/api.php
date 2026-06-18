@@ -92,12 +92,12 @@ Route::prefix('v1')->group(function () {
 
         // S3 — Patient journey
         Route::post('/visits', [VisitController::class, 'store'])->middleware('role:reception,admin');
-        Route::get('/visits', [VisitController::class, 'index'])->middleware('role:staff');
+        Route::get('/visits', [VisitController::class, 'index']);
         Route::get('/visits/{id}', [VisitController::class, 'show']);
         Route::post('/visits/{id}/triage', [VisitController::class, 'triage'])->middleware('role:nurse,admin');
         Route::post('/visits/{id}/advance', [VisitController::class, 'advance'])->middleware('role:doctor,nurse,admin');
         Route::post('/visits/{id}/cath-type', [VisitController::class, 'cathType'])->middleware('role:doctor,admin');
-        Route::get('/visits/{id}/care-plan', [VisitController::class, 'showCarePlan'])->middleware('role:staff');
+        Route::get('/visits/{id}/care-plan', [VisitController::class, 'showCarePlan']);
         Route::post('/visits/{id}/care-plan', [VisitController::class, 'storeCarePlan'])->middleware('role:doctor,admin');
         Route::post('/visits/{id}/consents', [ConsentController::class, 'store'])->middleware('role:doctor,nurse,admin');
         Route::post('/consents/{id}/respond', [ConsentController::class, 'respond']);

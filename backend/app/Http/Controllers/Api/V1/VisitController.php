@@ -66,11 +66,14 @@ class VisitController extends Controller
         return $this->ok(new VisitResource($visit));
     }
 
-    /** GET /visits?filters — staff worklist (stage/dept/status/doctor). */
+    /** GET /visits — patient sees own visits; staff get the filterable worklist. */
     public function index(Request $request): JsonResponse
     {
+        $user = $request->user();
+
         $visits = Visit::query()
             ->with(['patient', 'doctor', 'department'])
+            ->when(! $user->isStaff(), fn ($q) => $q->where('patient_serial', $user->patient_serial))
             ->when($request->filled('stage'), fn ($q) => $q->where('current_stage', $request->stage))
             ->when($request->filled('dept_code'), fn ($q) => $q->where('dept_code', $request->dept_code))
             ->when($request->filled('status'), fn ($q) => $q->where('visit_status', $request->status))
@@ -140,10 +143,14 @@ class VisitController extends Controller
         return $this->ok(new VisitResource($visit->fresh()), 'Catheterization type set.');
     }
 
-    /** GET /visits/{id}/care-plan — latest care plan (FR4.6.1). */
-    public function showCarePlan(string $id): JsonResponse
+    /** GET /visits/{id}/care-plan — latest care plan; patient may view their own (FR4.6.1). */
+    public function showCarePlan(Request $request, string $id): JsonResponse
     {
         $visit = $this->visit($id);
+
+        if ($deny = $this->denyUnlessPatientAccess($request->user(), $visit->patient_serial)) {
+            return $deny;
+        }
 
         return $this->ok($visit->carePlan ? new CarePlanResource($visit->carePlan) : null);
     }
