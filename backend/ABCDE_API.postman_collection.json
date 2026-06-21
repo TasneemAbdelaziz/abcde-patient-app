@@ -17,7 +17,7 @@
   "variable": [
     {
       "key": "baseUrl",
-      "value": "http://127.0.0.1:8000/api/v1"
+      "value": "https://aiu.edu.eg/abcde/api/v1"
     },
     {
       "key": "token",
@@ -30,9 +30,445 @@
     {
       "key": "ticket",
       "value": "#ALM-20413"
+    },
+    {
+      "key": "stageId",
+      "value": "1"
+    },
+    {
+      "key": "prescriptionId",
+      "value": "1"
     }
   ],
   "item": [
+    {
+      "name": "📱 Patient App",
+      "description": "The 9 patient mobile screens, in order. Run 'Login (Patient)' first — it saves the bearer token for the rest. Uses the demo patient ALM-20413 (phone 010-1000-0001).",
+      "item": [
+        {
+          "name": "0. Login (Patient) — saves token",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "description": "Patient login by phone. Saves {{token}} for the folder.",
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"identifier\": \"010-1000-0001\",\n  \"password\": \"password\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is a 2xx success', function () {",
+                  "    pm.expect(pm.response.code, 'HTTP ' + pm.response.code).to.be.oneOf([200, 201, 202, 204]);",
+                  "});",
+                  "pm.test('Response body is valid JSON', function () { pm.response.json(); });",
+                  "",
+                  "var d = pm.response.json();",
+                  "if (d && d.data && d.data.token) {",
+                  "  pm.collectionVariables.set('token', d.data.token);",
+                  "  console.log('Patient token saved');",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "1. My Visits list",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/visits",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "visits"
+              ]
+            },
+            "description": "GET /visits — the patient's own visits (scoped automatically)."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is a 2xx success', function () {",
+                  "    pm.expect(pm.response.code, 'HTTP ' + pm.response.code).to.be.oneOf([200, 201, 202, 204]);",
+                  "});",
+                  "pm.test('Response body is valid JSON', function () { pm.response.json(); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "2. Care Journey / Diagnosis",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/visits/%23{{serial}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "visits",
+                "%23{{serial}}"
+              ]
+            },
+            "description": "GET /visits/{id} — visit detail: stages, diagnosis, vitals, rx."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is a 2xx success', function () {",
+                  "    pm.expect(pm.response.code, 'HTTP ' + pm.response.code).to.be.oneOf([200, 201, 202, 204]);",
+                  "});",
+                  "pm.test('Response body is valid JSON', function () { pm.response.json(); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "3. Rate a stage",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/stages/{{stageId}}/feedback",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "stages",
+                "{{stageId}}",
+                "feedback"
+              ]
+            },
+            "description": "POST /stages/{id}/feedback — {id} is a journey-timeline stage id.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"stars\": 5,\n  \"comment\": \"Very smooth and well organized\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is a 2xx success', function () {",
+                  "    pm.expect(pm.response.code, 'HTTP ' + pm.response.code).to.be.oneOf([200, 201, 202, 204]);",
+                  "});",
+                  "pm.test('Response body is valid JSON', function () { pm.response.json(); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "4. Treatment Plan — Care plan",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/visits/%23{{serial}}/care-plan",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "visits",
+                "%23{{serial}}",
+                "care-plan"
+              ]
+            },
+            "description": "GET /visits/{id}/care-plan — recovery goals & progress."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is a 2xx success', function () {",
+                  "    pm.expect(pm.response.code, 'HTTP ' + pm.response.code).to.be.oneOf([200, 201, 202, 204]);",
+                  "});",
+                  "pm.test('Response body is valid JSON', function () { pm.response.json(); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "5. Treatment Plan — Prescriptions (today)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/visits/%23{{serial}}/prescriptions",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "visits",
+                "%23{{serial}}",
+                "prescriptions"
+              ]
+            },
+            "description": "GET /visits/{id}/prescriptions — medicine timeline."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is a 2xx success', function () {",
+                  "    pm.expect(pm.response.code, 'HTTP ' + pm.response.code).to.be.oneOf([200, 201, 202, 204]);",
+                  "});",
+                  "pm.test('Response body is valid JSON', function () { pm.response.json(); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "6. Treatment Plan — Vitals",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/visits/%23{{serial}}/vitals",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "visits",
+                "%23{{serial}}",
+                "vitals"
+              ]
+            },
+            "description": "GET /visits/{id}/vitals — latest vitals."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is a 2xx success', function () {",
+                  "    pm.expect(pm.response.code, 'HTTP ' + pm.response.code).to.be.oneOf([200, 201, 202, 204]);",
+                  "});",
+                  "pm.test('Response body is valid JSON', function () { pm.response.json(); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "7. Upcoming appointments",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/appointments",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "appointments"
+              ]
+            },
+            "description": "GET /appointments — the patient's own appointments."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is a 2xx success', function () {",
+                  "    pm.expect(pm.response.code, 'HTTP ' + pm.response.code).to.be.oneOf([200, 201, 202, 204]);",
+                  "});",
+                  "pm.test('Response body is valid JSON', function () { pm.response.json(); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "8. My Medicines (all)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/visits/%23{{serial}}/prescriptions",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "visits",
+                "%23{{serial}}",
+                "prescriptions"
+              ]
+            },
+            "description": "GET /visits/{id}/prescriptions — all prescribed medicines."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is a 2xx success', function () {",
+                  "    pm.expect(pm.response.code, 'HTTP ' + pm.response.code).to.be.oneOf([200, 201, 202, 204]);",
+                  "});",
+                  "pm.test('Response body is valid JSON', function () { pm.response.json(); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "9. Mark a dose taken",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/prescriptions/{{prescriptionId}}/administer",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "prescriptions",
+                "{{prescriptionId}}",
+                "administer"
+              ]
+            },
+            "description": "POST /prescriptions/{id}/administer — patient self-confirms a dose.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"action\": \"taken\",\n  \"scheduled_time\": \"2026-06-08 21:00\",\n  \"actual_time\": \"2026-06-08 21:05\",\n  \"note\": \"Taken at home\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is a 2xx success', function () {",
+                  "    pm.expect(pm.response.code, 'HTTP ' + pm.response.code).to.be.oneOf([200, 201, 202, 204]);",
+                  "});",
+                  "pm.test('Response body is valid JSON', function () { pm.response.json(); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
     {
       "name": "🔑 Shared",
       "item": [

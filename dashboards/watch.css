@@ -1,0 +1,175 @@
+/* ============================================================
+   A.B.C.D.E — Apple Watch companion · watch.css
+   A glanceable, dark, watchOS-style UI. Previews inside a watch
+   case on desktop; on a true watch-sized viewport the case
+   chrome drops away and the screen fills edge to edge.
+   ============================================================ */
+
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+:root {
+  --w-bg: #000; --w-card: #1c1d22; --w-card2: #232530; --w-ink: #f4f6f8;
+  --w-sub: #9aa3ad; --w-line: rgba(255,255,255,.08);
+  --w-teal: #2dd4bf; --w-teal-d: #0d9488; --w-green: #34d399;
+  --w-amber: #fbbf24; --w-red: #ff453a; --w-blue: #0a84ff;
+}
+
+html, body { height: 100%; margin: 0; }
+.watch-body {
+  font-family: -apple-system, "SF Pro Text", "Segoe UI", system-ui, sans-serif;
+  background: radial-gradient(120% 120% at 50% 0%, #2a2f3a 0%, #11151c 55%, #0a0d12 100%);
+  min-height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 20px; padding: 36px 16px; color: var(--w-ink);
+}
+
+/* ---- the watch device (desktop preview only) ---- */
+.watch-device {
+  position: relative;
+  width: 224px; height: 272px;
+  border-radius: 58px;
+  background: linear-gradient(155deg, #3a3f47, #14171c 60%, #0c0e12);
+  box-shadow:
+    0 2px 2px rgba(255,255,255,.18) inset,
+    0 -2px 6px rgba(0,0,0,.5) inset,
+    0 40px 80px rgba(0,0,0,.55),
+    0 10px 24px rgba(0,0,0,.4);
+  padding: 16px 15px;
+}
+/* the digital crown + side button on the right edge */
+.wd-crown {
+  position: absolute; right: -6px; top: 92px; width: 9px; height: 34px; border-radius: 4px;
+  background: linear-gradient(90deg, #5b6068, #2a2e34); box-shadow: 0 1px 2px rgba(0,0,0,.5);
+}
+.wd-sidebtn {
+  position: absolute; right: -4px; top: 142px; width: 6px; height: 48px; border-radius: 4px;
+  background: linear-gradient(90deg, #4a4f57, #23262c);
+}
+
+/* ---- the screen ---- */
+.watch-screen {
+  width: 100%; height: 100%;
+  border-radius: 44px;
+  background: var(--w-bg);
+  overflow-y: auto; overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  position: relative;
+  scrollbar-width: none;
+}
+.watch-screen::-webkit-scrollbar { display: none; }
+
+.watch-caption { color: #8a93a0; font-size: 12.5px; margin: 0; letter-spacing: .2px; }
+
+/* ---- status bar ---- */
+.w-status {
+  position: sticky; top: 0; z-index: 5;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 9px 16px 6px; background: linear-gradient(#000 70%, transparent);
+  font-size: 12px; font-weight: 600;
+}
+.w-status .w-role { color: var(--w-teal); display: flex; align-items: center; gap: 5px; }
+.w-status .w-role .w-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--w-green); box-shadow: 0 0 6px var(--w-green); }
+.w-status .w-time { color: var(--w-ink); font-variant-numeric: tabular-nums; }
+
+/* ---- content ---- */
+.w-wrap { padding: 2px 12px 16px; display: flex; flex-direction: column; gap: 9px; }
+.w-h1 { font-size: 19px; font-weight: 700; letter-spacing: -.3px; margin: 2px 2px 0; }
+.w-sub { font-size: 12px; color: var(--w-sub); margin: 0 2px 2px; }
+
+/* glance tile */
+.w-tile {
+  background: var(--w-card); border-radius: 20px; padding: 13px 14px;
+  display: flex; flex-direction: column; gap: 2px; border: 1px solid var(--w-line);
+}
+.w-tile .w-label { font-size: 11px; color: var(--w-sub); text-transform: uppercase; letter-spacing: .5px; display: flex; align-items: center; gap: 6px; }
+.w-tile .w-val { font-size: 30px; font-weight: 700; line-height: 1.05; letter-spacing: -.5px; }
+.w-tile .w-val small { font-size: 14px; font-weight: 600; color: var(--w-sub); }
+.w-tile .w-foot { font-size: 11.5px; color: var(--w-sub); margin-top: 3px; }
+.w-tile.teal { background: linear-gradient(150deg, #0f3d39, #0b2a2b); border-color: rgba(45,212,191,.25); }
+.w-tile.teal .w-val { color: var(--w-teal); }
+.w-tile.amber { background: linear-gradient(150deg, #3a2f10, #2a2310); border-color: rgba(251,191,36,.3); }
+.w-tile.amber .w-val { color: var(--w-amber); }
+.w-tile.red { background: linear-gradient(150deg, #46141a, #2c0f13); border-color: rgba(255,69,58,.35); }
+.w-tile.red .w-val { color: var(--w-red); }
+.w-tile.tap { cursor: pointer; }
+.w-tile.tap:active { transform: scale(.97); }
+
+/* big stage pill (patient/family) */
+.w-stage {
+  background: linear-gradient(150deg, var(--w-teal-d), #0b3b38);
+  border-radius: 22px; padding: 16px 15px; text-align: center;
+}
+.w-stage .w-stage-k { font-size: 11px; color: rgba(255,255,255,.7); text-transform: uppercase; letter-spacing: .6px; }
+.w-stage .w-stage-v { font-size: 18px; font-weight: 700; margin-top: 5px; line-height: 1.2; }
+.w-stage .w-stage-s { font-size: 12px; color: rgba(255,255,255,.78); margin-top: 4px; }
+
+/* action buttons */
+.w-btn {
+  border: none; width: 100%; border-radius: 18px; padding: 13px; font-size: 14px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center; gap: 7px; cursor: pointer;
+  font-family: inherit; color: #fff;
+}
+.w-btn:active { transform: scale(.97); }
+.w-btn.sos { background: var(--w-red); box-shadow: 0 6px 18px rgba(255,69,58,.4); }
+.w-btn.code { background: var(--w-blue); box-shadow: 0 6px 18px rgba(10,132,255,.4); }
+.w-btn.ghost { background: var(--w-card2); color: var(--w-ink); }
+.w-btn svg { width: 17px; height: 17px; }
+
+/* list rows */
+.w-row { display: flex; align-items: center; gap: 9px; padding: 9px 12px; background: var(--w-card); border-radius: 16px; }
+.w-row + .w-row { margin-top: 6px; }
+.w-row .w-rn { font-size: 13px; font-weight: 600; }
+.w-row .w-rs { font-size: 11px; color: var(--w-sub); }
+.w-row .w-pill { margin-inline-start: auto; font-size: 12px; font-weight: 700; padding: 3px 9px; border-radius: 10px; }
+.w-pill.red { background: rgba(255,69,58,.18); color: var(--w-red); }
+.w-pill.amber { background: rgba(251,191,36,.18); color: var(--w-amber); }
+.w-pill.green { background: rgba(52,211,153,.18); color: var(--w-green); }
+.w-pill.slate { background: rgba(255,255,255,.08); color: var(--w-sub); }
+
+/* role chooser (pairing screen) */
+.w-brand { text-align: center; padding: 14px 10px 4px; }
+.w-brand .w-logo { font-family: "SF Pro Display", system-ui, serif; font-size: 17px; font-weight: 800; letter-spacing: 2px; color: var(--w-teal); }
+.w-brand .w-tag { font-size: 11px; color: var(--w-sub); margin-top: 3px; }
+.w-roles { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; padding: 8px 12px 16px; }
+.w-rolebtn {
+  border: 1px solid var(--w-line); background: var(--w-card); color: var(--w-ink);
+  border-radius: 16px; padding: 11px 6px; font-size: 12px; font-weight: 600; cursor: pointer;
+  display: flex; flex-direction: column; align-items: center; gap: 6px; font-family: inherit;
+}
+.w-rolebtn:active { transform: scale(.96); background: var(--w-card2); }
+.w-rolebtn svg { width: 20px; height: 20px; color: var(--w-teal); }
+.w-rolebtn.loading { opacity: .5; pointer-events: none; }
+
+/* spinner + empty */
+.w-load { display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 80px 16px; color: var(--w-sub); }
+.w-spin { width: 26px; height: 26px; border-radius: 50%; border: 3px solid rgba(255,255,255,.14); border-top-color: var(--w-teal); animation: w-spin .7s linear infinite; }
+@keyframes w-spin { to { transform: rotate(360deg); } }
+.w-empty { text-align: center; color: var(--w-sub); font-size: 12.5px; padding: 30px 16px; }
+.w-err { color: var(--w-red); font-size: 12px; text-align: center; padding: 6px 14px; }
+
+/* footer actions */
+.w-foot-actions { display: flex; gap: 7px; padding: 4px 12px 18px; }
+.w-foot-actions .w-btn { padding: 10px; font-size: 12.5px; }
+
+/* tiny in-screen toast */
+.watch-toast {
+  position: absolute; left: 50%; bottom: 30px; transform: translateX(-50%) translateY(12px);
+  background: rgba(28,29,34,.96); color: #fff; font-size: 12px; font-weight: 600;
+  padding: 9px 14px; border-radius: 14px; border: 1px solid var(--w-line);
+  opacity: 0; pointer-events: none; transition: opacity .25s, transform .25s; max-width: 80%; text-align: center; z-index: 30;
+}
+.watch-toast.on { opacity: 1; transform: translateX(-50%) translateY(0); }
+.watch-toast.err { border-color: rgba(255,69,58,.5); color: #ffd7d4; }
+
+/* ============================================================
+   TRUE WATCH VIEWPORT — drop the case, fill the screen
+   (Apple Watch browser viewports are ~272–352px wide)
+   ============================================================ */
+@media (max-width: 420px) {
+  .watch-body { padding: 0; background: #000; display: block; }
+  .watch-device {
+    width: 100vw; height: 100vh; height: 100dvh;
+    border-radius: 0; padding: 0; box-shadow: none; background: #000;
+  }
+  .wd-crown, .wd-sidebtn, .watch-caption { display: none; }
+  .watch-screen { border-radius: 0; }
+  .w-status { padding-top: max(9px, env(safe-area-inset-top)); }
+}

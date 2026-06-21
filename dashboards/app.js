@@ -1,18 +1,18 @@
 /* ============================================================
    A.B.C.D.E — Staff Dashboards · app.js
-   The shell: login / role picker, the sidebar + topbar chrome,
-   the router that delegates to each role module, and the
-   language toggle (English first, Arabic/RTL ready).
+   The shell: landing page, REAL authentication against the
+   Laravel API (/auth/login + /auth/me), the sidebar + topbar
+   chrome, an async router that fetches each screen's data before
+   rendering, live notifications, and the language toggle.
    ============================================================ */
 
 (function () {
   var I = UI.icon, esc = UI.esc;
-  var DEMO_DATE = 'Monday · 8 June 2026';
 
   /* ---- small Arabic map for the chrome + nav (English-first, AR-ready) ---- */
   var AR = {
     'Reception': 'الاستقبال', 'Nursing': 'التمريض', 'Doctor': 'الطبيب',
-    'Quality': 'الجودة', 'Administration': 'الإدارة', 'Emergency': 'الطوارئ', 'Family': 'العائلة',
+    'Quality': 'الجودة', 'Administration': 'الإدارة', 'Director': 'الإدارة العليا', 'Emergency': 'الطوارئ', 'Family': 'العائلة',
     'Front desk': 'مكتب الاستقبال', 'New registration': 'تسجيل جديد', 'Patient queue': 'قائمة المرضى',
     'Appointments': 'المواعيد', 'Billing': 'الحسابات',
     'Ward overview': 'نظرة عامة على القسم', 'Triage': 'الفرز', 'Record vitals': 'تسجيل العلامات الحيوية',
@@ -26,27 +26,23 @@
     'Status': 'الحالة', 'Updates': 'التحديثات', 'Permissions': 'الصلاحيات',
     'Orders': 'الطلبات', 'Results': 'النتائج', 'Handover (SBAR)': 'التسليم', 'Committee': 'اللجنة',
     'Departments': 'الأقسام', 'Critical watch': 'الحالات الحرجة', 'Metrics': 'المقاييس',
-    'Care team': 'فريق الرعاية', 'Learn': 'تعلّم'
+    'Care team': 'فريق الرعاية', 'Learn': 'تعلّم', 'Overview': 'نظرة عامة', 'Medications': 'الأدوية',
+    'Worklist': 'قائمة العمل', 'Care journey': 'رحلة الرعاية'
   };
   function tn(label) { return window.STATE.lang === 'ar' && AR[label] ? AR[label] : label; }
+  window.tn = tn;
 
-  /* ---- role groups for the picker ---- */
-  var ROLE_GROUPS = [
-    { label: 'Clinical care', labelAr: 'الرعاية الإكلينيكية', roles: ['reception', 'nurse', 'doctor'] },
-    { label: 'Oversight', labelAr: 'الإشراف', roles: ['quality', 'admin'] },
-    { label: 'Response & access', labelAr: 'الاستجابة والوصول', roles: ['emergency', 'family'] }
-  ];
-
-  function roleCard(key) {
-    var r = window.ROLES[key];
-    return '<button class="role-card" onclick="App.enter(\'' + key + '\')">' +
-      '<div class="rc-ic">' + I(r.icon) + '</div>' +
-      '<div><div class="rc-name">' + esc(tn(r.label)) + '</div>' +
-        '<div class="rc-person">' + esc(r.person) + '</div></div>' +
-      '<div class="rc-desc">' + esc(r.desc) + '</div>' +
-      '<div class="rc-go">' + esc(window.t('signin')) + ' ' + esc(tn(r.label)) + ' ' + I('arrowRight') + '</div>' +
-    '</button>';
-  }
+  /* ---- demo accounts for one-click sign-in (password: "password") ---- */
+  var DEMO = {
+    reception: { id: 'o.lotfy@alamein.example',  name: 'Omar Lotfy' },
+    nurse:     { id: 'f.sayed@alamein.example',  name: 'Fatma El-Sayed' },
+    doctor:    { id: 'k.adel@alamein.example',   name: 'Dr. Karim Adel' },
+    quality:   { id: 'h.mansour@alamein.example', name: 'Hala Mansour' },
+    admin:     { id: 'admin@alamein.example',    name: 'System Admin' },
+    director:  { id: 'a.zaki@alamein.example',   name: 'Dr. Ahmed Zaki' },
+    emergency: { id: 'k.sami@alamein.example',   name: 'Khaled Sami' },
+    family:    { id: '010-0000-0003',            name: 'Mariam Al-Rashid' }
+  };
 
   /* ============================================================
      LANDING PAGE — the hospital's public homepage
@@ -56,7 +52,6 @@
     var P = window.PUBLIC, C = P.contact;
     var initials = function (n) { return n.replace(/^Dr\.?\s*/, '').split(' ').map(function (w) { return w[0]; }).slice(0, 2).join(''); };
 
-    // hero visual — hospital photo with floating info cards
     var hero =
       '<div class="lp-visual">' +
         '<div class="lp-herophoto"><img src="../alamein-city.jpg" alt="Alamein Model Hospital" onerror="this.parentNode.classList.add(\'noimg\')"></div>' +
@@ -66,8 +61,8 @@
 
     var trust = [
       { ic: 'shield', v: 'GAHAR', s: ar ? 'معتمد' : 'accredited' },
-      { ic: 'desk', v: '107', s: ar ? 'سرير' : 'beds' },
-      { ic: 'surgery', v: '5', s: ar ? 'غرف عمليات' : 'operating rooms' },
+      { ic: 'desk', v: '180', s: ar ? 'سرير' : 'beds' },
+      { ic: 'surgery', v: '2', s: ar ? 'معامل قسطرة' : 'cath labs' },
       { ic: 'stethoscope', v: '20+', s: ar ? 'تخصص' : 'specialties' },
       { ic: 'clock', v: '2002', s: ar ? 'تأسست' : 'established' }
     ];
@@ -76,7 +71,6 @@
         '<div class="ti">' + I(t.ic) + '<b>' + esc(t.v) + '</b><span>' + esc(t.s) + '</span></div>';
     }).join('') + '</div>';
 
-    // departments
     var depts = '<div id="departments" class="lp-section">' +
       '<div class="lp-section-h"><div class="lpk">' + (ar ? 'الأقسام' : 'Departments') + '</div>' +
         '<h2>' + (ar ? 'أقسامنا الطبية' : 'Our medical departments') + '</h2>' +
@@ -87,7 +81,6 @@
           '<div class="dept-desc">' + esc(d.desc) + '</div></div>';
       }).join('') + '</div></div>';
 
-    // services
     var svcs = '<div id="services" class="lp-section">' +
       '<div class="lp-section-h"><div class="lpk">' + (ar ? 'الخدمات' : 'Services') + '</div>' +
         '<h2>' + (ar ? 'خدمات على مدار الساعة' : 'Round-the-clock services') + '</h2>' +
@@ -98,7 +91,6 @@
           '<div class="svc-desc">' + esc(s.desc) + '</div></div></div>';
       }).join('') + '</div></div>';
 
-    // smart & connected care (the technology, patient-facing)
     var smart = '<div class="lp-smart">' +
       '<div class="lp-smart-txt"><div class="lpk">' + (ar ? 'رعاية ذكية ومترابطة' : 'Smart & connected care') + '</div>' +
         '<h2>' + (ar ? 'تقنية تخدم المريض' : 'Technology that serves the patient') + '</h2>' +
@@ -111,7 +103,6 @@
         '<div class="sp"><div class="sp-ic">' + I('globe') + '</div><div><b>' + (ar ? 'لغتان وإتاحة' : 'Bilingual & accessible') + '</b><span>' + (ar ? 'عربي/إنجليزي' : 'Arabic / English') + '</span></div></div>' +
       '</div></div>';
 
-    // doctors
     var docs = '<div id="doctors" class="lp-section">' +
       '<div class="lp-section-h"><div class="lpk">' + (ar ? 'الأطباء' : 'Our doctors') + '</div>' +
         '<h2>' + (ar ? 'نخبة من الاستشاريين' : 'Meet our consultants') + '</h2>' +
@@ -123,18 +114,16 @@
           '<button class="doc-book" onclick="App.bookAppointment()">' + I('calendar') + (ar ? 'احجز' : 'Book') + '</button></div>';
       }).join('') + '</div></div>';
 
-    // about
     var about = '<div class="lp-about">' +
       '<div class="lp-about-txt"><div class="lpk">' + (ar ? 'عن المستشفى' : 'About the hospital') + '</div>' +
         '<h2>' + (ar ? 'مستشفى العلمين النموذجي' : 'Alamein Model Hospital') + '</h2>' +
         '<p>' + (ar
-          ? 'صرح طبي حديث على ساحل البحر المتوسط يخدم مطروح والساحل الشمالي. تأسس عام ٢٠٠٢ وأصبح "مستشفى نموذجياً" عام ٢٠١٩، بـ١٠٧ أسرّة و٥ غرف عمليات وأكثر من ٢٠ تخصصاً.'
-          : 'A modern medical campus on the Mediterranean serving Matrouh and the North Coast. Founded in 2002 and elevated to a “Model Hospital” in 2019 — 107 beds, 5 operating rooms, and 20+ specialties.') + '</p>' +
+          ? 'صرح طبي حديث على ساحل البحر المتوسط يخدم مطروح والساحل الشمالي. تأسس عام ٢٠٠٢ وأصبح "مستشفى نموذجياً" عام ٢٠١٩.'
+          : 'A modern medical campus on the Mediterranean serving Matrouh and the North Coast. Founded in 2002 and elevated to a “Model Hospital” in 2019 — 180 beds, 2 cath labs, and 20+ specialties.') + '</p>' +
         '<a class="btn-line" style="background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.2);color:#eaf2f0" href="#contact">' + I('pin') + (ar ? 'تواصل معنا' : 'Contact us') + '</a></div>' +
       '<div class="lp-about-photo"><img src="../alamein-city.jpg" alt="New Alamein City" onerror="this.style.display=\'none\'"></div>' +
     '</div>';
 
-    // contact
     var contact = '<div id="contact" class="lp-section">' +
       '<div class="lp-section-h"><div class="lpk">' + (ar ? 'تواصل' : 'Contact') + '</div>' +
         '<h2>' + (ar ? 'تواصل معنا' : 'Get in touch') + '</h2></div>' +
@@ -163,8 +152,8 @@
             '<div class="lph-eyebrow"><span class="dotp"></span>' + (ar ? 'مدينة العلمين الجديدة · الساحل الشمالي' : 'New Alamein City · North Coast') + '</div>' +
             '<h1>' + (ar ? 'رعاية عالمية المستوى،<br><em>قريبة منك</em>.' : 'World-class care,<br><em>close to home</em>.') + '</h1>' +
             '<p class="lph-lead">' + (ar
-              ? 'مستشفى العلمين النموذجي — رعاية محورها المريض من لحظة الوصول حتى العودة للمنزل، بقسطرة قلبية على مدار الساعة، وتصوير مدعوم بالذكاء الاصطناعي، وفريق متخصص.'
-              : 'Alamein Model Hospital — patient-centered care from the moment you arrive until you’re home, with round-the-clock cardiac catheterization, AI-assisted imaging, and a specialist team.') + '</p>' +
+              ? 'مستشفى العلمين النموذجي — رعاية محورها المريض من لحظة الوصول حتى العودة للمنزل.'
+              : 'Alamein Model Hospital — patient-centered care from the moment you arrive until you’re home, with round-the-clock cardiac catheterization and a specialist team.') + '</p>' +
             '<div class="lph-cta">' +
               '<button class="btn-cta" onclick="App.bookAppointment()">' + I('calendar') + (ar ? 'احجز موعداً' : 'Book an appointment') + '</button>' +
               '<a class="btn-line" href="#doctors">' + I('stethoscope') + (ar ? 'ابحث عن طبيب' : 'Find a doctor') + '</a>' +
@@ -184,22 +173,24 @@
   }
 
   /* ============================================================
-     LOGIN / ROLE PICKER
+     LOGIN — real authentication against /auth/login
      ============================================================ */
   var RT_ACCENT = {
     reception: ['#dbf3ef', '#0f766e'], nurse: ['#dbf3ef', '#0f766e'], doctor: ['#dbf3ef', '#0f766e'],
-    quality: ['#fbf0dd', '#a96b1f'], admin: ['#e7e8fb', '#5b56c0'], emergency: ['#fbe6e6', '#b23a3a'], family: ['#e6f4ec', '#2e7d4f']
+    quality: ['#fbf0dd', '#a96b1f'], admin: ['#e7e8fb', '#5b56c0'], director: ['#e7e8fb', '#5b56c0'],
+    emergency: ['#fbe6e6', '#b23a3a'], family: ['#e6f4ec', '#2e7d4f']
   };
 
   function renderLogin() {
     var ar = window.STATE.lang === 'ar';
-    var order = ['reception', 'nurse', 'doctor', 'quality', 'admin', 'emergency', 'family'];
+    var order = ['reception', 'nurse', 'doctor', 'quality', 'admin', 'director', 'emergency', 'family'];
     var tiles = order.map(function (key) {
-      var r = window.ROLES[key], a = RT_ACCENT[key] || ['#dbf3ef', '#0f766e'];
-      return '<button class="role-tile" onclick="App.enter(\'' + key + '\')">' +
+      var r = window.ROLES[key]; if (!r) return '';
+      var a = RT_ACCENT[key] || ['#dbf3ef', '#0f766e'];
+      return '<button class="role-tile" onclick="App.quickLogin(\'' + key + '\')" id="qt-' + key + '">' +
         '<div class="rt-ic" style="background:' + a[0] + ';color:' + a[1] + '">' + I(r.icon) + '</div>' +
         '<div class="rt-txt"><div class="rt-name">' + esc(tn(r.label)) + '</div>' +
-          '<div class="rt-person">' + esc(r.person.split(' · ')[0]) + '</div></div>' +
+          '<div class="rt-person">' + esc((DEMO[key] && DEMO[key].name) || r.person) + '</div></div>' +
         '<div class="rt-go">' + I('arrowRight') + '</div>' +
       '</button>';
     }).join('');
@@ -213,7 +204,7 @@
           '<p class="lsb-lead">' + (ar ? 'سجّل الدخول إلى مساحة عملك في نظام A.B.C.D.E بمستشفى العلمين النموذجي.' : 'Sign in to your workspace in the A.B.C.D.E system at Alamein Model Hospital.') + '</p>' +
           '<div class="lsb-points">' +
             '<div class="lsb-point"><div class="lpi">' + I('shield') + '</div><div><b>' + (ar ? 'وصول حسب الدور' : 'Role-based access') + '</b><span>' + (ar ? 'كل فريق يرى ما يخصه فقط' : 'Each team sees only its own data') + '</span></div></div>' +
-            '<div class="lsb-point"><div class="lpi">' + I('activity') + '</div><div><b>' + (ar ? 'لحظي' : 'Real-time') + '</b><span>' + (ar ? 'علامات حيوية ورحلة وتنبيهات' : 'Vitals, journey & alerts live') + '</span></div></div>' +
+            '<div class="lsb-point"><div class="lpi">' + I('activity') + '</div><div><b>' + (ar ? 'لحظي' : 'Real-time') + '</b><span>' + (ar ? 'بيانات حية من الخادم' : 'Live data from the API') + '</span></div></div>' +
             '<div class="lsb-point"><div class="lpi">' + I('globe') + '</div><div><b>' + (ar ? 'لغتان' : 'Bilingual') + '</b><span>' + (ar ? 'عربي وإنجليزي' : 'Arabic & English') + '</span></div></div>' +
           '</div>' +
           '<div class="lsb-foot">' + (ar ? 'سري — للفرق المعنية فقط.' : 'Confidential — for the named teams only.') + '<br>' + esc(window.HOSPITAL.name) + '</div>' +
@@ -225,12 +216,28 @@
             '<button class="ls-langbtn" onclick="App.toggleLang()">' + (ar ? 'EN' : 'العربية') + '</button>' +
           '</div>' +
           '<div class="ls-eyebrow">' + (ar ? 'دخول الطاقم' : 'Staff sign-in') + '</div>' +
-          '<h1>' + (ar ? 'اختر مساحة عملك' : 'Choose your workspace') + '</h1>' +
-          '<p class="ls-sub">' + (ar ? 'اختر دورك للمتابعة.' : 'Select your role to continue.') + '</p>' +
+          '<h1>' + (ar ? 'تسجيل الدخول' : 'Sign in to continue') + '</h1>' +
+          '<p class="ls-sub">' + (ar ? 'أدخل بيانات الدخول، أو اختر دوراً للدخول التجريبي السريع.' : 'Enter your credentials, or pick a role for quick demo access.') + '</p>' +
+
+          '<form class="auth-form" onsubmit="App.doLogin(event)">' +
+            '<div class="field"><label>' + (ar ? 'البريد / الهاتف / الرقم القومي' : 'Email · phone · national ID') + '</label>' +
+              '<input id="lg-id" autocomplete="username" placeholder="' + (ar ? 'مثال: k.adel@alamein.example' : 'e.g. k.adel@alamein.example') + '" /></div>' +
+            '<div class="field"><label>' + (ar ? 'كلمة المرور' : 'Password') + '</label>' +
+              '<input id="lg-pw" type="password" autocomplete="current-password" placeholder="••••••••" value="password" /></div>' +
+            '<div id="lg-err" class="login-error" style="display:none"></div>' +
+            '<button class="btn btn-primary btn-block" id="lg-btn" type="submit">' + I('logout') + (ar ? 'تسجيل الدخول' : 'Sign in') + '</button>' +
+          '</form>' +
+
+          '<div class="q-divider"><span>' + (ar ? 'أو دخول سريع بدور' : 'or quick sign-in by role') + '</span></div>' +
           '<div class="role-tiles">' + tiles + '</div>' +
-          '<div class="ls-note">' + I('shield') + (ar ? 'نموذج أولي · الوصول محكوم حسب الدور (FR-1.7 / FR-1.8)' : 'Prototype · access gated per role (FR-1.7 / FR-1.8)') + '</div>' +
+          '<div class="ls-note">' + I('shield') + (ar ? 'بيانات حية · الوصول محكوم حسب الدور (FR-1.7 / FR-1.8)' : 'Live data · access gated per role (FR-1.7 / FR-1.8)') + '</div>' +
         '</main>' +
       '</div>';
+  }
+
+  function loginError(msg) {
+    var el = document.getElementById('lg-err');
+    if (el) { el.textContent = msg; el.style.display = 'block'; }
   }
 
   /* ============================================================
@@ -239,7 +246,7 @@
   function sidebarHTML(role) {
     var nav = role.nav.map(function (item) {
       var on = window.STATE.route === item.route;
-      var n = typeof item.badge === 'function' ? item.badge() : 0;
+      var n = 0; try { n = typeof item.badge === 'function' ? (item.badge() || 0) : 0; } catch (e) {}
       return '<a class="nav-item ' + (on ? 'on' : '') + '" onclick="App.go(\'' + item.route + '\')">' +
         I(item.icon) + '<span>' + esc(tn(item.label)) + '</span>' +
         (n ? '<span class="badge-n">' + n + '</span>' : '') +
@@ -249,28 +256,36 @@
     return '<div class="sb-brand"><img src="../logo.png" alt="" onerror="this.style.display=\'none\'">' +
         '<div><div class="sbb-t">A.B.C.D.E</div><div class="sbb-s">Dashboards</div></div></div>' +
       '<div class="sb-role"><div class="sr-ic">' + I(role.icon) + '</div>' +
-        '<div><div class="sr-name">' + esc(tn(role.label)) + '</div><div class="sr-sub">' + esc(role.person) + '</div></div></div>' +
+        '<div><div class="sr-name">' + esc(tn(role.label)) + '</div><div class="sr-sub">' + esc(currentUserName()) + '</div></div></div>' +
       '<div class="sb-section">' + (window.STATE.lang === 'ar' ? 'القائمة' : 'Menu') + '</div>' +
       nav +
-      '<div class="sb-foot">Prototype · illustrative data<br>Alamein Model Hospital</div>';
+      '<div class="sb-foot">' + (window.STATE.lang === 'ar' ? 'بيانات حية من الخادم' : 'Live data · ' + API.base().replace(/^https?:\/\//, '')) + '<br>Alamein Model Hospital</div>';
+  }
+
+  function currentUserName() {
+    var m = STORE.me() || API.user() || {};
+    return m.name || (window.ROLES[window.STATE.role] && window.ROLES[window.STATE.role].person) || 'Staff';
   }
 
   function topbarHTML(role) {
-    var staff = window.STAFF[window.STATE.role];
+    var name = currentUserName();
+    var roleLabel = role.label;
+    var n = window.STATE.notifCount || 0;
     return '<button class="nav-toggle" onclick="App.toggleNav()" aria-label="Menu">' + I('menu') + '</button>' +
       '<div class="search">' + I('search') +
         '<input type="text" placeholder="' + esc(window.t('search')) + '" oninput="App.search(this.value)" onkeydown="if(event.key===\'Enter\')App.searchGo()" id="globalSearch" /></div>' +
       '<div class="spacer"></div>' +
-      '<span class="tb-date">' + esc(window.STATE.lang === 'ar' ? 'الإثنين · ٨ يونيو ٢٠٢٦' : DEMO_DATE) + '</span>' +
+      '<button class="icon-btn" title="Refresh" onclick="App.refresh()">' + I('route') + '</button>' +
       '<button class="lang-toggle" onclick="App.toggleLang()">' + (window.STATE.lang === 'en' ? 'العربية' : 'EN') + '</button>' +
-      '<button class="icon-btn" title="' + esc(window.t('notifications')) + '" onclick="UI.toast(\'No new notifications\')">' + I('bell') + '<span class="dot"></span></button>' +
-      '<div class="tb-user"><div class="avatar">' + esc(staff.initials) + '</div>' +
-        '<div><div class="tu-name">' + esc(staff.name) + '</div><div class="tu-role">' + esc(staff.role) + '</div></div></div>' +
+      '<button class="icon-btn notif-btn" title="' + esc(window.t('notifications')) + '" onclick="App.toggleNotif(event)">' + I('bell') +
+        (n ? '<span class="dot"></span>' : '') + '</button>' +
+      '<div class="tb-user"><div class="avatar">' + esc(STORE.initials(name)) + '</div>' +
+        '<div><div class="tu-name">' + esc(name) + '</div><div class="tu-role">' + esc(tn(roleLabel)) + '</div></div></div>' +
       '<button class="icon-btn" title="' + esc(window.t('signout')) + '" onclick="App.signOut()">' + I('logout') + '</button>';
   }
 
   /* ============================================================
-     RENDER + ROUTER
+     RENDER + ASYNC ROUTER
      ============================================================ */
   function render() {
     var role = window.ROLES[window.STATE.role];
@@ -278,10 +293,28 @@
     document.getElementById('sidebar').innerHTML = sidebarHTML(role);
     document.getElementById('topbar').innerHTML = topbarHTML(role);
     var main = document.getElementById('main');
-    main.innerHTML = role.render(window.STATE.route);
+    try {
+      main.innerHTML = role.render(window.STATE.route);
+    } catch (e) {
+      main.innerHTML = errorPanel(e);
+    }
     main.scrollTop = 0;
   }
-  window.render = render; // role modules call this after mutations
+  window.render = render;
+
+  function loadingPanel() {
+    return '<div class="loading-wrap">' +
+      '<div class="spinner"></div>' +
+      '<div class="loading-txt">' + (window.STATE.lang === 'ar' ? 'جارٍ التحميل…' : 'Loading…') + '</div>' +
+    '</div>';
+  }
+  function errorPanel(e) {
+    var msg = (e && e.message) || 'Something went wrong.';
+    return '<div class="error-panel"><div class="ep-ic">' + I('alert') + '</div>' +
+      '<h3>' + (window.STATE.lang === 'ar' ? 'تعذّر تحميل البيانات' : 'Could not load this screen') + '</h3>' +
+      '<p>' + esc(msg) + '</p>' +
+      '<button class="btn btn-primary" onclick="App.refresh()">' + I('route') + (window.STATE.lang === 'ar' ? 'إعادة المحاولة' : 'Retry') + '</button></div>';
+  }
 
   function showScreen(which) {
     window.STATE.screen = which;
@@ -291,89 +324,242 @@
     if (window.AI) window.AI.sync();
   }
 
+  // run a role screen's async loader (if any), then render
+  function navigate(route) {
+    var role = window.ROLES[window.STATE.role];
+    if (!role) return Promise.resolve();
+    window.STATE.route = route;
+    // chrome first (so sidebar highlights immediately), then a loading body
+    document.getElementById('sidebar').innerHTML = sidebarHTML(role);
+    document.getElementById('topbar').innerHTML = topbarHTML(role);
+    var main = document.getElementById('main');
+    main.innerHTML = loadingPanel();
+    main.scrollTop = 0;
+
+    var loader = role.load ? Promise.resolve().then(function () { return role.load(route); }) : Promise.resolve();
+    return loader.then(function () {
+      render();
+    }, function (e) {
+      document.getElementById('main').innerHTML = errorPanel(e);
+      if (e && e.message) UI.toast(e.message, 'err');
+    });
+  }
+
   var App = {
+    /* ---- entering a dashboard once authenticated ---- */
     enter: function (roleKey) {
+      var role = window.ROLES[roleKey];
+      if (!role) {
+        UI.toast('No dashboard for the "' + roleKey + '" role.', 'warn');
+        App.signOut();
+        return;
+      }
       window.STATE.role = roleKey;
-      window.STATE.route = window.ROLES[roleKey].home;
       showScreen('app');
-      render();
+      App.loadNotifications();
+      navigate(role.home);
     },
-    go: function (route) {
-      window.STATE.route = route;
-      App.closeNav();
-      render();
-    },
+
+    go: function (route) { App.closeNav(); navigate(route); },
+    refresh: function () { navigate(window.STATE.route); App.loadNotifications(); },
+
     toggleNav: function () { document.getElementById('appRoot').classList.toggle('nav-open'); },
     closeNav: function () { var a = document.getElementById('appRoot'); if (a) a.classList.remove('nav-open'); },
     showLogin: function () { renderLogin(); showScreen('login'); },
     showLanding: function () { window.STATE.role = null; renderLanding(); showScreen('landing'); },
+
+    /* ---- AUTH ---- */
+    doLogin: function (ev) {
+      if (ev) ev.preventDefault();
+      var id = (document.getElementById('lg-id') || {}).value || '';
+      var pw = (document.getElementById('lg-pw') || {}).value || '';
+      if (!id.trim()) { loginError(window.STATE.lang === 'ar' ? 'أدخل بيانات الدخول' : 'Enter your identifier'); return; }
+      var btn = document.getElementById('lg-btn');
+      if (btn) { btn.disabled = true; btn.classList.add('loading'); }
+      App._authenticate(id.trim(), pw).catch(function (e) {
+        loginError(e.message || 'Sign-in failed');
+        if (btn) { btn.disabled = false; btn.classList.remove('loading'); }
+      });
+    },
+    quickLogin: function (roleKey) {
+      var acct = DEMO[roleKey];
+      if (!acct) return;
+      var tile = document.getElementById('qt-' + roleKey);
+      if (tile) tile.classList.add('loading');
+      App._authenticate(acct.id, 'password').catch(function (e) {
+        if (tile) tile.classList.remove('loading');
+        UI.toast(e.message || 'Sign-in failed', 'err');
+      });
+    },
+    _authenticate: function (identifier, password) {
+      return API.auth.login(identifier, password).then(function () {
+        return API.auth.me();
+      }).then(function (meData) {
+        STORE.setMe(meData);
+        var roleKey = meData.role;
+        if (roleKey === 'director' && !window.ROLES.director && window.ROLES.admin) roleKey = 'admin';
+        if (!window.ROLES[roleKey]) {
+          throw new API.ApiError('The "' + roleKey + '" role has no web dashboard (use the patient app).', 0);
+        }
+        UI.toast((window.STATE.lang === 'ar' ? 'مرحباً ' : 'Welcome, ') + meData.name, 'ok');
+        App.enter(roleKey);
+      });
+    },
+    signOut: function () {
+      API.auth.logout().catch(function () {});
+      STORE.setMe(null);
+      window.STATE.role = null; window.STATE.selectedSerial = null; window.STATE.selectedTicket = null;
+      renderLogin();
+      showScreen('login');
+    },
+
+    /* ---- notifications ---- */
+    loadNotifications: function () {
+      if (!API.isAuthed()) return;
+      API.notifications.list().then(function (data) {
+        window.STATE.notif = data;
+        window.STATE.notifCount = (data && data.unread) || 0;
+        var btn = document.querySelector('.notif-btn .dot');
+        var hasBtn = document.querySelector('.notif-btn');
+        if (hasBtn && window.STATE.screen === 'app') {
+          document.getElementById('topbar').innerHTML = topbarHTML(window.ROLES[window.STATE.role]);
+        }
+      }).catch(function () {});
+    },
+    toggleNotif: function (ev) {
+      if (ev) ev.stopPropagation();
+      var existing = document.getElementById('notifPop');
+      if (existing) { existing.remove(); return; }
+      var data = window.STATE.notif || { items: [], unread: 0 };
+      var items = (data.items || []);
+      var ar = window.STATE.lang === 'ar';
+      var list = items.length ? items.map(function (it) {
+        var title = it.title || it.message || it.body || it.type || 'Notification';
+        var when = it.created_at || it.sent_at || it.at;
+        var unread = !it.read_at && !it.is_read;
+        return '<div class="np-item ' + (unread ? 'unread' : '') + '"' + (it.id ? ' onclick="App.readNotif(\'' + it.id + '\')"' : '') + '>' +
+          '<div class="np-dot"></div><div><div class="np-title">' + esc(title) + '</div>' +
+          '<div class="np-time">' + esc(when ? STORE.ago(when) : '') + '</div></div></div>';
+      }).join('') : '<div class="np-empty">' + (ar ? 'لا إشعارات جديدة' : 'No notifications') + '</div>';
+      var pop = document.createElement('div');
+      pop.id = 'notifPop'; pop.className = 'notif-pop';
+      pop.innerHTML = '<div class="np-head">' + (ar ? 'الإشعارات' : 'Notifications') +
+        (data.unread ? '<span class="badge gold">' + data.unread + '</span>' : '') + '</div>' +
+        '<div class="np-list">' + list + '</div>';
+      pop.onclick = function (e) { e.stopPropagation(); };
+      document.body.appendChild(pop);
+      setTimeout(function () { document.addEventListener('click', App._closeNotif); }, 0);
+    },
+    _closeNotif: function () {
+      var p = document.getElementById('notifPop'); if (p) p.remove();
+      document.removeEventListener('click', App._closeNotif);
+    },
+    readNotif: function (id) {
+      API.notifications.markRead(id).then(function () { App.loadNotifications(); App._closeNotif(); }).catch(function () {});
+    },
+
+    /* ---- public appointment booking (landing) ---- */
     bookAppointment: function () {
       var ar = window.STATE.lang === 'ar';
-      var opts = window.PUBLIC.departments.map(function (d) { return '<option>' + esc(ar ? d.nameAr : d.name) + '</option>'; }).join('');
-      UI.modal({
-        title: ar ? 'طلب موعد' : 'Request an appointment', icon: 'calendar',
-        body:
-          '<div class="field"><label>' + (ar ? 'الاسم' : 'Full name') + '</label><input id="ap-name" /></div>' +
-          '<div class="field-row"><div class="field"><label>' + (ar ? 'الهاتف' : 'Phone') + '</label><input id="ap-phone" /></div>' +
-          '<div class="field"><label>' + (ar ? 'القسم' : 'Department') + '</label><select id="ap-dept">' + opts + '</select></div></div>' +
-          '<div class="field"><label>' + (ar ? 'الوقت المفضّل' : 'Preferred time') + '</label><input id="ap-time" type="datetime-local" /></div>' +
-          '<p class="muted" style="font-size:12.5px">' + (ar ? 'سيتواصل معك الاستقبال لتأكيد الموعد (FR-2.5).' : 'Reception will contact you to confirm (FR-2.5).') + '</p>',
-        foot:
-          '<button class="btn btn-ghost" onclick="UI.closeModal()">' + (ar ? 'إلغاء' : 'Cancel') + '</button>' +
-          '<button class="btn btn-primary" onclick="App.submitAppointment()">' + UI.icon('check') + (ar ? 'إرسال الطلب' : 'Submit request') + '</button>'
-      });
+      STORE.departments().then(function (depts) {
+        var bookable = (depts || []).filter(function (d) { return d.accepts_bookings; });
+        var opts = bookable.map(function (d) { return '<option value="' + esc(d.dept_code) + '">' + esc(d.department_name) + '</option>'; }).join('');
+        UI.modal({
+          title: ar ? 'طلب موعد' : 'Request an appointment', icon: 'calendar',
+          body:
+            '<div class="field"><label>' + (ar ? 'الاسم' : 'Full name') + '</label><input id="ap-name" /></div>' +
+            '<div class="field-row"><div class="field"><label>' + (ar ? 'الهاتف' : 'Phone') + '</label><input id="ap-phone" /></div>' +
+            '<div class="field"><label>' + (ar ? 'القسم' : 'Department') + '</label><select id="ap-dept">' + opts + '</select></div></div>' +
+            '<div class="field"><label>' + (ar ? 'الشكوى' : 'Reason / complaint') + '</label><input id="ap-complaint" /></div>' +
+            '<p class="muted" style="font-size:12.5px">' + (ar ? 'سيتواصل معك الاستقبال لتأكيد الموعد (FR-2.5).' : 'Reception will contact you to confirm (FR-2.5).') + '</p>',
+          foot:
+            '<button class="btn btn-ghost" onclick="UI.closeModal()">' + (ar ? 'إلغاء' : 'Cancel') + '</button>' +
+            '<button class="btn btn-primary" onclick="App.submitAppointment()">' + UI.icon('check') + (ar ? 'إرسال الطلب' : 'Submit request') + '</button>'
+        });
+      }).catch(function (e) { UI.toast(e.message, 'err'); });
     },
     submitAppointment: function () {
       var ar = window.STATE.lang === 'ar';
       var name = (document.getElementById('ap-name') || {}).value || '';
       if (!name.trim()) { UI.toast(ar ? 'من فضلك أدخل الاسم' : 'Please enter your name', 'warn'); return; }
-      var dept = (document.getElementById('ap-dept') || {}).value || '';
-      window.DB.appointments.push({ id: 'AP-' + (510 + window.DB.appointments.length), name: name, phone: (document.getElementById('ap-phone') || {}).value || '—', dept: dept, complaint: '—', pref: (document.getElementById('ap-time') || {}).value || '—', status: 'pending', source: 'Public website' });
-      UI.closeModal();
-      UI.toast(ar ? 'تم استلام طلبك — سيتواصل معك الاستقبال' : 'Request received — reception will be in touch', 'ok');
+      var payload = {
+        dept_code: (document.getElementById('ap-dept') || {}).value || '',
+        complaint: (document.getElementById('ap-complaint') || {}).value || 'General consultation',
+        guest_name: name.trim(),
+        guest_phone: (document.getElementById('ap-phone') || {}).value || '—'
+      };
+      API.appointments.create(payload).then(function () {
+        UI.closeModal();
+        UI.toast(ar ? 'تم استلام طلبك — سيتواصل معك الاستقبال' : 'Request received — reception will be in touch', 'ok');
+      }).catch(function (e) { UI.toast(e.message, 'err'); });
     },
-    signOut: function () {
-      window.STATE.role = null;
-      renderLogin();
-      showScreen('login');
-    },
+
+    /* ---- language ---- */
     toggleLang: function () {
       window.STATE.lang = window.STATE.lang === 'en' ? 'ar' : 'en';
+      API.setLocale(window.STATE.lang);
       var dict = window.I18N[window.STATE.lang];
       document.documentElement.dir = dict.dir;
       document.documentElement.lang = window.STATE.lang;
-      if (window.STATE.screen === 'app') render();
+      if (window.STATE.screen === 'app') navigate(window.STATE.route);
       else if (window.STATE.screen === 'login') renderLogin();
       else renderLanding();
       UI.toast(window.STATE.lang === 'ar' ? 'تم التبديل إلى العربية (RTL)' : 'Switched to English', 'ok');
     },
+
+    /* ---- global patient search ---- */
     search: function (val) { window._q = val; },
     searchGo: function () {
-      var q = (window._q || '').trim().toLowerCase();
+      var q = (window._q || '').trim();
       if (!q) return;
-      var hit = window.DB.patients.find(function (p) {
-        return p.name.toLowerCase().indexOf(q) > -1 || p.serial.toLowerCase().indexOf(q) > -1 || (p.nationalId || '').indexOf(q) > -1;
-      });
-      if (hit) {
-        window.STATE.selectedSerial = hit.serial;
-        // jump to the most relevant screen for the current role
-        var dest = { reception: 'queue', nurse: 'vitals', doctor: 'file' }[window.STATE.role];
-        window.STATE.route = dest;
-        render();
-        UI.toast('Opened ' + hit.name, 'ok');
-      } else {
-        UI.toast('No patient matches “' + q + '”', 'warn');
+      API.patients.list({ q: q, per_page: 1 }).then(function (res) {
+        var items = (res && res.items) || [];
+        if (items.length) {
+          var hit = STORE.patient(items[0]);
+          window.STATE.selectedSerial = hit.serial;
+          var dest = { reception: 'queue', nurse: 'ward', doctor: 'worklist' }[window.STATE.role] || window.ROLES[window.STATE.role].home;
+          navigate(dest);
+          UI.toast('Opened ' + hit.name, 'ok');
+        } else {
+          UI.toast('No patient matches “' + q + '”', 'warn');
+        }
+      }).catch(function (e) { UI.toast(e.message, 'err'); });
+    },
+
+    /* ---- boot / resume ---- */
+    boot: function () {
+      // resume an existing session if a token is stored
+      if (API.isAuthed()) {
+        showScreen('app');
+        document.getElementById('main').innerHTML = loadingPanel();
+        API.auth.me().then(function (meData) {
+          STORE.setMe(meData);
+          var roleKey = meData.role;
+          if (!window.ROLES[roleKey] && roleKey === 'director' && window.ROLES.admin) roleKey = 'admin';
+          if (window.ROLES[roleKey]) { App.enter(roleKey); }
+          else { App.signOut(); }
+        }).catch(function () { API.clearSession(); renderLanding(); showScreen('landing'); });
+        return;
       }
+      var hash = (typeof location !== 'undefined' && location.hash ? location.hash.replace('#', '') : '');
+      if (hash === 'login') { renderLogin(); showScreen('login'); }
+      else { renderLanding(); showScreen('landing'); }
     }
   };
   window.App = App;
 
+  // when the API forces a logout (401), bounce to the login screen
+  API.onUnauthorized = function () {
+    STORE.setMe(null);
+    UI.toast(window.STATE.lang === 'ar' ? 'انتهت الجلسة — سجّل الدخول مجدداً' : 'Session expired — please sign in again', 'warn');
+    renderLogin(); showScreen('login');
+  };
+
   /* ---- boot ---- */
-  document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape') UI.closeModal();
-  });
-  window.STATE.screen = 'landing';
-  // deep-link: #doctor / #nurse / … opens that dashboard directly (handy on mobile)
-  var hash = (typeof location !== 'undefined' && location.hash ? location.hash.replace('#', '') : '');
-  if (window.ROLES[hash]) { App.enter(hash); } else { renderLanding(); }
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') UI.closeModal(); });
+  // sync stored locale into the UI on first paint
+  window.STATE.lang = API.locale() || window.STATE.lang || 'en';
+  document.documentElement.dir = (window.I18N[window.STATE.lang] || window.I18N.en).dir;
+  document.documentElement.lang = window.STATE.lang;
+  App.boot();
 })();

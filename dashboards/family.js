@@ -1,70 +1,91 @@
 /* ============================================================
-   A.B.C.D.E — Staff Dashboards · family.js
-   The family / caregiver view. ONE linked companion may follow
-   the patient and act for them inside the privacy rules (FR-11.x).
+   A.B.C.D.E — Staff Dashboards · family.js  (LIVE API)
+   The family / caregiver view. ONE linked companion follows the
+   patient and acts for them inside the privacy rules (FR-11.x).
    They see STATUS and patient-approved items only — never the
-   medical file (FR-11.5 / BR-3). Permissions are per-person:
-   see status, get alerts, book, rate, raise an emergency
-   (FR-11.2). They are told about stage moves and big decisions
-   and asked for consent where the hospital needs it (FR-11.4).
+   medical file (FR-11.5 / BR-3). Permissions are per-person and
+   they may raise an SOS, rate stages, and give consent (FR-11.2).
    ============================================================ */
 
 (function () {
-  var I = UI.icon, esc = UI.esc;
+  var I = UI.icon, esc = UI.esc, S = window.STORE;
 
-  function link() { return window.DB.familyLink; }
-  function patient() { return window.findPatient(link().patientSerial); }
+  var data = { serial: null, visit: null, companions: [], notif: null, edu: [], points: null };
 
   // plain-language status per stage (FR-4.7) — no clinical detail
   var PLAIN = {
-    arrival: 'Being registered at reception',
-    triage: 'Being assessed by the nurse',
-    er: 'With the emergency doctor',
-    diagnosis: 'Seeing the specialist',
-    cathprep: 'Being prepared for the procedure',
-    cath: 'In the procedure',
-    recovery: 'Recovering and being watched closely',
-    ward: 'Stable, resting on the ward',
-    discharge: 'Getting ready to go home',
-    followup: 'Home follow-up'
+    arrival: 'Being registered at reception', triage: 'Being assessed by the nurse',
+    diagnosis: 'Seeing the specialist', cathprep: 'Being prepared for the procedure',
+    cath: 'In the procedure', recovery: 'Recovering and being watched closely',
+    ward: 'Stable, resting on the ward', discharge: 'Getting ready to go home', followup: 'Home follow-up'
   };
 
+  function mySerial() {
+    if (data.serial) return data.serial;
+    var u = API.user() || {}; var me = S.me() || {};
+    data.serial = u.patient_serial || (me.patient && me.patient.patient_serial) || null;
+    return data.serial;
+  }
+  function ticket() { var s = mySerial(); return s ? '#' + s : null; }
+  function myCompanion() {
+    // the row that matches the logged-in companion phone, else the first
+    var u = API.user() || {};
+    return data.companions.find(function (c) { return c.companion_phone === u.name || c.companion_phone === u.username; }) || data.companions[0] || null;
+  }
+
+  function load(route) {
+    var s = mySerial();
+    if (!s) return Promise.resolve();
+    var t = '#' + s;
+    if (route === 'updates') return API.notifications.list().then(function (n) { data.notif = n; });
+    if (route === 'education') return API.education.videos().then(function (e) { data.edu = e || []; });
+    if (route === 'permissions') return API.family.list(s).then(function (c) { data.companions = c || []; });
+    // status / team
+    var jobs = [API.visits.get(t).then(function (v) { data.visit = v; }, function () { data.visit = null; }),
+      API.family.list(s).then(function (c) { data.companions = c || []; }, function () { data.companions = []; })];
+    if (route === 'status') jobs.push(API.patients.carePoints(s).then(function (p) { data.points = p; }, function () {}));
+    return Promise.all(jobs);
+  }
+
   /* ---- actions ---- */
-  window.famTogglePerm = function (key) {
-    var p = link().permissions; p[key] = !p[key];
-    UI.toast('Permission “' + key + '” ' + (p[key] ? 'enabled' : 'disabled'), p[key] ? 'ok' : 'warn');
-    window.render();
-  };
-  window.famConsent = function (give) {
-    link().consentPending = null;
-    UI.toast(give ? 'Consent given — the team has been notified' : 'Consent declined', give ? 'ok' : 'warn');
-    window.render();
-  };
   window.famSOS = function () {
-    if (!link().permissions.sos) { UI.toast('You do not have permission to raise an emergency', 'warn'); return; }
+    var t = ticket(); if (!t) { UI.toast('No active visit', 'warn'); return; }
     UI.modal({
       title: 'Raise an emergency', icon: 'alert',
-      body: '<div class="lock-note" style="background:#fdf2f2;border-color:#f0c9c9;color:#b23a3a">' + I('alert') + '<div>This alerts the care team in order — treating physician, then nursing station, then you, then the care center (FR-10.2).</div></div>',
-      foot:
-        '<button class="btn btn-ghost" onclick="UI.closeModal()">Cancel</button>' +
-        '<button class="btn btn-rose" onclick="UI.closeModal();UI.toast(\'Emergency raised — alerting the treating physician\',\'err\')">' + I('alert') + 'Send SOS</button>'
+      body: '<div class="lock-note" style="background:#fdf2f2;border-color:#f0c9c9;color:#b23a3a">' + I('alert') + '<div>This alerts the care team in order — treating physician, then nursing station, then you, then the care center (FR-10.2).</div></div>' +
+        '<div class="field mt-2"><label>Where is the patient?</label><input id="sos-loc" placeholder="e.g. Ward B - Bed 7" /></div>',
+      foot: '<button class="btn btn-ghost" onclick="UI.closeModal()">Cancel</button>' +
+        '<button class="btn btn-rose" onclick="famDoSOS()">' + I('alert') + 'Send SOS</button>'
     });
   };
-  window.famRate = function () {
-    if (!link().permissions.rate) { UI.toast('You do not have permission to rate', 'warn'); return; }
-    UI.toast('Thanks — your rating helps the hospital improve', 'ok');
+  window.famDoSOS = function () {
+    API.emergency.sos({ ticket_no: ticket(), location: (document.getElementById('sos-loc') || {}).value || 'Unknown' })
+      .then(function () { UI.closeModal(); UI.toast('Emergency raised — alerting the treating physician', 'err'); }).catch(function (e) { UI.toast(e.message, 'err'); });
+  };
+  window.famTogglePerm = function (id, key, val) {
+    var c = data.companions.find(function (x) { return x.id === id; }); if (!c) return;
+    var payload = {
+      can_see_status: c.can_see_status, receives_alerts: c.receives_alerts, can_book: c.can_book,
+      can_rate: c.can_rate, can_raise_emergency: c.can_raise_emergency, is_decision_maker: c.is_decision_maker
+    };
+    payload[key] = !val;
+    API.family.permissions(id, payload).then(function () {
+      UI.toast('Permission “' + S.titleCase(key.replace(/_/g, ' ')) + '” ' + (!val ? 'enabled' : 'disabled'), !val ? 'ok' : 'warn');
+      return load('permissions').then(window.render);
+    }).catch(function (e) { UI.toast(e.message, 'err'); });
   };
 
   /* ---- screens ---- */
   function status() {
-    var p = patient();
-    var cur = window.stageIndex(p.stage);
-    var pending = link().consentPending;
+    if (!data.visit) return UI.pageHead({ eyebrow: 'Family', title: 'Status' }) + '<div class="card card-pad">' + UI.empty('No active visit for your patient right now', 'activity') + '</div>';
+    var v = S.visit(data.visit);
+    var cur = window.stageIndex(v.stage);
+    var comp = myCompanion();
 
     var tiles = '<div class="grid cols-3 mb-2">' +
-      UI.tile({ label: 'Current status', value: '<span style="font-size:18px">' + esc(PLAIN[p.stage] || window.stageLabel(p.stage)) + '</span>', icon: 'activity', accent: 'teal' }) +
-      UI.tile({ label: 'Department', value: '<span style="font-size:20px">' + esc(p.department) + '</span>', icon: 'desk', foot: p.room && p.room !== '—' ? p.room : '' }) +
-      UI.tile({ label: 'Care team', value: '<span style="font-size:18px">' + esc(p.doctor || '—') + '</span>', icon: 'doctor', foot: 'Treating physician' }) +
+      UI.tile({ label: 'Current status', value: '<span style="font-size:17px">' + esc(PLAIN[v.stage] || window.stageLabel(v.stage)) + '</span>', icon: 'activity', accent: 'teal' }) +
+      UI.tile({ label: 'Department', value: '<span style="font-size:18px">' + esc(v.dept) + '</span>', icon: 'desk', foot: v.room && v.room !== '—' ? v.room : '' }) +
+      UI.tile({ label: 'Care team', value: '<span style="font-size:16px">' + esc(v.doctor || '—') + '</span>', icon: 'doctor', foot: 'Treating physician' }) +
     '</div>';
 
     var tl = window.STAGES.map(function (s, i) {
@@ -75,80 +96,42 @@
         '<div class="tl-sub">' + (i < cur ? 'Done' : i === cur ? 'Happening now' : 'Coming up') + '</div></div></div>';
     }).join('');
 
-    var consentCard = pending ?
-      '<div class="card mb-2" style="border-color:#f1d9b4"><div class="card-head" style="background:#fdf8f0">' + I('shield') + '<h3>A decision needs your consent</h3></div><div class="card-pad">' +
-        '<p class="mb-2"><b>' + esc(pending.item) + '</b><br><span class="muted">Requested at ' + esc(pending.askedAt) + '. As the named decision-maker, you may consent on the patient’s behalf.</span></p>' +
-        '<div class="wrap-gap"><button class="btn btn-primary" onclick="famConsent(true)">' + I('check') + 'Give consent</button>' +
-          '<button class="btn btn-soft" onclick="famConsent(false)">Decline</button></div>' +
-      '</div></div>' : '';
-
+    var canSos = comp ? comp.can_raise_emergency : true;
     return UI.pageHead({
-      eyebrow: 'Family · ' + esc(link().companion.name) + ' (' + esc(link().companion.relation) + ')',
-      title: 'Following ' + esc(p.name),
+      eyebrow: 'Family · ' + esc(comp ? comp.companion_name + ' (' + comp.relation + ')' : 'Companion'),
+      title: 'Following ' + esc(v.name),
       sub: 'You see status and approved updates only — not the medical file',
-      actions: (link().permissions.sos ? '<button class="btn btn-rose" onclick="famSOS()">' + I('alert') + 'Emergency</button>' : '')
-    }) +
-      tiles + consentCard +
+      actions: canSos ? '<button class="btn btn-rose" onclick="famSOS()">' + I('alert') + 'Emergency</button>' : ''
+    }) + tiles +
       '<div class="grid" style="grid-template-columns:1fr 300px;gap:18px">' +
         '<div class="card card-pad"><div class="row-between mb-2"><h3 style="font-size:16px">Care journey</h3>' + UI.badge('Live', 'teal') + '</div><div class="timeline">' + tl + '</div></div>' +
-        '<div>' +
-          UI.lockNote('For your privacy and the patient’s, family sees status updates only. Medical details stay with the treating doctor and the nursing supervisor (BR-3).') +
-          '<div class="card mt-2"><div class="card-head"><h3>You can</h3></div><div class="card-pad">' +
-            '<div class="wrap-gap">' +
-              (link().permissions.book ? '<button class="btn btn-ghost btn-sm" onclick="UI.toast(\'Opening appointments…\')">' + I('calendar') + 'Book</button>' : '') +
-              (link().permissions.rate ? '<button class="btn btn-ghost btn-sm" onclick="famRate()">' + I('heart') + 'Rate a stage</button>' : '') +
-              '<button class="btn btn-soft btn-sm" onclick="STATE.route=\'permissions\';render()">' + I('shield') + 'Permissions</button>' +
-            '</div>' +
-          '</div></div>' +
+        '<div>' + UI.lockNote('For privacy, family sees status updates only. Medical details stay with the treating doctor and the nursing supervisor (BR-3).') +
+          '<div class="card mt-2"><div class="card-head"><h3>Loyalty points</h3></div><div class="card-pad">' +
+            '<div style="font-size:30px;font-weight:700;font-family:Fraunces,serif;color:var(--teal-d)">' + (data.points ? data.points.total : 0) + '</div>' +
+            '<div class="muted" style="font-size:12.5px">Care points earned across the journey (FR-14 loyalty).</div></div></div>' +
         '</div>' +
       '</div>';
   }
 
   function updates() {
-    var p = patient();
-    var items = p.stageHistory.slice().reverse().map(function (h) {
+    var n = data.notif || { items: [] };
+    var items = (n.items || []).map(function (it) {
+      var title = it.title || it.message || it.body || it.type || 'Update';
       return '<div class="alert-row"><div class="ar-ic" style="background:var(--mist);color:var(--teal-d)">' + I('activity') + '</div>' +
-        '<div class="ar-body"><div class="ar-t">' + esc(PLAIN[h.stage] || window.stageLabel(h.stage)) + '</div><div class="ar-s">' + esc(h.at) + '</div></div>' + UI.badge('Update', 'teal') + '</div>';
+        '<div class="ar-body"><div class="ar-t">' + esc(title) + '</div><div class="ar-s">' + esc(it.created_at ? S.fmtDateTime(it.created_at) : '') + '</div></div>' +
+        (it.read_at ? UI.badge('Read', 'slate') : UI.badge('New', 'teal')) + '</div>';
     }).join('');
-    var consent = link().consentPending
-      ? '<div class="alert-row warn"><div class="ar-ic">' + I('shield') + '</div><div class="ar-body"><div class="ar-t">Consent requested: ' + esc(link().consentPending.item) + '</div><div class="ar-s">' + esc(link().consentPending.askedAt) + '</div></div>' +
-        '<button class="btn btn-primary btn-sm" onclick="STATE.route=\'status\';render()">Review</button></div>'
-      : '';
-
     return UI.pageHead({ eyebrow: 'Family', title: 'Updates', sub: 'Stage moves and decisions you are told about (FR-11.4)' }) +
-      '<div class="card card-pad">' + consent + (items || UI.empty('No updates yet', 'bell')) + '</div>';
-  }
-
-  function permissions() {
-    var perms = [
-      { key: 'status', label: 'See status', desc: 'Follow where the patient is in their visit' },
-      { key: 'alerts', label: 'Get alerts', desc: 'Receive notifications about stage moves' },
-      { key: 'book', label: 'Book appointments', desc: 'Request appointments for the patient' },
-      { key: 'rate', label: 'Rate stages', desc: 'Leave feedback on finished stages' },
-      { key: 'sos', label: 'Raise an emergency', desc: 'Trigger the SOS escalation chain' }
-    ];
-    var rows = perms.map(function (pm) {
-      var on = link().permissions[pm.key];
-      return '<div class="row-between" style="padding:13px 0;border-bottom:1px solid var(--line)">' +
-        '<div><div style="font-weight:600">' + esc(pm.label) + '</div><div class="muted" style="font-size:12.5px">' + esc(pm.desc) + '</div></div>' +
-        '<button class="btn ' + (on ? 'btn-primary' : 'btn-soft') + ' btn-sm" onclick="famTogglePerm(\'' + pm.key + '\')">' + (on ? I('check') + 'Allowed' : 'Off') + '</button>' +
-      '</div>';
-    }).join('');
-
-    return UI.pageHead({ eyebrow: 'Family', title: 'Permissions & privacy', sub: 'Per-person permissions for the linked companion (FR-11.2 / FR-11.3)' }) +
-      UI.lockNote('Only one companion may be linked per patient. No permission ever opens the medical file — that stays with the treating doctor and nursing supervisor (FR-11.5).') +
-      '<div class="card mt-2"><div class="card-head"><div class="flex"><div class="avatar">' + esc(link().companion.initials) + '</div>' +
-        '<div><div style="font-weight:600">' + esc(link().companion.name) + '</div><div class="muted" style="font-size:12.5px">' + esc(link().companion.relation) + ' · linked to ' + esc(patient().name) + '</div></div></div>' +
-        '<span class="ch-act">' + UI.badge('Active', 'green') + '</span></div>' +
-      '<div class="card-pad">' + rows + '</div></div>';
+      '<div class="card card-pad">' + (items || UI.empty('No updates yet', 'bell')) + '</div>';
   }
 
   function team() {
-    var p = patient();
+    if (!data.visit) return UI.pageHead({ eyebrow: 'Family', title: 'Care team' }) + '<div class="card card-pad">' + UI.empty('No active visit', 'stethoscope') + '</div>';
+    var v = S.visit(data.visit);
     var members = [
-      { ic: 'doctor', name: p.doctor || '—', role: 'Treating physician', note: 'Leads the care plan' },
-      { ic: 'nurse', name: 'Fatma El-Sayed', role: 'Nursing supervisor', note: 'Day-to-day care & vitals' },
-      { ic: 'desk', name: window.HOSPITAL.name, role: 'Care center', note: 'General enquiries' }
+      { ic: 'doctor', name: v.doctor || '—', role: 'Treating physician', note: 'Leads the care plan' },
+      { ic: 'desk', name: v.dept, role: 'Department', note: v.room && v.room !== '—' ? 'Room ' + v.room : 'In-patient unit' },
+      { ic: 'reception', name: window.HOSPITAL.name, role: 'Care center', note: 'General enquiries' }
     ];
     var cards = members.map(function (m) {
       return '<div class="card card-pad mb-2"><div class="row-between"><div class="flex" style="gap:12px">' +
@@ -156,8 +139,8 @@
         '<div><div style="font-weight:600">' + esc(m.name) + '</div><div class="muted" style="font-size:12.5px">' + esc(m.role) + ' · ' + esc(m.note) + '</div></div></div>' +
         '<button class="btn btn-ghost btn-sm" onclick="UI.toast(\'Request sent to the care team\',\'ok\')">' + I('phone') + 'Contact</button></div></div>';
     }).join('');
-    return UI.pageHead({ eyebrow: 'Family', title: 'Care team', sub: 'Who is looking after ' + esc(p.name) + ' and how to reach them' }) +
-      UI.lockNote('You can contact the team for non-clinical questions. For an emergency, use the SOS on the status screen — it alerts the team in order (FR-10.2).') +
+    return UI.pageHead({ eyebrow: 'Family', title: 'Care team', sub: 'Who is looking after ' + esc(v.name) + ' and how to reach them' }) +
+      UI.lockNote('Contact the team for non-clinical questions. For an emergency, use the SOS on the status screen — it alerts the team in order (FR-10.2).') +
       '<div class="mt-2">' + cards + '</div>' +
       '<div class="card card-pad"><div class="row-between"><div class="flex" style="gap:12px"><div class="rt-ic" style="width:46px;height:46px;background:#fbe6e6;color:#b23a3a">' + I('ambulance') + '</div>' +
         '<div><div style="font-weight:600">Emergency</div><div class="muted" style="font-size:12.5px">Available 24/7</div></div></div>' +
@@ -165,32 +148,57 @@
   }
 
   function education() {
-    var p = patient();
-    var items = window.EDUCATION.map(function (e) {
-      var rel = e.stage === p.stage || e.stage === 'any';
+    var v = data.visit ? S.visit(data.visit) : null;
+    var items = (data.edu || []).map(function (e) {
+      var rel = v && (e.journey_stage === v.stage || e.journey_stage === 'any');
       return '<div class="card card-pad mb-2"><div class="row-between"><div class="flex" style="gap:12px">' +
-        '<div class="rt-ic" style="width:44px;height:44px;background:linear-gradient(140deg,var(--teal),var(--teal-d));color:#fff">' + I(e.type === 'Video' ? 'activity' : e.type === 'Audio' ? 'bell' : 'file') + '</div>' +
-        '<div><div style="font-weight:600">' + esc(e.title) + '</div><div class="muted" style="font-size:12px">' + esc(e.type) + ' · ' + e.mins + ' min · ' + esc(e.topic) + (rel ? ' · <span style="color:var(--teal-d)">recommended now</span>' : '') + '</div></div></div>' +
+        '<div class="rt-ic" style="width:44px;height:44px;background:linear-gradient(140deg,var(--teal),var(--teal-d));color:#fff">' + I(e.content_type === 'video' ? 'activity' : e.content_type === 'audio' ? 'bell' : 'file') + '</div>' +
+        '<div><div style="font-weight:600">' + esc(e.title) + '</div><div class="muted" style="font-size:12px">' + esc(S.titleCase(e.content_type)) + ' · ' + (e.duration_min || '—') + ' min · ' + esc(e.approved_by || '') + (rel ? ' · <span style="color:var(--teal-d)">recommended now</span>' : '') + '</div></div></div>' +
         '<button class="btn btn-ghost btn-sm" onclick="UI.toast(\'Opening: ' + esc(e.title) + '\')">' + I('arrowRight') + 'Open</button></div></div>';
     }).join('');
     return UI.pageHead({ eyebrow: 'Family', title: 'Learn & prepare', sub: 'Hospital-approved guidance for this stage of the journey (FR-14)' }) +
       UI.lockNote('All educational content is reviewed and approved by the quality team before it is published (FR-14.4).') +
-      '<div class="mt-2">' + items + '</div>';
+      '<div class="mt-2">' + (items || '<div class="card card-pad">' + UI.empty('No content available', 'file') + '</div>') + '</div>';
+  }
+
+  function permissions() {
+    var comp = myCompanion();
+    if (!comp) return UI.pageHead({ eyebrow: 'Family', title: 'Permissions' }) + '<div class="card card-pad">' + UI.empty('No linked companion found', 'shield') + '</div>';
+    var perms = [
+      { key: 'can_see_status', label: 'See status', desc: 'Follow where the patient is in their visit' },
+      { key: 'receives_alerts', label: 'Get alerts', desc: 'Receive notifications about stage moves' },
+      { key: 'can_book', label: 'Book appointments', desc: 'Request appointments for the patient' },
+      { key: 'can_rate', label: 'Rate stages', desc: 'Leave feedback on finished stages' },
+      { key: 'can_raise_emergency', label: 'Raise an emergency', desc: 'Trigger the SOS escalation chain' }
+    ];
+    var rows = perms.map(function (pm) {
+      var on = !!comp[pm.key];
+      return '<div class="row-between" style="padding:13px 0;border-bottom:1px solid var(--line)">' +
+        '<div><div style="font-weight:600">' + esc(pm.label) + '</div><div class="muted" style="font-size:12.5px">' + esc(pm.desc) + '</div></div>' +
+        '<button class="btn ' + (on ? 'btn-primary' : 'btn-soft') + ' btn-sm" onclick="famTogglePerm(' + comp.id + ',\'' + pm.key + '\',' + on + ')">' + (on ? I('check') + 'Allowed' : 'Off') + '</button></div>';
+    }).join('');
+    return UI.pageHead({ eyebrow: 'Family', title: 'Permissions & privacy', sub: 'Per-person permissions for the linked companion (FR-11.2 / FR-11.3)' }) +
+      UI.lockNote('No permission ever opens the medical file — that stays with the treating doctor and nursing supervisor (FR-11.5).') +
+      '<div class="card mt-2"><div class="card-head"><div class="flex"><div class="avatar">' + esc(S.initials(comp.companion_name)) + '</div>' +
+        '<div><div style="font-weight:600">' + esc(comp.companion_name) + '</div><div class="muted" style="font-size:12.5px">' + esc(comp.relation) + ' · linked to ' + esc(mySerial()) + '</div></div></div>' +
+        '<span class="ch-act">' + (comp.is_accepted ? UI.badge('Active', 'green') : UI.badge('Pending', 'gold')) + '</span></div>' +
+      '<div class="card-pad">' + rows + '</div></div>';
   }
 
   /* ---- register ---- */
   window.ROLES = window.ROLES || {};
   window.ROLES.family = {
-    label: 'Family', person: 'Mariam Abdel-Rahman · Companion', icon: 'users', accent: 'teal',
+    label: 'Family', person: 'Companion', icon: 'users', accent: 'green',
     desc: 'Follow the patient’s status, get updates, give consent when needed, and act for them within the permissions you are granted.',
     home: 'status',
     nav: [
       { route: 'status', label: 'Status', icon: 'activity' },
-      { route: 'updates', label: 'Updates', icon: 'bell', badge: function () { return link().consentPending ? 1 : 0; } },
+      { route: 'updates', label: 'Updates', icon: 'bell' },
       { route: 'team', label: 'Care team', icon: 'stethoscope' },
       { route: 'education', label: 'Learn', icon: 'file' },
       { route: 'permissions', label: 'Permissions', icon: 'shield' }
     ],
+    load: load,
     render: function (route) {
       switch (route) {
         case 'updates': return updates();

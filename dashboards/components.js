@@ -73,16 +73,23 @@ window.UI = (function () {
   }
 
   function triageBadge(key) {
-    var c = window.TRIAGE[key]; if (!c) return '';
+    if (!key) return '';
+    var c = window.STORE.triageInfo(key);
     return badge(c.label, c.tone);
   }
   function insuranceBadge(key) {
-    var c = window.INSURANCE[key]; if (!c) return '';
+    if (!key) return badge('—', 'slate');
+    var c = window.STORE.insuranceInfo(key);
     return badge(c.label, c.tone);
   }
   function newsBadge(score) {
-    var b = window.newsBand(score);
-    return badge('NEWS2 ' + score + ' · ' + b.label, b.tone);
+    var b = window.STORE.newsBand(score);
+    return badge(score == null ? b.label : 'NEWS2 ' + score + ' · ' + b.label, b.tone);
+  }
+  // generic status pill using the shared tone map (appointment/complaint/order statuses)
+  function statusBadge(status, labelOverride) {
+    if (!status) return badge('—', 'slate');
+    return badge(labelOverride || window.STORE.titleCase(status), window.STORE.statusTone(status));
   }
 
   function tile(opts) {
@@ -288,7 +295,7 @@ window.UI = (function () {
 
   return {
     icon: icon, badge: badge, triageBadge: triageBadge, insuranceBadge: insuranceBadge,
-    newsBadge: newsBadge, tile: tile, pageHead: pageHead, patientStrip: patientStrip,
+    newsBadge: newsBadge, statusBadge: statusBadge, tile: tile, pageHead: pageHead, patientStrip: patientStrip,
     avatarFor: avatarFor, lockNote: lockNote, empty: empty, barcode: barcode, spark: spark,
     stars: stars, sentimentBadge: sentimentBadge, barChart: barChart,
     lineChart: lineChart, donut: donut, ring: ring, palette: palette,

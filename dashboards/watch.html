@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#000000">
+<title>A.B.C.D.E — Apple Watch</title>
+<meta name="description" content="Apple Watch companion for the A.B.C.D.E patient-centered system — glanceable, live data.">
+<link rel="stylesheet" href="watch.css">
+</head>
+<body class="watch-body">
+
+  <!-- Apple Watch case (hidden on a real watch-sized viewport, where the screen goes full-bleed) -->
+  <div class="watch-device" id="watchDevice">
+    <span class="wd-crown" aria-hidden="true"></span>
+    <span class="wd-sidebtn" aria-hidden="true"></span>
+    <div class="watch-screen" id="watchScreen"><!-- filled by watch.js --></div>
+    <div class="watch-toast" id="watchToast"></div>
+  </div>
+
+  <p class="watch-caption">A . B . C . D . E · Apple Watch companion — live data from the API</p>
+
+  <!-- same client + store as the dashboards -->
+  <script src="data.js"></script>
+  <script src="api.js"></script>
+  <script src="store.js"></script>
+  <script src="components.js"></script>
+  <script src="watch.js"></script>
+</body>
+</html>
