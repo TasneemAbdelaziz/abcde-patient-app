@@ -97,5 +97,10 @@
     "Hospital settings updated.": "医院设置已更新。",
     "Patient updated.": "患者信息已更新。",
     "Visit updated.": "就诊已更新。",
-    "File uploaded.": "文件已上传。"
+    "File uploaded.": "文件已上传。",
+    "Action created.": "操作已创建。",
+    "Action updated.": "操作已更新。",
+    "Action deleted.": "操作已删除。",
+    "Action activated.": "操作已激活。",
+    "Active action cleared.": "已清除活动操作。"
 }

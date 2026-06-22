@@ -97,5 +97,10 @@
     "Hospital settings updated.": "تم تحديث إعدادات المستشفى.",
     "Patient updated.": "تم تحديث بيانات المريض.",
     "Visit updated.": "تم تحديث الزيارة.",
-    "File uploaded.": "تم رفع الملف."
+    "File uploaded.": "تم رفع الملف.",
+    "Action created.": "تم إنشاء الإجراء.",
+    "Action updated.": "تم تحديث الإجراء.",
+    "Action deleted.": "تم حذف الإجراء.",
+    "Action activated.": "تم تفعيل الإجراء.",
+    "Active action cleared.": "تم مسح الإجراء النشط."
 }

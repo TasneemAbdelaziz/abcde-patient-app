@@ -49,6 +49,14 @@ PLACE = {
     "POST auth/login/qr": ["auth"],
     "POST auth/logout": ["auth"],
     "GET auth/me": ["auth"],
+    # Per-user actions (mobile / watch shortcuts) — under Shared (every signed-in user)
+    "GET me/actions": ["auth"],
+    "POST me/actions": ["auth"],
+    "GET me/actions/active": ["auth"],
+    "DELETE me/actions/active": ["auth"],
+    "PUT me/actions/{id}": ["auth"],
+    "DELETE me/actions/{id}": ["auth"],
+    "POST me/actions/{id}/activate": ["auth"],
 
     # Mobile · Guest / Public
     "POST patients/register": ["guest"],
@@ -202,7 +210,7 @@ PUBLIC = {
 
 # Feature sub-folders shown inside each role folder, in this order.
 FEATURE_ORDER = [
-    "Auth & Session", "Public Portal", "Navigation", "Profile & Settings",
+    "Auth & Session", "Watch Actions", "Public Portal", "Navigation", "Profile & Settings",
     "Appointments", "Care Journey", "Vitals & Risk", "Medications",
     "Diagnostics & Records", "AI Assistant", "Notifications", "Emergency & Alerts",
     "Family & Caregiver", "Billing & Insurance", "Feedback & Quality",
@@ -220,6 +228,7 @@ def feature_for(rel):
         ("Content Management", lambda: any(rel.startswith(p) for p in _CONTENT)),
         ("Admin & Users", lambda: rel.startswith("admin/")),
         ("Reports & KPIs", lambda: rel.startswith("reports/")),
+        ("Watch Actions", lambda: rel.startswith("me/actions")),
         ("Auth & Session", lambda: rel == "health" or rel.startswith("auth")),
         ("Public Portal", lambda: rel.startswith("public/")),
         ("Navigation", lambda: rel.startswith("nav/")),
@@ -295,6 +304,10 @@ BODIES = {
     "POST admin/users": {"name": "Tasnem H.", "email": "t.h@alamein.example", "username": "t.h@alamein.example", "role": "doctor", "staff_id": "D-009", "password": "password", "locale": "en"},
     "PATCH admin/users/{id}/role": {"role": "director", "is_active": True},
     "POST admin/import/seed": {"password": "password"},
+
+    # Per-user actions (mobile / watch shortcuts)
+    "POST me/actions": {"action_key": "action_1", "label": "My Vitals", "route": "/vitals", "icon": "activity", "position": 1, "payload": {"tab": "today"}},
+    "PUT me/actions/{id}": {"label": "My Vitals (renamed)", "route": "/vitals", "position": 2},
 
     # Patient suggestions & overall rating
     "POST suggestions": {"area": "facilities", "suggestion_text": "Please improve restroom cleanliness on the second floor.", "ticket_no": "#ALM-20413"},

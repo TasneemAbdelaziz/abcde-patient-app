@@ -97,5 +97,10 @@
     "Hospital settings updated.": "Настройки больницы обновлены.",
     "Patient updated.": "Данные пациента обновлены.",
     "Visit updated.": "Визит обновлён.",
-    "File uploaded.": "Файл загружен."
+    "File uploaded.": "Файл загружен.",
+    "Action created.": "Действие создано.",
+    "Action updated.": "Действие обновлено.",
+    "Action deleted.": "Действие удалено.",
+    "Action activated.": "Действие активировано.",
+    "Active action cleared.": "Активное действие сброшено."
 }

@@ -23,6 +23,7 @@ use App\Http\Controllers\Api\V1\RatingController;
 use App\Http\Controllers\Api\V1\ReportController;
 use App\Http\Controllers\Api\V1\SuggestionController;
 use App\Http\Controllers\Api\V1\TransportController;
+use App\Http\Controllers\Api\V1\UserActionController;
 use App\Http\Controllers\Api\V1\VisitController;
 use App\Http\Controllers\Api\V1\VitalsController;
 use Illuminate\Support\Facades\Route;
@@ -77,6 +78,15 @@ Route::prefix('v1')->group(function () {
         // S1 — Identity
         Route::post('/auth/logout', [AuthController::class, 'logout']);
         Route::get('/auth/me', [AuthController::class, 'me']);
+
+        // Per-user actions (mobile / Apple Watch shortcuts) — scoped to the token user
+        Route::get('/me/actions', [UserActionController::class, 'index']);
+        Route::get('/me/actions/active', [UserActionController::class, 'active']);
+        Route::delete('/me/actions/active', [UserActionController::class, 'clearActive']);
+        Route::post('/me/actions', [UserActionController::class, 'store']);
+        Route::post('/me/actions/{id}/activate', [UserActionController::class, 'activate'])->whereNumber('id');
+        Route::put('/me/actions/{id}', [UserActionController::class, 'update'])->whereNumber('id');
+        Route::delete('/me/actions/{id}', [UserActionController::class, 'destroy'])->whereNumber('id');
 
         Route::get('/patients', [PatientController::class, 'index'])->middleware('role:staff');
         Route::get('/patients/{serial}', [PatientController::class, 'show']);
