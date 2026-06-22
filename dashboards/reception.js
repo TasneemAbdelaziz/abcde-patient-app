@@ -122,7 +122,32 @@
     API.patients.issueCard(serial, type).then(function () { UI.toast((type === 'arrival' ? 'Arrival' : 'Booking') + ' card issued', 'ok'); }).catch(function (e) { UI.toast(e.message, 'err'); });
   };
   window.recIssueQr = function (serial) {
-    API.patients.issueQr(serial).then(function (r) { UI.closeModal(); UI.toast('QR card issued' + (r && r.qr_token ? ' · ' + r.qr_token : ''), 'ok'); }).catch(function (e) { UI.toast(e.message, 'err'); });
+    UI.toast('Generating sign-in QR…', 'ok');
+    API.patients.issueQr(serial).then(function (r) {
+      UI.modal({
+        title: 'Patient sign-in QR · ' + serial, icon: 'scan',
+        body:
+          '<div style="text-align:center">' +
+            '<img id="qrImg" src="' + r.qr_svg + '" alt="Sign-in QR" style="width:230px;height:230px;background:#fff;border:1px solid var(--line);border-radius:16px;padding:12px" />' +
+            '<p class="muted" style="font-size:13px;margin:14px 0 6px">The patient scans this with the <b>A.B.C.D.E app</b> to sign in — no password needed (FR-1.1.2).</p>' +
+            '<div class="t-mono" style="font-size:12px;color:var(--muted)">' + esc(r.qr_token) + '</div>' +
+          '</div>',
+        foot:
+          '<button class="btn btn-ghost" onclick="recPrintQr(\'' + serial + '\')">' + I('print') + 'Print</button>' +
+          '<button class="btn btn-primary" onclick="UI.closeModal()">' + I('check') + 'Done</button>'
+      });
+    }).catch(function (e) { UI.toast(e.message, 'err'); });
+  };
+  window.recPrintQr = function (serial) {
+    var img = document.getElementById('qrImg'); if (!img) return;
+    var w = window.open('', '_blank', 'width=420,height=600'); if (!w) { UI.toast('Allow pop-ups to print', 'warn'); return; }
+    w.document.write('<!DOCTYPE html><html><head><title>Sign-in QR · ' + esc(serial) + '</title></head>' +
+      '<body style="text-align:center;font-family:system-ui,sans-serif;padding:30px;color:#15302b">' +
+      '<h2 style="margin:0 0 4px">' + esc(window.HOSPITAL.name) + '</h2>' +
+      '<div style="font-size:13px;color:#6b8079;margin-bottom:18px">Patient sign-in · ' + esc(serial) + '</div>' +
+      '<img src="' + img.src + '" style="width:320px;height:320px"/>' +
+      '<p style="font-size:14px;margin-top:18px">Scan with the A.B.C.D.E app to sign in</p></body></html>');
+    w.document.close(); w.focus(); setTimeout(function () { try { w.print(); } catch (e) {} }, 350);
   };
 
   /* appointments */
@@ -348,6 +373,7 @@
         UI.lockNote('Clinical fields (vitals, diagnosis, medication, the medical file) are hidden from reception — they live in the Nurse and Doctor dashboards.') +
         '<div class="wrap-gap mt-2">' +
           '<button class="btn btn-soft btn-sm" onclick="recShowCards(\'' + serial + '\')">' + I('card') + 'Cards</button>' +
+          '<button class="btn btn-soft btn-sm" onclick="recIssueQr(\'' + serial + '\')">' + I('scan') + 'Sign-in QR</button>' +
           (v ? '' : '<button class="btn btn-primary btn-sm" onclick="recAdmit(\'' + serial + '\')">' + I('plus') + 'Admit / start visit</button>') +
           (v ? '<button class="btn btn-ghost btn-sm" onclick="recFinancialFile(\'' + serial + '\')">' + I('file') + 'Financial file</button>' : '') +
           (v ? '<button class="btn btn-ghost btn-sm" onclick="recTakePayment(\'' + serial + '\')">' + I('money') + 'Payment</button>' : '') +

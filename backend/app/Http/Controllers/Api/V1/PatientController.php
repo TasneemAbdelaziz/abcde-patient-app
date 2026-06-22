@@ -99,7 +99,13 @@ class PatientController extends Controller
             'issued_at' => now(),
         ]);
 
-        return $this->ok(['qr_token' => $card->qr_token], 'QR issued.', 201);
+        // A scannable sign-in QR the patient scans with the app (-> POST /auth/login/qr).
+        return $this->ok([
+            'qr_token' => $card->qr_token,
+            'patient_serial' => $serial,
+            'qr_svg' => \App\Support\Qr::svgDataUri($card->qr_token),
+            'issued_at' => $card->issued_at?->toDateTimeString(),
+        ], 'QR issued.', 201);
     }
 
     /** GET /patients/{serial}/accessibility — accessibility profile (FR16). */
