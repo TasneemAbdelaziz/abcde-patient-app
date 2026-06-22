@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\V1\AdminContentController;
 use App\Http\Controllers\Api\V1\AdminController;
 use App\Http\Controllers\Api\V1\AppointmentController;
 use App\Http\Controllers\Api\V1\AssistantController;
@@ -18,7 +19,9 @@ use App\Http\Controllers\Api\V1\NotificationController;
 use App\Http\Controllers\Api\V1\PatientController;
 use App\Http\Controllers\Api\V1\PublicController;
 use App\Http\Controllers\Api\V1\QualityController;
+use App\Http\Controllers\Api\V1\RatingController;
 use App\Http\Controllers\Api\V1\ReportController;
+use App\Http\Controllers\Api\V1\SuggestionController;
 use App\Http\Controllers\Api\V1\TransportController;
 use App\Http\Controllers\Api\V1\VisitController;
 use App\Http\Controllers\Api\V1\VitalsController;
@@ -168,6 +171,12 @@ Route::prefix('v1')->group(function () {
         Route::get('/feedback', [QualityController::class, 'indexFeedback'])->middleware('role:quality,director,admin');
         Route::get('/quality/dashboard', [QualityController::class, 'dashboard'])->middleware('role:quality,director,admin');
 
+        // S10 — Patient suggestions & overall care rating (mobile app)
+        Route::post('/suggestions', [SuggestionController::class, 'store'])->middleware('role:patient,family');
+        Route::get('/suggestions', [SuggestionController::class, 'index']);
+        Route::post('/ratings/overall', [RatingController::class, 'store'])->middleware('role:patient,family');
+        Route::get('/ratings/overall', [RatingController::class, 'show'])->middleware('role:patient,family');
+
         // S11 — Education & loyalty
         Route::get('/education/videos', [EducationController::class, 'videos']);
         Route::get('/education/relax', [EducationController::class, 'relax']);
@@ -182,6 +191,30 @@ Route::prefix('v1')->group(function () {
             Route::get('/admin/audit', [AdminController::class, 'audit']);
             Route::get('/admin/integrations', [AdminController::class, 'integrations']);
             Route::get('/admin/ai-models', [AdminController::class, 'aiModels']);
+
+            // S12 — Content management (admin edits everything on the site)
+            Route::get('/admin/departments', [AdminContentController::class, 'departments']);
+            Route::post('/admin/departments', [AdminContentController::class, 'storeDepartment']);
+            Route::put('/admin/departments/{code}', [AdminContentController::class, 'updateDepartment']);
+            Route::delete('/admin/departments/{code}', [AdminContentController::class, 'destroyDepartment']);
+
+            Route::get('/admin/education', [AdminContentController::class, 'education']);
+            Route::post('/admin/education', [AdminContentController::class, 'storeEducation']);
+            Route::put('/admin/education/{id}', [AdminContentController::class, 'updateEducation']);
+            Route::delete('/admin/education/{id}', [AdminContentController::class, 'destroyEducation']);
+
+            Route::get('/admin/drugs', [AdminContentController::class, 'drugs']);
+            Route::post('/admin/drugs', [AdminContentController::class, 'storeDrug']);
+            Route::put('/admin/drugs/{id}', [AdminContentController::class, 'updateDrug']);
+            Route::delete('/admin/drugs/{id}', [AdminContentController::class, 'destroyDrug']);
+
+            Route::get('/admin/hospital', [AdminContentController::class, 'hospital']);
+            Route::put('/admin/hospital', [AdminContentController::class, 'updateHospital']);
+
+            Route::put('/admin/patients/{serial}', [AdminContentController::class, 'updatePatient']);
+            Route::put('/admin/visits/{id}', [AdminContentController::class, 'updateVisit']);
+
+            Route::post('/admin/media', [AdminContentController::class, 'uploadMedia']);
         });
         Route::get('/reports/kpis', [ReportController::class, 'kpis'])->middleware('role:director,quality,admin');
         Route::get('/reports/monthly', [ReportController::class, 'monthly'])->middleware('role:director,quality,admin');

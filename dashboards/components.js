@@ -72,41 +72,42 @@ window.UI = (function () {
       '<span class="bdot"></span>' + esc(text) + '</span>';
   }
 
+  var T = function (s) { return window.t ? window.t(s) : s; };
   function triageBadge(key) {
     if (!key) return '';
     var c = window.STORE.triageInfo(key);
-    return badge(c.label, c.tone);
+    return badge(T(c.label), c.tone);
   }
   function insuranceBadge(key) {
     if (!key) return badge('—', 'slate');
     var c = window.STORE.insuranceInfo(key);
-    return badge(c.label, c.tone);
+    return badge(T(c.label), c.tone);
   }
   function newsBadge(score) {
     var b = window.STORE.newsBand(score);
-    return badge(score == null ? b.label : 'NEWS2 ' + score + ' · ' + b.label, b.tone);
+    return badge(score == null ? T(b.label) : 'NEWS2 ' + score + ' · ' + T(b.label), b.tone);
   }
   // generic status pill using the shared tone map (appointment/complaint/order statuses)
   function statusBadge(status, labelOverride) {
     if (!status) return badge('—', 'slate');
-    return badge(labelOverride || window.STORE.titleCase(status), window.STORE.statusTone(status));
+    return badge(T(labelOverride || window.STORE.titleCase(status)), window.STORE.statusTone(status));
   }
 
   function tile(opts) {
     return '<div class="tile ' + (opts.accent ? 'accent-' + opts.accent : '') + '">' +
-      '<div class="ti-top"><span class="ti-label">' + esc(opts.label) + '</span>' +
+      '<div class="ti-top"><span class="ti-label">' + esc(T(opts.label)) + '</span>' +
         '<span class="ti-ic">' + icon(opts.icon || 'activity') + '</span></div>' +
       '<div class="ti-val">' + opts.value + (opts.unit ? ' <small>' + esc(opts.unit) + '</small>' : '') + '</div>' +
-      (opts.foot ? '<div class="ti-foot">' + opts.foot + '</div>' : '') +
+      (opts.foot ? '<div class="ti-foot">' + (window.tHas && window.tHas(opts.foot) ? esc(T(opts.foot)) : opts.foot) + '</div>' : '') +
     '</div>';
   }
 
   function pageHead(opts) {
     return '<div class="page-head">' +
       '<div>' +
-        (opts.eyebrow ? '<div class="ph-eyebrow">' + esc(opts.eyebrow) + '</div>' : '') +
-        '<h1>' + esc(opts.title) + '</h1>' +
-        (opts.sub ? '<div class="ph-sub">' + esc(opts.sub) + '</div>' : '') +
+        (opts.eyebrow ? '<div class="ph-eyebrow">' + esc(T(opts.eyebrow)) + '</div>' : '') +
+        '<h1>' + esc(T(opts.title)) + '</h1>' +
+        (opts.sub ? '<div class="ph-sub">' + esc(T(opts.sub)) + '</div>' : '') +
       '</div>' +
       (opts.actions ? '<div class="ph-actions">' + opts.actions + '</div>' : '') +
     '</div>';
@@ -133,7 +134,7 @@ window.UI = (function () {
   }
 
   function empty(text, ic) {
-    return '<div class="empty">' + icon(ic || 'clipboard') + '<div>' + esc(text) + '</div></div>';
+    return '<div class="empty">' + icon(ic || 'clipboard') + '<div>' + esc(T(text)) + '</div></div>';
   }
 
   function barcode(seed) {
@@ -256,6 +257,70 @@ window.UI = (function () {
       .replace(/"/g, '&quot;');
   }
 
+  /* ---------- table enhancer: search + sortable columns (DOM-level, no module changes) ---------- */
+  function cellNum(s) { var m = String(s).replace(/,/g, '').match(/-?\d+(\.\d+)?/); return m ? parseFloat(m[0]) : null; }
+  function enhanceTables(root) {
+    if (!root) return;
+    var tables = root.querySelectorAll ? root.querySelectorAll('table.t') : [];
+    Array.prototype.forEach.call(tables, function (tbl) {
+      if (tbl.__enh) return;
+      var thead = tbl.tHead, tbody = tbl.tBodies && tbl.tBodies[0];
+      if (!thead || !thead.rows[0] || !tbody) return;
+      var headCells = thead.rows[0].cells;
+      var rowCount = tbody.rows.length;
+      if (headCells.length < 2 || rowCount < 3) return; // skip pickers / tiny tables
+      tbl.__enh = true;
+
+      // sortable headers
+      Array.prototype.forEach.call(headCells, function (th, idx) {
+        if (!th.textContent.trim()) return;
+        th.classList.add('sortable');
+        th.insertAdjacentHTML('beforeend', '<span class="sort-ar">↕</span>');
+        th.addEventListener('click', function () {
+          var asc = !(th.__asc);
+          th.__asc = asc;
+          Array.prototype.forEach.call(headCells, function (h) { if (h !== th) { h.classList.remove('sorted'); var a = h.querySelector('.sort-ar'); if (a) a.textContent = '↕'; h.__asc = undefined; } });
+          th.classList.add('sorted');
+          var ar = th.querySelector('.sort-ar'); if (ar) ar.textContent = asc ? '↑' : '↓';
+          var rows = Array.prototype.slice.call(tbody.rows);
+          rows.sort(function (a, b) {
+            var ta = (a.cells[idx] ? a.cells[idx].textContent : '').trim();
+            var tb = (b.cells[idx] ? b.cells[idx].textContent : '').trim();
+            var na = cellNum(ta), nb = cellNum(tb), r;
+            if (na != null && nb != null) r = na - nb; else r = ta.localeCompare(tb, undefined, { numeric: true });
+            return asc ? r : -r;
+          });
+          rows.forEach(function (r) { tbody.appendChild(r); });
+        });
+      });
+
+      // search toolbar (only for longer tables)
+      if (rowCount >= 6) {
+        var wrap = tbl.closest ? tbl.closest('.table-wrap') : null;
+        if (wrap && wrap.parentNode) {
+          var bar = document.createElement('div');
+          bar.className = 'tbl-toolbar';
+          var ph = window.t ? window.t('Search…') : 'Search…';
+          bar.innerHTML = '<div class="tbl-search">' + icon('search') + '<input type="text" placeholder="' + esc(ph) + '" /></div>' +
+            '<span class="tbl-count"></span>';
+          var input = bar.querySelector('input'), count = bar.querySelector('.tbl-count');
+          function refresh() {
+            var q = input.value.trim().toLowerCase(), shown = 0, rows = tbody.rows;
+            for (var i = 0; i < rows.length; i++) {
+              var hit = !q || rows[i].textContent.toLowerCase().indexOf(q) > -1;
+              rows[i].style.display = hit ? '' : 'none';
+              if (hit) shown++;
+            }
+            count.textContent = shown + ' / ' + rows.length;
+          }
+          input.addEventListener('input', refresh);
+          wrap.parentNode.insertBefore(bar, wrap);
+          refresh();
+        }
+      }
+    });
+  }
+
   /* ---------- modal ---------- */
   function modal(opts) {
     var back = document.getElementById('modalBack');
@@ -271,6 +336,7 @@ window.UI = (function () {
       '</div>';
     back.classList.add('on');
     back.onclick = function () { closeModal(); };
+    if (window.i18nApply) window.i18nApply(back);
   }
   function closeModal() {
     var back = document.getElementById('modalBack');
@@ -295,7 +361,7 @@ window.UI = (function () {
 
   return {
     icon: icon, badge: badge, triageBadge: triageBadge, insuranceBadge: insuranceBadge,
-    newsBadge: newsBadge, statusBadge: statusBadge, tile: tile, pageHead: pageHead, patientStrip: patientStrip,
+    newsBadge: newsBadge, statusBadge: statusBadge, tile: tile, pageHead: pageHead, patientStrip: patientStrip, enhanceTables: enhanceTables,
     avatarFor: avatarFor, lockNote: lockNote, empty: empty, barcode: barcode, spark: spark,
     stars: stars, sentimentBadge: sentimentBadge, barChart: barChart,
     lineChart: lineChart, donut: donut, ring: ring, palette: palette,

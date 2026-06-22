@@ -13,6 +13,7 @@ use App\Http\Resources\DocumentationDraftResource;
 use App\Http\Traits\ResolvesVisit;
 use App\Models\DocumentationDraft;
 use App\Models\Visit;
+use App\Services\TranslationService;
 use Illuminate\Http\JsonResponse;
 
 /**
@@ -105,17 +106,24 @@ class AssistantController extends Controller
         ]);
     }
 
-    /** POST /documentation/translate — AR/EN/RU translation (FR9.2.2, stub). */
-    public function translate(TranslateRequest $request): JsonResponse
+    /** POST /documentation/translate — on-demand AR/EN/RU/ZH translation (FR9.2.2). */
+    public function translate(TranslateRequest $request, TranslationService $translator): JsonResponse
     {
         $data = $request->validated();
+        $result = $translator->translate($data['text'], $data['target']);
 
-        return $this->ok([
+        $payload = [
             'source_text' => $data['text'],
             'target' => $data['target'],
-            'translated_text' => $data['text'], // passthrough until a translation model is connected
-            'note' => 'Translation is a passthrough placeholder in this build.',
-        ]);
+            'translated_text' => $result['translated_text'],
+            'provider' => $result['provider'],
+        ];
+        // Be honest when arbitrary text can't be translated without a provider.
+        if (! $result['translated']) {
+            $payload['note'] = 'No translation available for this text yet; configure an MT provider for arbitrary text.';
+        }
+
+        return $this->ok($payload);
     }
 
     private function hasRedFlag(string $text): bool

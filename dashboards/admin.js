@@ -10,7 +10,8 @@
 (function () {
   var I = UI.icon, esc = UI.esc, S = window.STORE;
 
-  var data = { kpis: null, monthly: [], users: [], perms: null, audit: [], integrations: [], aiModels: [], quality: null, emMetrics: null };
+  var data = { kpis: null, monthly: [], users: [], perms: null, audit: [], integrations: [], aiModels: [], quality: null, emMetrics: null,
+    content: { tab: 'education', education: [], departments: [], drugs: [] } };
 
   /* ---- loaders ---- */
   function load(route) {
@@ -22,6 +23,11 @@
     if (route === 'permissions') jobs.push(API.admin.getPermissions().then(function (p) { data.perms = p; }));
     if (route === 'audit') jobs.push(API.admin.audit().then(function (a) { data.audit = a || []; }));
     if (route === 'integration') jobs.push(API.admin.integrations().then(function (g) { data.integrations = g || []; }));
+    if (route === 'content') jobs.push(
+      API.admin.education().then(function (e) { data.content.education = e || []; }, function () {}),
+      API.admin.departments().then(function (d) { data.content.departments = d || []; }, function () {}),
+      API.admin.drugs().then(function (d) { data.content.drugs = d || []; }, function () {})
+    );
     // director-only routes
     if (route === 'quality') jobs.push(API.quality.dashboard().then(function (q) { data.quality = q; }));
     if (route === 'emergency') jobs.push(API.emergency.metrics().then(function (m) { data.emMetrics = m; }));
@@ -214,6 +220,156 @@
         UI.barChart([{ label: 'SOS', value: bt.sos || 0, display: '' + (bt.sos || 0) }, { label: 'Code Blue', value: bt.code_blue || 0, display: '' + (bt.code_blue || 0) }]) + '</div></div>';
   }
 
+  /* ===================== CONTENT MANAGEMENT ===================== */
+  window.adminContentTab = function (tab) { data.content.tab = tab; window.render(); };
+
+  function content() {
+    var c = data.content;
+    var tabs = [['education', 'Education media', 'file'], ['departments', 'Departments', 'desk'], ['drugs', 'Medications', 'pill']]
+      .map(function (t) {
+        return '<button class="btn ' + (c.tab === t[0] ? 'btn-primary' : 'btn-ghost') + ' btn-sm" onclick="adminContentTab(\'' + t[0] + '\')">' + I(t[2]) + esc(window.t(t[1])) + '</button>';
+      }).join('');
+
+    var body, addBtn;
+    if (c.tab === 'education') {
+      addBtn = '<button class="btn btn-primary" onclick="adminEduModal()">' + I('plus') + esc(window.t('Add')) + '</button>';
+      var rows = c.education.map(function (e) {
+        var isMedia = /\.(mp4|webm|mov|m4v|jpg|jpeg|png|gif|webp|mp3|wav)$/i.test(e.file_or_link || '') || /^https?:/.test(e.file_or_link || '');
+        return '<tr><td><div class="t-name">' + esc(e.title) + '</div><div class="t-sub">' + esc(e.approved_by || '') + '</div></td>' +
+          '<td>' + UI.badge(S.titleCase(e.content_type), 'teal') + '</td>' +
+          '<td>' + esc(window.stageLabel(e.journey_stage) || '—') + '</td>' +
+          '<td class="t-sub">' + (e.file_or_link ? (isMedia ? '<a href="' + esc(e.file_or_link) + '" target="_blank" style="color:var(--teal-d)">' + I('scan') + 'open</a>' : esc(e.file_or_link)) : '—') + '</td>' +
+          '<td><div class="wrap-gap"><button class="btn btn-ghost btn-sm" onclick="adminEduModal(' + e.id + ')">' + I('edit') + '</button>' +
+            '<button class="btn btn-soft btn-sm" onclick="adminEduDelete(' + e.id + ')">' + I('x') + '</button></div></td></tr>';
+      }).join('') || '<tr><td colspan="5">' + UI.empty('No content yet') + '</td></tr>';
+      body = '<div class="table-wrap"><table class="t"><thead><tr><th>Title</th><th>Type</th><th>Stage</th><th>File / link</th><th></th></tr></thead><tbody>' + rows + '</tbody></table></div>';
+    } else if (c.tab === 'departments') {
+      addBtn = '<button class="btn btn-primary" onclick="adminDeptModal()">' + I('plus') + esc(window.t('Add')) + '</button>';
+      var drows = c.departments.map(function (d) {
+        return '<tr><td class="t-mono">' + esc(d.dept_code) + '</td><td><div class="t-name">' + esc(d.department_name) + '</div><div class="t-sub">' + esc(d.head_of_department || '') + '</div></td>' +
+          '<td>' + (d.accepts_bookings ? UI.badge('Bookable', 'green') : UI.badge('Internal', 'slate')) + '</td>' +
+          '<td><div class="wrap-gap"><button class="btn btn-ghost btn-sm" onclick="adminDeptModal(\'' + esc(d.dept_code) + '\')">' + I('edit') + '</button>' +
+            '<button class="btn btn-soft btn-sm" onclick="adminDeptDelete(\'' + esc(d.dept_code) + '\')">' + I('x') + '</button></div></td></tr>';
+      }).join('') || '<tr><td colspan="4">' + UI.empty('No departments') + '</td></tr>';
+      body = '<div class="table-wrap"><table class="t"><thead><tr><th>Code</th><th>Department</th><th>Bookings</th><th></th></tr></thead><tbody>' + drows + '</tbody></table></div>';
+    } else {
+      addBtn = '<button class="btn btn-primary" onclick="adminDrugModal()">' + I('plus') + esc(window.t('Add')) + '</button>';
+      var grows = c.drugs.map(function (d) {
+        return '<tr><td><div class="t-name">' + esc(d.drug_name) + '</div><div class="t-sub">' + esc(d.code || '') + '</div></td>' +
+          '<td>' + esc((d.strength || '') + ' · ' + (d.form || '')) + '</td>' +
+          '<td>' + (d.currently_available ? UI.badge('In stock (' + (d.approx_stock_qty != null ? d.approx_stock_qty : '?') + ')', 'green') : UI.badge('Out', 'rose')) + '</td>' +
+          '<td>' + (d.part_of_cardiac_protocol ? UI.badge('Cardiac', 'teal') : '<span class="muted">—</span>') + '</td>' +
+          '<td><div class="wrap-gap"><button class="btn btn-ghost btn-sm" onclick="adminDrugModal(' + d.id + ')">' + I('edit') + '</button>' +
+            '<button class="btn btn-soft btn-sm" onclick="adminDrugDelete(' + d.id + ')">' + I('x') + '</button></div></td></tr>';
+      }).join('') || '<tr><td colspan="5">' + UI.empty('No medications') + '</td></tr>';
+      body = '<div class="table-wrap"><table class="t"><thead><tr><th>Drug</th><th>Strength / form</th><th>Stock</th><th>Protocol</th><th></th></tr></thead><tbody>' + grows + '</tbody></table></div>';
+    }
+
+    return UI.pageHead({ eyebrow: 'Administration', title: 'Content management', sub: 'Edit departments, education media (images & videos) and the medication catalogue', actions: addBtn }) +
+      UI.lockNote('Admin-only. Changes here update the live site content (the public portal, patient app, and dashboards) immediately.') +
+      '<div class="wrap-gap mt-2 mb-2">' + tabs + '</div>' +
+      '<div class="card">' + body + '</div>';
+  }
+
+  /* media upload helper: reads #<fileId>, uploads, writes URL into #<linkId> */
+  window.adminUploadMedia = function (fileId, linkId) {
+    var el = document.getElementById(fileId);
+    if (!el || !el.files || !el.files[0]) { UI.toast('Choose a file first', 'warn'); return; }
+    var fd = new FormData(); fd.append('file', el.files[0]);
+    UI.toast('Uploading…', 'ok');
+    API.admin.uploadMedia(fd).then(function (r) {
+      var link = document.getElementById(linkId); if (link) link.value = r.url;
+      UI.toast('Uploaded · URL filled in', 'ok');
+    }).catch(function (e) { UI.toast(e.message, 'err'); });
+  };
+
+  window.adminEduModal = function (id) {
+    var e = id ? data.content.education.find(function (x) { return x.id === id; }) : {};
+    e = e || {};
+    var ct = ['video', 'article', 'audio', 'image', 'game'].map(function (t) { return '<option value="' + t + '"' + (e.content_type === t ? ' selected' : '') + '>' + S.titleCase(t) + '</option>'; }).join('');
+    UI.modal({
+      title: id ? 'Edit content' : 'Add education content', icon: 'file', wide: true,
+      body: '<div class="field"><label>Title</label><input id="ed-title" value="' + esc(e.title || '') + '" /></div>' +
+        '<div class="field-row"><div class="field"><label>Type</label><select id="ed-type">' + ct + '</select></div>' +
+        '<div class="field"><label>Journey stage</label><input id="ed-stage" value="' + esc(e.journey_stage || '') + '" placeholder="e.g. discharge / any" /></div></div>' +
+        '<div class="field-row"><div class="field"><label>Duration (min)</label><input id="ed-dur" inputmode="numeric" value="' + esc(e.duration_min != null ? e.duration_min : '') + '" /></div>' +
+        '<div class="field"><label>Approved by</label><input id="ed-appr" value="' + esc(e.approved_by || '') + '" /></div></div>' +
+        '<div class="field"><label>File or link (image / video URL)</label><input id="ed-link" value="' + esc(e.file_or_link || '') + '" placeholder="https://… or upload below" /></div>' +
+        '<div class="wrap-gap"><input type="file" id="ed-file" accept="image/*,video/*,audio/*" style="font-size:12px" />' +
+          '<button class="btn btn-soft btn-sm" onclick="adminUploadMedia(\'ed-file\',\'ed-link\')">' + I('scan') + 'Upload image/video</button></div>',
+      foot: '<button class="btn btn-ghost" onclick="UI.closeModal()">Cancel</button>' +
+        '<button class="btn btn-primary" onclick="adminEduSave(' + (id || 'null') + ')">' + I('check') + 'Save</button>'
+    });
+  };
+  window.adminEduSave = function (id) {
+    var g = function (x) { return (document.getElementById(x) || {}).value || ''; };
+    var p = { title: g('ed-title'), content_type: g('ed-type'), journey_stage: g('ed-stage') || null,
+      duration_min: g('ed-dur') ? +g('ed-dur') : null, approved_by: g('ed-appr') || null, file_or_link: g('ed-link') || null };
+    if (!p.title.trim()) { UI.toast('Title is required', 'warn'); return; }
+    var req = id ? API.admin.updateEducation(id, p) : API.admin.createEducation(p);
+    req.then(function () { UI.closeModal(); UI.toast('Saved', 'ok'); return load('content').then(window.render); }).catch(function (e) { UI.toast(e.message, 'err'); });
+  };
+  window.adminEduDelete = function (id) {
+    API.admin.deleteEducation(id).then(function () { UI.toast('Deleted', 'ok'); return load('content').then(window.render); }).catch(function (e) { UI.toast(e.message, 'err'); });
+  };
+
+  window.adminDeptModal = function (code) {
+    var d = code ? data.content.departments.find(function (x) { return x.dept_code === code; }) : {};
+    d = d || {};
+    UI.modal({
+      title: code ? 'Edit department' : 'Add department', icon: 'desk',
+      body: (code ? '' : '<div class="field"><label>Code</label><input id="dp-code" placeholder="e.g. NEUR" /></div>') +
+        '<div class="field"><label>Department name</label><input id="dp-name" value="' + esc(d.department_name || '') + '" /></div>' +
+        '<div class="field"><label>Head of department</label><input id="dp-head" value="' + esc(d.head_of_department || '') + '" /></div>' +
+        '<div class="field"><label>Description</label><textarea id="dp-desc">' + esc(d.description || '') + '</textarea></div>' +
+        '<label class="task"><input type="checkbox" id="dp-book"' + (d.accepts_bookings ? ' checked' : '') + '/> <span>Accepts bookings</span></label>',
+      foot: '<button class="btn btn-ghost" onclick="UI.closeModal()">Cancel</button>' +
+        '<button class="btn btn-primary" onclick="adminDeptSave(' + (code ? '\'' + esc(code) + '\'' : 'null') + ')">' + I('check') + 'Save</button>'
+    });
+  };
+  window.adminDeptSave = function (code) {
+    var g = function (x) { return (document.getElementById(x) || {}).value || ''; };
+    var p = { department_name: g('dp-name'), head_of_department: g('dp-head') || null, description: g('dp-desc') || null,
+      accepts_bookings: !!(document.getElementById('dp-book') || {}).checked };
+    var req;
+    if (code) { req = API.admin.updateDepartment(code, p); }
+    else { p.dept_code = g('dp-code'); if (!p.dept_code.trim() || !p.department_name.trim()) { UI.toast('Code and name are required', 'warn'); return; } req = API.admin.createDepartment(p); }
+    req.then(function () { UI.closeModal(); UI.toast('Saved', 'ok'); return load('content').then(window.render); }).catch(function (e) { UI.toast(e.message, 'err'); });
+  };
+  window.adminDeptDelete = function (code) {
+    API.admin.deleteDepartment(code).then(function () { UI.toast('Deleted', 'ok'); return load('content').then(window.render); }).catch(function (e) { UI.toast(e.message, 'err'); });
+  };
+
+  window.adminDrugModal = function (id) {
+    var d = id ? data.content.drugs.find(function (x) { return x.id === id; }) : {};
+    d = d || {};
+    UI.modal({
+      title: id ? 'Edit medication' : 'Add medication', icon: 'pill',
+      body: '<div class="field"><label>Drug name</label><input id="dg-name" value="' + esc(d.drug_name || '') + '" /></div>' +
+        '<div class="field-row"><div class="field"><label>Strength</label><input id="dg-str" value="' + esc(d.strength || '') + '" placeholder="e.g. 75 mg" /></div>' +
+        '<div class="field"><label>Form</label><input id="dg-form" value="' + esc(d.form || '') + '" placeholder="tablet / vial…" /></div></div>' +
+        '<div class="field-row"><div class="field"><label>ATC code</label><input id="dg-code" value="' + esc(d.code || '') + '" /></div>' +
+        '<div class="field"><label>Stock qty</label><input id="dg-qty" inputmode="numeric" value="' + esc(d.approx_stock_qty != null ? d.approx_stock_qty : '') + '" /></div></div>' +
+        '<label class="task"><input type="checkbox" id="dg-avail"' + (d.currently_available !== false ? ' checked' : '') + '/> <span>Currently available</span></label>' +
+        '<label class="task"><input type="checkbox" id="dg-card"' + (d.part_of_cardiac_protocol ? ' checked' : '') + '/> <span>Part of cardiac protocol</span></label>',
+      foot: '<button class="btn btn-ghost" onclick="UI.closeModal()">Cancel</button>' +
+        '<button class="btn btn-primary" onclick="adminDrugSave(' + (id || 'null') + ')">' + I('check') + 'Save</button>'
+    });
+  };
+  window.adminDrugSave = function (id) {
+    var g = function (x) { return (document.getElementById(x) || {}).value || ''; };
+    var p = { drug_name: g('dg-name'), strength: g('dg-str') || null, form: g('dg-form') || null, code: g('dg-code') || null,
+      approx_stock_qty: g('dg-qty') ? +g('dg-qty') : null,
+      currently_available: !!(document.getElementById('dg-avail') || {}).checked,
+      part_of_cardiac_protocol: !!(document.getElementById('dg-card') || {}).checked };
+    if (!p.drug_name.trim()) { UI.toast('Drug name is required', 'warn'); return; }
+    var req = id ? API.admin.updateDrug(id, p) : API.admin.createDrug(p);
+    req.then(function () { UI.closeModal(); UI.toast('Saved', 'ok'); return load('content').then(window.render); }).catch(function (e) { UI.toast(e.message, 'err'); });
+  };
+  window.adminDrugDelete = function (id) {
+    API.admin.deleteDrug(id).then(function () { UI.toast('Deleted', 'ok'); return load('content').then(window.render); }).catch(function (e) { UI.toast(e.message, 'err'); });
+  };
+
   /* ---- register admin ---- */
   window.ROLES = window.ROLES || {};
   window.ROLES.admin = {
@@ -223,6 +379,7 @@
     nav: [
       { route: 'overview', label: 'KPIs', icon: 'chart' },
       { route: 'reports', label: 'Reports', icon: 'file' },
+      { route: 'content', label: 'Content', icon: 'edit' },
       { route: 'aimodels', label: 'AI models', icon: 'sparkle' },
       { route: 'users', label: 'Users & roles', icon: 'users' },
       { route: 'permissions', label: 'Permissions', icon: 'shield' },
@@ -233,6 +390,7 @@
     render: function (route) {
       switch (route) {
         case 'reports': return reports();
+        case 'content': return content();
         case 'aimodels': return aimodels();
         case 'users': return users();
         case 'permissions': return permissions();

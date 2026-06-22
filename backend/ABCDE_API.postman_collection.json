@@ -17,7 +17,7 @@
   "variable": [
     {
       "key": "baseUrl",
-      "value": "https://aiu.edu.eg/abcde/api/v1"
+      "value": "http://127.0.0.1:8000/api/v1"
     },
     {
       "key": "token",
@@ -30,445 +30,9 @@
     {
       "key": "ticket",
       "value": "#ALM-20413"
-    },
-    {
-      "key": "stageId",
-      "value": "1"
-    },
-    {
-      "key": "prescriptionId",
-      "value": "1"
     }
   ],
   "item": [
-    {
-      "name": "📱 Patient App",
-      "description": "The 9 patient mobile screens, in order. Run 'Login (Patient)' first — it saves the bearer token for the rest. Uses the demo patient ALM-20413 (phone 010-1000-0001).",
-      "item": [
-        {
-          "name": "0. Login (Patient) — saves token",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              },
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "{{baseUrl}}/auth/login",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "auth",
-                "login"
-              ]
-            },
-            "description": "Patient login by phone. Saves {{token}} for the folder.",
-            "auth": {
-              "type": "noauth"
-            },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"identifier\": \"010-1000-0001\",\n  \"password\": \"password\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            }
-          },
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test('Status is a 2xx success', function () {",
-                  "    pm.expect(pm.response.code, 'HTTP ' + pm.response.code).to.be.oneOf([200, 201, 202, 204]);",
-                  "});",
-                  "pm.test('Response body is valid JSON', function () { pm.response.json(); });",
-                  "",
-                  "var d = pm.response.json();",
-                  "if (d && d.data && d.data.token) {",
-                  "  pm.collectionVariables.set('token', d.data.token);",
-                  "  console.log('Patient token saved');",
-                  "}"
-                ]
-              }
-            }
-          ]
-        },
-        {
-          "name": "1. My Visits list",
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "{{baseUrl}}/visits",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "visits"
-              ]
-            },
-            "description": "GET /visits — the patient's own visits (scoped automatically)."
-          },
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test('Status is a 2xx success', function () {",
-                  "    pm.expect(pm.response.code, 'HTTP ' + pm.response.code).to.be.oneOf([200, 201, 202, 204]);",
-                  "});",
-                  "pm.test('Response body is valid JSON', function () { pm.response.json(); });"
-                ]
-              }
-            }
-          ]
-        },
-        {
-          "name": "2. Care Journey / Diagnosis",
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "{{baseUrl}}/visits/%23{{serial}}",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "visits",
-                "%23{{serial}}"
-              ]
-            },
-            "description": "GET /visits/{id} — visit detail: stages, diagnosis, vitals, rx."
-          },
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test('Status is a 2xx success', function () {",
-                  "    pm.expect(pm.response.code, 'HTTP ' + pm.response.code).to.be.oneOf([200, 201, 202, 204]);",
-                  "});",
-                  "pm.test('Response body is valid JSON', function () { pm.response.json(); });"
-                ]
-              }
-            }
-          ]
-        },
-        {
-          "name": "3. Rate a stage",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              },
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "{{baseUrl}}/stages/{{stageId}}/feedback",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "stages",
-                "{{stageId}}",
-                "feedback"
-              ]
-            },
-            "description": "POST /stages/{id}/feedback — {id} is a journey-timeline stage id.",
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"stars\": 5,\n  \"comment\": \"Very smooth and well organized\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            }
-          },
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test('Status is a 2xx success', function () {",
-                  "    pm.expect(pm.response.code, 'HTTP ' + pm.response.code).to.be.oneOf([200, 201, 202, 204]);",
-                  "});",
-                  "pm.test('Response body is valid JSON', function () { pm.response.json(); });"
-                ]
-              }
-            }
-          ]
-        },
-        {
-          "name": "4. Treatment Plan — Care plan",
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "{{baseUrl}}/visits/%23{{serial}}/care-plan",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "visits",
-                "%23{{serial}}",
-                "care-plan"
-              ]
-            },
-            "description": "GET /visits/{id}/care-plan — recovery goals & progress."
-          },
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test('Status is a 2xx success', function () {",
-                  "    pm.expect(pm.response.code, 'HTTP ' + pm.response.code).to.be.oneOf([200, 201, 202, 204]);",
-                  "});",
-                  "pm.test('Response body is valid JSON', function () { pm.response.json(); });"
-                ]
-              }
-            }
-          ]
-        },
-        {
-          "name": "5. Treatment Plan — Prescriptions (today)",
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "{{baseUrl}}/visits/%23{{serial}}/prescriptions",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "visits",
-                "%23{{serial}}",
-                "prescriptions"
-              ]
-            },
-            "description": "GET /visits/{id}/prescriptions — medicine timeline."
-          },
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test('Status is a 2xx success', function () {",
-                  "    pm.expect(pm.response.code, 'HTTP ' + pm.response.code).to.be.oneOf([200, 201, 202, 204]);",
-                  "});",
-                  "pm.test('Response body is valid JSON', function () { pm.response.json(); });"
-                ]
-              }
-            }
-          ]
-        },
-        {
-          "name": "6. Treatment Plan — Vitals",
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "{{baseUrl}}/visits/%23{{serial}}/vitals",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "visits",
-                "%23{{serial}}",
-                "vitals"
-              ]
-            },
-            "description": "GET /visits/{id}/vitals — latest vitals."
-          },
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test('Status is a 2xx success', function () {",
-                  "    pm.expect(pm.response.code, 'HTTP ' + pm.response.code).to.be.oneOf([200, 201, 202, 204]);",
-                  "});",
-                  "pm.test('Response body is valid JSON', function () { pm.response.json(); });"
-                ]
-              }
-            }
-          ]
-        },
-        {
-          "name": "7. Upcoming appointments",
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "{{baseUrl}}/appointments",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "appointments"
-              ]
-            },
-            "description": "GET /appointments — the patient's own appointments."
-          },
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test('Status is a 2xx success', function () {",
-                  "    pm.expect(pm.response.code, 'HTTP ' + pm.response.code).to.be.oneOf([200, 201, 202, 204]);",
-                  "});",
-                  "pm.test('Response body is valid JSON', function () { pm.response.json(); });"
-                ]
-              }
-            }
-          ]
-        },
-        {
-          "name": "8. My Medicines (all)",
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "{{baseUrl}}/visits/%23{{serial}}/prescriptions",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "visits",
-                "%23{{serial}}",
-                "prescriptions"
-              ]
-            },
-            "description": "GET /visits/{id}/prescriptions — all prescribed medicines."
-          },
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test('Status is a 2xx success', function () {",
-                  "    pm.expect(pm.response.code, 'HTTP ' + pm.response.code).to.be.oneOf([200, 201, 202, 204]);",
-                  "});",
-                  "pm.test('Response body is valid JSON', function () { pm.response.json(); });"
-                ]
-              }
-            }
-          ]
-        },
-        {
-          "name": "9. Mark a dose taken",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              },
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "{{baseUrl}}/prescriptions/{{prescriptionId}}/administer",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "prescriptions",
-                "{{prescriptionId}}",
-                "administer"
-              ]
-            },
-            "description": "POST /prescriptions/{id}/administer — patient self-confirms a dose.",
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"action\": \"taken\",\n  \"scheduled_time\": \"2026-06-08 21:00\",\n  \"actual_time\": \"2026-06-08 21:05\",\n  \"note\": \"Taken at home\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            }
-          },
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test('Status is a 2xx success', function () {",
-                  "    pm.expect(pm.response.code, 'HTTP ' + pm.response.code).to.be.oneOf([200, 201, 202, 204]);",
-                  "});",
-                  "pm.test('Response body is valid JSON', function () { pm.response.json(); });"
-                ]
-              }
-            }
-          ]
-        }
-      ]
-    },
     {
       "name": "🔑 Shared",
       "item": [
@@ -1826,6 +1390,63 @@
                   }
                 },
                 {
+                  "name": "POST /ratings/overall",
+                  "request": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"stars\": 4,\n  \"comment\": \"The nursing team was very attentive.\",\n  \"ticket_no\": \"#ALM-20413\"\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/ratings/overall",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "ratings",
+                        "overall"
+                      ]
+                    }
+                  }
+                },
+                {
+                  "name": "GET /ratings/overall",
+                  "request": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/ratings/overall",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "ratings",
+                        "overall"
+                      ]
+                    }
+                  }
+                },
+                {
                   "name": "POST /stages/{id}/feedback",
                   "request": {
                     "method": "POST",
@@ -1857,6 +1478,61 @@
                         "stages",
                         "1",
                         "feedback"
+                      ]
+                    }
+                  }
+                },
+                {
+                  "name": "POST /suggestions",
+                  "request": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"area\": \"facilities\",\n  \"suggestion_text\": \"Please improve restroom cleanliness on the second floor.\",\n  \"ticket_no\": \"#ALM-20413\"\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/suggestions",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "suggestions"
+                      ]
+                    }
+                  }
+                },
+                {
+                  "name": "GET /suggestions",
+                  "request": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/suggestions",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "suggestions"
                       ]
                     }
                   }
@@ -4310,6 +3986,27 @@
                       ]
                     }
                   }
+                },
+                {
+                  "name": "GET /suggestions",
+                  "request": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/suggestions",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "suggestions"
+                      ]
+                    }
+                  }
                 }
               ]
             },
@@ -4655,6 +4352,520 @@
         {
           "name": "Admin",
           "item": [
+            {
+              "name": "Content Management",
+              "item": [
+                {
+                  "name": "GET /admin/departments",
+                  "request": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/admin/departments",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "admin",
+                        "departments"
+                      ]
+                    }
+                  }
+                },
+                {
+                  "name": "POST /admin/departments",
+                  "request": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"dept_code\": \"NEUR\",\n  \"department_name\": \"Neurology\",\n  \"description\": \"Neurology clinics and stroke care.\",\n  \"accepts_bookings\": true,\n  \"head_of_department\": \"Dr. Hala Mansour\"\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/admin/departments",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "admin",
+                        "departments"
+                      ]
+                    }
+                  }
+                },
+                {
+                  "name": "PUT /admin/departments/{code}",
+                  "request": {
+                    "method": "PUT",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"department_name\": \"Cardiology & Catheterization\",\n  \"accepts_bookings\": true,\n  \"head_of_department\": \"Dr. Karim Adel\"\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/admin/departments/CARD",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "admin",
+                        "departments",
+                        "CARD"
+                      ]
+                    }
+                  }
+                },
+                {
+                  "name": "DELETE /admin/departments/{code}",
+                  "request": {
+                    "method": "DELETE",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/admin/departments/CARD",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "admin",
+                        "departments",
+                        "CARD"
+                      ]
+                    }
+                  }
+                },
+                {
+                  "name": "GET /admin/drugs",
+                  "request": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/admin/drugs",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "admin",
+                        "drugs"
+                      ]
+                    }
+                  }
+                },
+                {
+                  "name": "POST /admin/drugs",
+                  "request": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"drug_name\": \"Bisoprolol\",\n  \"form\": \"tablet\",\n  \"strength\": \"5 mg\",\n  \"code\": \"C07AB07\",\n  \"currently_available\": true,\n  \"approx_stock_qty\": 200,\n  \"part_of_cardiac_protocol\": false\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/admin/drugs",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "admin",
+                        "drugs"
+                      ]
+                    }
+                  }
+                },
+                {
+                  "name": "PUT /admin/drugs/{id}",
+                  "request": {
+                    "method": "PUT",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"approx_stock_qty\": 150,\n  \"currently_available\": true\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/admin/drugs/1",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "admin",
+                        "drugs",
+                        "1"
+                      ]
+                    }
+                  }
+                },
+                {
+                  "name": "DELETE /admin/drugs/{id}",
+                  "request": {
+                    "method": "DELETE",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/admin/drugs/1",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "admin",
+                        "drugs",
+                        "1"
+                      ]
+                    }
+                  }
+                },
+                {
+                  "name": "GET /admin/education",
+                  "request": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/admin/education",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "admin",
+                        "education"
+                      ]
+                    }
+                  }
+                },
+                {
+                  "name": "POST /admin/education",
+                  "request": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"title\": \"Recognizing heart attack symptoms\",\n  \"content_type\": \"video\",\n  \"condition\": \"cardiac\",\n  \"journey_stage\": \"any\",\n  \"duration_min\": 4,\n  \"file_or_link\": \"https://cdn.example/vid_symptoms.mp4\",\n  \"approved_by\": \"Quality Department\"\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/admin/education",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "admin",
+                        "education"
+                      ]
+                    }
+                  }
+                },
+                {
+                  "name": "PUT /admin/education/{id}",
+                  "request": {
+                    "method": "PUT",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"title\": \"Recognizing heart attack symptoms (updated)\",\n  \"duration_min\": 5\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/admin/education/1",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "admin",
+                        "education",
+                        "1"
+                      ]
+                    }
+                  }
+                },
+                {
+                  "name": "DELETE /admin/education/{id}",
+                  "request": {
+                    "method": "DELETE",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/admin/education/1",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "admin",
+                        "education",
+                        "1"
+                      ]
+                    }
+                  }
+                },
+                {
+                  "name": "GET /admin/hospital",
+                  "request": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/admin/hospital",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "admin",
+                        "hospital"
+                      ]
+                    }
+                  }
+                },
+                {
+                  "name": "PUT /admin/hospital",
+                  "request": {
+                    "method": "PUT",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"settings\": {\n    \"hotline\": \"0800-1000-200\",\n    \"about\": \"Founded in 2002; a Model Hospital since 2019.\",\n    \"emergency_line\": \"123\"\n  }\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/admin/hospital",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "admin",
+                        "hospital"
+                      ]
+                    }
+                  }
+                },
+                {
+                  "name": "POST /admin/media",
+                  "request": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      }
+                    ],
+                    "body": {
+                      "mode": "formdata",
+                      "formdata": [
+                        {
+                          "key": "file",
+                          "type": "file",
+                          "src": "logo.png"
+                        }
+                      ]
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/admin/media",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "admin",
+                        "media"
+                      ]
+                    }
+                  }
+                },
+                {
+                  "name": "PUT /admin/patients/{serial}",
+                  "request": {
+                    "method": "PUT",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"full_name\": \"Hassan Mahmoud\",\n  \"phone\": \"010-0000-0001\",\n  \"city_district\": \"Marsa Matrouh\",\n  \"preferred_language\": \"en\",\n  \"chronic_conditions\": \"Hypertension, Type 2 Diabetes\"\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/admin/patients/ALM-20413",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "admin",
+                        "patients",
+                        "ALM-20413"
+                      ]
+                    }
+                  }
+                },
+                {
+                  "name": "PUT /admin/visits/{id}",
+                  "request": {
+                    "method": "PUT",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"dept_code\": \"CARD\",\n  \"treating_doctor_id\": \"D-001\",\n  \"location_code\": \"CCU-2\",\n  \"current_stage\": \"ward\",\n  \"visit_status\": \"open\"\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/admin/visits/%23ALM-20413",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "admin",
+                        "visits",
+                        "%23ALM-20413"
+                      ]
+                    }
+                  }
+                }
+              ]
+            },
             {
               "name": "Admin & Users",
               "item": [

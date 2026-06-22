@@ -167,6 +167,31 @@ PLACE = {
     "GET admin/audit": ["admin"],
     "GET admin/integrations": ["admin"],
     "GET admin/ai-models": ["admin"],
+
+    # Mobile · Patient — suggestions & overall rating
+    "POST suggestions": ["patient"],
+    "GET suggestions": ["patient", "quality"],
+    "POST ratings/overall": ["patient"],
+    "GET ratings/overall": ["patient"],
+
+    # Web · Admin — content management
+    "GET admin/departments": ["admin"],
+    "POST admin/departments": ["admin"],
+    "PUT admin/departments/{code}": ["admin"],
+    "DELETE admin/departments/{code}": ["admin"],
+    "GET admin/education": ["admin"],
+    "POST admin/education": ["admin"],
+    "PUT admin/education/{id}": ["admin"],
+    "DELETE admin/education/{id}": ["admin"],
+    "GET admin/drugs": ["admin"],
+    "POST admin/drugs": ["admin"],
+    "PUT admin/drugs/{id}": ["admin"],
+    "DELETE admin/drugs/{id}": ["admin"],
+    "GET admin/hospital": ["admin"],
+    "PUT admin/hospital": ["admin"],
+    "PUT admin/patients/{serial}": ["admin"],
+    "PUT admin/visits/{id}": ["admin"],
+    "POST admin/media": ["admin"],
 }
 
 PUBLIC = {
@@ -181,14 +206,18 @@ FEATURE_ORDER = [
     "Appointments", "Care Journey", "Vitals & Risk", "Medications",
     "Diagnostics & Records", "AI Assistant", "Notifications", "Emergency & Alerts",
     "Family & Caregiver", "Billing & Insurance", "Feedback & Quality",
-    "Education & Loyalty", "Reports & KPIs", "Admin & Users", "Data Import",
+    "Education & Loyalty", "Reports & KPIs", "Content Management", "Admin & Users", "Data Import",
 ]
+
+_CONTENT = ("admin/departments", "admin/education", "admin/drugs", "admin/hospital",
+            "admin/patients", "admin/visits", "admin/media")
 
 
 def feature_for(rel):
     """Map an endpoint to its feature sub-folder."""
     checks = [
         ("Data Import", lambda: rel.startswith("admin/import")),
+        ("Content Management", lambda: any(rel.startswith(p) for p in _CONTENT)),
         ("Admin & Users", lambda: rel.startswith("admin/")),
         ("Reports & KPIs", lambda: rel.startswith("reports/")),
         ("Auth & Session", lambda: rel == "health" or rel.startswith("auth")),
@@ -198,7 +227,7 @@ def feature_for(rel):
         ("Family & Caregiver", lambda: rel.startswith("family/") or rel.endswith("/family")),
         ("Education & Loyalty", lambda: rel.startswith("education/") or rel.endswith("care-points")),
         ("Billing & Insurance", lambda: rel.endswith("/insurance") or "billing" in rel or rel.endswith("financial-file") or rel.endswith("/payments")),
-        ("Feedback & Quality", lambda: rel.startswith("stages/") or rel.startswith("complaints") or rel == "feedback" or rel.startswith("quality/")),
+        ("Feedback & Quality", lambda: rel.startswith("stages/") or rel.startswith("complaints") or rel == "feedback" or rel.startswith("quality/") or rel.startswith("suggestions") or rel.startswith("ratings")),
         ("Notifications", lambda: rel.startswith("notifications")),
         ("Emergency & Alerts", lambda: rel.startswith("emergency/")),
         ("AI Assistant", lambda: rel.startswith("assistant/") or rel.startswith("documentation/")),
@@ -266,6 +295,21 @@ BODIES = {
     "POST admin/users": {"name": "Tasnem H.", "email": "t.h@alamein.example", "username": "t.h@alamein.example", "role": "doctor", "staff_id": "D-009", "password": "password", "locale": "en"},
     "PATCH admin/users/{id}/role": {"role": "director", "is_active": True},
     "POST admin/import/seed": {"password": "password"},
+
+    # Patient suggestions & overall rating
+    "POST suggestions": {"area": "facilities", "suggestion_text": "Please improve restroom cleanliness on the second floor.", "ticket_no": "#ALM-20413"},
+    "POST ratings/overall": {"stars": 4, "comment": "The nursing team was very attentive.", "ticket_no": "#ALM-20413"},
+
+    # Admin content management
+    "POST admin/departments": {"dept_code": "NEUR", "department_name": "Neurology", "description": "Neurology clinics and stroke care.", "accepts_bookings": True, "head_of_department": "Dr. Hala Mansour"},
+    "PUT admin/departments/{code}": {"department_name": "Cardiology & Catheterization", "accepts_bookings": True, "head_of_department": "Dr. Karim Adel"},
+    "POST admin/education": {"title": "Recognizing heart attack symptoms", "content_type": "video", "condition": "cardiac", "journey_stage": "any", "duration_min": 4, "file_or_link": "https://cdn.example/vid_symptoms.mp4", "approved_by": "Quality Department"},
+    "PUT admin/education/{id}": {"title": "Recognizing heart attack symptoms (updated)", "duration_min": 5},
+    "POST admin/drugs": {"drug_name": "Bisoprolol", "form": "tablet", "strength": "5 mg", "code": "C07AB07", "currently_available": True, "approx_stock_qty": 200, "part_of_cardiac_protocol": False},
+    "PUT admin/drugs/{id}": {"approx_stock_qty": 150, "currently_available": True},
+    "PUT admin/hospital": {"settings": {"hotline": "0800-1000-200", "about": "Founded in 2002; a Model Hospital since 2019.", "emergency_line": "123"}},
+    "PUT admin/patients/{serial}": {"full_name": "Hassan Mahmoud", "phone": "010-0000-0001", "city_district": "Marsa Matrouh", "preferred_language": "en", "chronic_conditions": "Hypertension, Type 2 Diabetes"},
+    "PUT admin/visits/{id}": {"dept_code": "CARD", "treating_doctor_id": "D-001", "location_code": "CCU-2", "current_stage": "ward", "visit_status": "open"},
 }
 
 
@@ -279,6 +323,8 @@ def example_path(uri):
         prev = segs[i - 1] if i else ""
         if s == "{serial}":
             out.append(SERIAL)
+        elif s == "{code}":
+            out.append("CARD")
         elif prev == "visits":
             out.append(TICKET)
         elif prev == "appointments":
@@ -302,6 +348,11 @@ def make_request(method, rel, sig):
     if rel == "admin/import":
         req["body"] = {"mode": "formdata", "formdata": [
             {"key": "file", "type": "file", "src": "../db/ABCDE_Data_1_Hospital_Master.xlsx"},
+        ]}
+    elif rel == "admin/media":
+        # Postman sets the multipart boundary itself; don't pin Content-Type.
+        req["body"] = {"mode": "formdata", "formdata": [
+            {"key": "file", "type": "file", "src": "logo.png"},
         ]}
     else:
         body = BODIES.get(sig)

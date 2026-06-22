@@ -29,8 +29,10 @@
     'Care team': 'فريق الرعاية', 'Learn': 'تعلّم', 'Overview': 'نظرة عامة', 'Medications': 'الأدوية',
     'Worklist': 'قائمة العمل', 'Care journey': 'رحلة الرعاية'
   };
-  function tn(label) { return window.STATE.lang === 'ar' && AR[label] ? AR[label] : label; }
+  function tn(label) { return window.t ? window.t(label) : label; }
   window.tn = tn;
+  function dirOf(code) { for (var i = 0; i < window.LANGS.length; i++) if (window.LANGS[i].code === code) return window.LANGS[i].dir; return 'ltr'; }
+  function applyI18n(el) { if (el && window.i18nApply) window.i18nApply(el); }
 
   /* ---- demo accounts for one-click sign-in (password: "password") ---- */
   var DEMO = {
@@ -233,6 +235,7 @@
           '<div class="ls-note">' + I('shield') + (ar ? 'بيانات حية · الوصول محكوم حسب الدور (FR-1.7 / FR-1.8)' : 'Live data · access gated per role (FR-1.7 / FR-1.8)') + '</div>' +
         '</main>' +
       '</div>';
+    applyI18n(document.getElementById('login'));
   }
 
   function loginError(msg) {
@@ -273,15 +276,24 @@
     var n = window.STATE.notifCount || 0;
     return '<button class="nav-toggle" onclick="App.toggleNav()" aria-label="Menu">' + I('menu') + '</button>' +
       '<div class="search">' + I('search') +
-        '<input type="text" placeholder="' + esc(window.t('search')) + '" oninput="App.search(this.value)" onkeydown="if(event.key===\'Enter\')App.searchGo()" id="globalSearch" /></div>' +
+        '<input type="text" placeholder="' + esc(window.t('Search patients…')) + '" oninput="App.search(this.value)" onkeydown="if(event.key===\'Enter\')App.searchGo()" id="globalSearch" /></div>' +
       '<div class="spacer"></div>' +
-      '<button class="icon-btn" title="Refresh" onclick="App.refresh()">' + I('route') + '</button>' +
-      '<button class="lang-toggle" onclick="App.toggleLang()">' + (window.STATE.lang === 'en' ? 'العربية' : 'EN') + '</button>' +
-      '<button class="icon-btn notif-btn" title="' + esc(window.t('notifications')) + '" onclick="App.toggleNotif(event)">' + I('bell') +
+      '<button class="icon-btn" title="' + esc(window.t('Refresh')) + '" onclick="App.refresh()">' + I('route') + '</button>' +
+      '<button class="icon-btn" title="' + esc(window.t('Theme')) + '" onclick="App.toggleTheme()">' + I('shield') + '</button>' +
+      langSelect() +
+      '<button class="icon-btn notif-btn" title="' + esc(window.t('Notifications')) + '" onclick="App.toggleNotif(event)">' + I('bell') +
         (n ? '<span class="dot"></span>' : '') + '</button>' +
       '<div class="tb-user"><div class="avatar">' + esc(STORE.initials(name)) + '</div>' +
         '<div><div class="tu-name">' + esc(name) + '</div><div class="tu-role">' + esc(tn(roleLabel)) + '</div></div></div>' +
-      '<button class="icon-btn" title="' + esc(window.t('signout')) + '" onclick="App.signOut()">' + I('logout') + '</button>';
+      '<button class="icon-btn" title="' + esc(window.t('Sign out')) + '" onclick="App.signOut()">' + I('logout') + '</button>';
+  }
+
+  function langSelect() {
+    var cur = window.STATE.lang || 'en';
+    var opts = window.LANGS.map(function (l) {
+      return '<option value="' + l.code + '"' + (l.code === cur ? ' selected' : '') + '>' + l.native + '</option>';
+    }).join('');
+    return '<select class="lang-select" aria-label="Language" onchange="App.setLang(this.value)">' + opts + '</select>';
   }
 
   /* ============================================================
@@ -299,21 +311,23 @@
       main.innerHTML = errorPanel(e);
     }
     main.scrollTop = 0;
+    applyI18n(document.getElementById('appRoot'));
+    if (UI.enhanceTables) UI.enhanceTables(main);
   }
   window.render = render;
 
   function loadingPanel() {
     return '<div class="loading-wrap">' +
       '<div class="spinner"></div>' +
-      '<div class="loading-txt">' + (window.STATE.lang === 'ar' ? 'جارٍ التحميل…' : 'Loading…') + '</div>' +
+      '<div class="loading-txt">' + esc(window.t('Loading…')) + '</div>' +
     '</div>';
   }
   function errorPanel(e) {
     var msg = (e && e.message) || 'Something went wrong.';
     return '<div class="error-panel"><div class="ep-ic">' + I('alert') + '</div>' +
-      '<h3>' + (window.STATE.lang === 'ar' ? 'تعذّر تحميل البيانات' : 'Could not load this screen') + '</h3>' +
+      '<h3>' + esc(window.t('Could not load this screen')) + '</h3>' +
       '<p>' + esc(msg) + '</p>' +
-      '<button class="btn btn-primary" onclick="App.refresh()">' + I('route') + (window.STATE.lang === 'ar' ? 'إعادة المحاولة' : 'Retry') + '</button></div>';
+      '<button class="btn btn-primary" onclick="App.refresh()">' + I('route') + esc(window.t('Retry')) + '</button></div>';
   }
 
   function showScreen(which) {
@@ -448,6 +462,7 @@
         '<div class="np-list">' + list + '</div>';
       pop.onclick = function (e) { e.stopPropagation(); };
       document.body.appendChild(pop);
+      applyI18n(pop);
       setTimeout(function () { document.addEventListener('click', App._closeNotif); }, 0);
     },
     _closeNotif: function () {
@@ -494,17 +509,33 @@
       }).catch(function (e) { UI.toast(e.message, 'err'); });
     },
 
-    /* ---- language ---- */
-    toggleLang: function () {
-      window.STATE.lang = window.STATE.lang === 'en' ? 'ar' : 'en';
-      API.setLocale(window.STATE.lang);
-      var dict = window.I18N[window.STATE.lang];
-      document.documentElement.dir = dict.dir;
-      document.documentElement.lang = window.STATE.lang;
+    /* ---- language (4 languages) ---- */
+    setLang: function (code) {
+      if (!code) return;
+      window.STATE.lang = code;
+      API.setLocale(code);
+      document.documentElement.dir = dirOf(code);
+      document.documentElement.lang = code;
       if (window.STATE.screen === 'app') navigate(window.STATE.route);
-      else if (window.STATE.screen === 'login') renderLogin();
+      else if (window.STATE.screen === 'login') { renderLogin(); applyI18n(document.getElementById('login')); }
       else renderLanding();
-      UI.toast(window.STATE.lang === 'ar' ? 'تم التبديل إلى العربية (RTL)' : 'Switched to English', 'ok');
+      var l = window.LANGS.filter(function (x) { return x.code === code; })[0];
+      UI.toast((l ? l.native : code) + (dirOf(code) === 'rtl' ? ' · RTL' : ''), 'ok');
+    },
+    toggleLang: function () {
+      var codes = window.LANGS.map(function (l) { return l.code; });
+      var i = codes.indexOf(window.STATE.lang || 'en');
+      App.setLang(codes[(i + 1) % codes.length]);
+    },
+
+    /* ---- theme (light / dark) ---- */
+    setTheme: function (theme) {
+      window.STATE.theme = theme;
+      document.documentElement.setAttribute('data-theme', theme);
+      try { localStorage.setItem('abcde_theme', theme); } catch (e) {}
+    },
+    toggleTheme: function () {
+      App.setTheme((window.STATE.theme === 'dark') ? 'light' : 'dark');
     },
 
     /* ---- global patient search ---- */
@@ -557,9 +588,10 @@
 
   /* ---- boot ---- */
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape') UI.closeModal(); });
-  // sync stored locale into the UI on first paint
+  // sync stored locale + theme into the UI on first paint
   window.STATE.lang = API.locale() || window.STATE.lang || 'en';
-  document.documentElement.dir = (window.I18N[window.STATE.lang] || window.I18N.en).dir;
+  document.documentElement.dir = dirOf(window.STATE.lang);
   document.documentElement.lang = window.STATE.lang;
+  try { App.setTheme(localStorage.getItem('abcde_theme') || 'light'); } catch (e) { App.setTheme('light'); }
   App.boot();
 })();

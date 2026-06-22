@@ -35,4 +35,12 @@ return [
         ],
     ],
 
+    // Optional on-demand machine-translation provider for /documentation/translate.
+    // LibreTranslate-compatible: POST { q, source, target [, api_key] }.
+    // When unset, the endpoint falls back to the built-in medical phrase dictionary.
+    'translation' => [
+        'url' => env('TRANSLATION_API_URL'),
+        'key' => env('TRANSLATION_API_KEY'),
+    ],
+
 ];

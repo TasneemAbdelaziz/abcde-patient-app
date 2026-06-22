@@ -47,7 +47,7 @@ window.STORE = (function () {
   }
   function triageInfo(k) { return TRIAGE[k] || { label: titleCase(k) || '—', tone: 'slate', note: '' }; }
   function insuranceInfo(k) { return INSURANCE[k] || { label: titleCase(k) || 'Unknown', tone: 'slate', flow: '' }; }
-  function arrivalLabel(k) { return ARRIVAL[k] || titleCase(k) || '—'; }
+  function arrivalLabel(k) { var l = ARRIVAL[k] || titleCase(k) || '—'; return window.t ? window.t(l) : l; }
   function statusTone(s) { return STATUS_TONE[s] || 'slate'; }
 
   /* ---------- formatting helpers ---------- */

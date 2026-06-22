@@ -24,7 +24,8 @@ window.STAGES = [
 window.stageIndex = function (key) { return window.STAGES.findIndex(function (s) { return s.key === key; }); };
 window.stageLabel = function (key) {
   var s = window.STAGES.find(function (x) { return x.key === key; });
-  return s ? s.label : (key ? key.charAt(0).toUpperCase() + key.slice(1) : '—');
+  var label = s ? s.label : (key ? key.charAt(0).toUpperCase() + key.slice(1) : '—');
+  return window.t ? window.t(label) : label;
 };
 
 /* ---------- vitals thresholds — alert when crossed (FR-5.2) ---------- */

@@ -324,7 +324,26 @@ window.API = (function () {
       integrations: function () { return get('/admin/integrations'); },
       aiModels: function () { return get('/admin/ai-models'); },
       importSeed: function (password) { return post('/admin/import/seed', { password: password || 'password' }); },
-      importUpload: function (formData) { return post('/admin/import', formData); }
+      importUpload: function (formData) { return post('/admin/import', formData); },
+
+      /* -- content management (admin edits everything on the site) -- */
+      departments: function () { return get('/admin/departments'); },
+      createDepartment: function (p) { return post('/admin/departments', p); },
+      updateDepartment: function (code, p) { return put('/admin/departments/' + encodeURIComponent(code), p); },
+      deleteDepartment: function (code) { return del('/admin/departments/' + encodeURIComponent(code)); },
+      education: function () { return get('/admin/education'); },
+      createEducation: function (p) { return post('/admin/education', p); },
+      updateEducation: function (id, p) { return put('/admin/education/' + encodeURIComponent(id), p); },
+      deleteEducation: function (id) { return del('/admin/education/' + encodeURIComponent(id)); },
+      drugs: function () { return get('/admin/drugs'); },
+      createDrug: function (p) { return post('/admin/drugs', p); },
+      updateDrug: function (id, p) { return put('/admin/drugs/' + encodeURIComponent(id), p); },
+      deleteDrug: function (id) { return del('/admin/drugs/' + encodeURIComponent(id)); },
+      hospital: function () { return get('/admin/hospital'); },
+      updateHospital: function (settings) { return put('/admin/hospital', { settings: settings }); },
+      updatePatient: function (serial, p) { return put('/admin/patients/' + encodeURIComponent(serial), p); },
+      updateVisit: function (ticket, p) { return put('/admin/visits/' + vt(ticket), p); },
+      uploadMedia: function (formData) { return post('/admin/media', formData); }
     },
     reports: {
       kpis: function () { return get('/reports/kpis'); },
