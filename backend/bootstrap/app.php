@@ -2,6 +2,7 @@
 
 use App\Http\Middleware\EnsureRole;
 use App\Http\Middleware\ForceJsonResponse;
+use App\Http\Middleware\LocalizeContent;
 use App\Http\Middleware\OptionalSanctum;
 use App\Http\Middleware\SetLocale;
 use Illuminate\Auth\AuthenticationException;
@@ -21,10 +22,12 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        // Treat the whole API as JSON, then negotiate the response language.
+        // Treat the whole API as JSON, negotiate the language, then localize
+        // response content into that language on the way out.
         $middleware->api(prepend: [
             ForceJsonResponse::class,
             SetLocale::class,
+            LocalizeContent::class,
         ]);
 
         $middleware->alias([

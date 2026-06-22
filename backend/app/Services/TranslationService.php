@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Support\ContentDictionary;
 use Illuminate\Support\Facades\Http;
 
 /**
@@ -89,6 +90,26 @@ class TranslationService
         ],
     ];
 
+    /** Normalized merged dictionary per language (medical phrases + content corpus). */
+    private static array $maps = [];
+    /** Per-process memo of resolved translations to avoid repeat lookups/calls. */
+    private static array $memo = [];
+
+    private function dict(string $lang): array
+    {
+        if (! isset(self::$maps[$lang])) {
+            $merged = [];
+            foreach ([self::DICT[$lang] ?? [], ContentDictionary::all()[$lang] ?? []] as $src) {
+                foreach ($src as $en => $tr) {
+                    $merged[$this->normalize($en)] = $tr;
+                }
+            }
+            self::$maps[$lang] = $merged;
+        }
+
+        return self::$maps[$lang];
+    }
+
     /**
      * @return array{translated_text:string, provider:string, translated:bool}
      */
@@ -105,11 +126,9 @@ class TranslationService
             return ['translated_text' => $provider, 'provider' => 'mt-provider', 'translated' => true];
         }
 
-        // 2) curated medical dictionary
-        $key = $this->normalize($clean);
-        $hit = self::DICT[$target][$key] ?? null;
+        // 2) curated dictionary (medical phrases + content corpus)
+        $hit = $this->dict($target)[$this->normalize($clean)] ?? null;
         if ($hit !== null) {
-            // preserve a trailing period if the source had one
             if (str_ends_with($clean, '.') && ! str_ends_with($hit, '.') && $target !== 'zh') {
                 $hit .= '.';
             }
@@ -118,6 +137,29 @@ class TranslationService
 
         // 3) no match — return source, flagged
         return ['translated_text' => $text, 'provider' => 'none', 'translated' => false];
+    }
+
+    /**
+     * Best-effort string localization used by the response middleware: returns
+     * a translated string (provider → dictionary → original), memoized.
+     */
+    public function localize(?string $text, string $lang): ?string
+    {
+        if ($text === null) {
+            return null;
+        }
+        $clean = trim($text);
+        if ($clean === '' || $lang === 'en' || ! preg_match('/[A-Za-z]/', $clean)) {
+            return $text; // empty, English target, or already non-Latin
+        }
+        $ck = $lang.'|'.$clean;
+        if (array_key_exists($ck, self::$memo)) {
+            return self::$memo[$ck];
+        }
+        $r = $this->translate($clean, $lang);
+        $out = $r['translated'] ? $r['translated_text'] : $text;
+
+        return self::$memo[$ck] = $out;
     }
 
     private function normalize(string $s): string
