@@ -127,7 +127,7 @@ every device that user's phone registered.
 |----------|--------|---------|
 | `POST /me/devices` | phone (after login) | register/upsert the phone's FCM token (`{ fcm_token, platform }`) → `{ "registered": true }` |
 | `DELETE /me/devices` | phone (on logout) | unregister this token (or all of the user's, if none given) |
-| `POST /remote/open` | watch (button press) | push `{ route }` to the user's phones → `{ "sent_to": <n> }` |
+| `POST /remote/open` | watch (button press) | push `{ route }` to the user's phones → `{ "sent_to": <n>, "devices": <registered> }` |
 
 The server sends an FCM HTTP v1 message with both a `notification` (so a
 backgrounded app opens on tap) and a `data` payload the app reads — all `data`
@@ -141,12 +141,23 @@ values are strings:
 }
 ```
 
+When nothing is delivered (`sent_to: 0`), the response carries a `data.reason` so
+you can tell *why* at a glance instead of trawling the log:
+
+| `reason` | Meaning | Fix |
+|----------|---------|-----|
+| `no_devices` | this user has registered no phone | phone must `POST /me/devices` first |
+| `fcm_unconfigured` | server has no Firebase service-account.json | do the **Setup** below |
+| `tokens_stale` | devices existed but FCM says they're unregistered (now pruned) | phone re-registers its token |
+| `send_failed` | tokens + FCM present, but every send errored | check `storage/logs/laravel.log` |
+
 **Setup:** drop the Firebase **service-account JSON** at
 `storage/app/firebase/service-account.json` (Firebase Console → Project settings →
 Service accounts → *Generate new private key*), or point `FIREBASE_CREDENTIALS` at
 it. It is git-ignored. Without it, push is skipped gracefully and `/remote/open`
-returns `sent_to: 0`. No extra Composer package is required — `App\Services\FcmService`
-mints the OAuth2 token from the service account itself.
+returns `sent_to: 0` with `reason: "fcm_unconfigured"`. An empty `FIREBASE_CREDENTIALS=`
+line still falls back to the default path. No extra Composer package is required —
+`App\Services\FcmService` mints the OAuth2 token from the service account itself.
 
 ## Multilingual API (en · ar · ru · zh)
 

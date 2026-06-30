@@ -22,7 +22,15 @@ class RemoteController extends Controller
     /**
      * POST /remote/open — fan a "open this route" push out to the user's phones.
      *
-     * Response: `{ "data": { "sent_to": <device count delivered> } }`.
+     * Response: `{ "data": { "sent_to": <delivered>, "devices": <registered> } }`.
+     * When nothing is delivered, `data.reason` says *why* so a client (or a bare
+     * Postman call) can tell a missing-device problem from a server FCM problem
+     * without trawling the log:
+     *   - `no_devices`      — this user has registered no phone (call /me/devices)
+     *   - `fcm_unconfigured`— server is missing its Firebase service-account.json
+     *   - `tokens_stale`    — devices existed but FCM says they're unregistered
+     *                         (app reinstalled / token rotated → re-register)
+     *   - `send_failed`     — tokens + FCM present, but every send errored (see log)
      */
     public function open(RemoteOpenRequest $request): JsonResponse
     {
@@ -44,6 +52,17 @@ class RemoteController extends Controller
                 ->delete();
         }
 
-        return $this->ok(['sent_to' => $result['sent']], 'Remote open sent.');
+        $payload = ['sent_to' => $result['sent'], 'devices' => count($tokens)];
+
+        if ($result['sent'] === 0) {
+            $payload['reason'] = match (true) {
+                $tokens === [] => 'no_devices',
+                ! $this->fcm->isConfigured() => 'fcm_unconfigured',
+                $result['invalid'] !== [] => 'tokens_stale',
+                default => 'send_failed',
+            };
+        }
+
+        return $this->ok($payload, 'Remote open sent.');
     }
 }
