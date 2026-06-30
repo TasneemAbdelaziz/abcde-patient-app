@@ -101,6 +101,10 @@
     "Action created.": "Действие создано.",
     "Action updated.": "Действие обновлено.",
     "Action deleted.": "Действие удалено.",
+    "Device registered.": "Устройство зарегистрировано.",
+    "Device removed.": "Устройство удалено.",
+    "Remote open sent.": "Команда открытия отправлена.",
+    "Opening on your phone…": "Открываю на вашем телефоне…",
     "Action activated.": "Действие активировано.",
     "Active action cleared.": "Активное действие сброшено."
 }

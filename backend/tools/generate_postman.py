@@ -57,6 +57,10 @@ PLACE = {
     "PUT me/actions/{id}": ["auth"],
     "DELETE me/actions/{id}": ["auth"],
     "POST me/actions/{id}/activate": ["auth"],
+    # Push devices + watch→phone remote control (FCM) — under Shared (every signed-in user)
+    "POST me/devices": ["auth"],
+    "DELETE me/devices": ["auth"],
+    "POST remote/open": ["auth"],
 
     # Mobile · Guest / Public
     "POST patients/register": ["guest"],
@@ -210,7 +214,7 @@ PUBLIC = {
 
 # Feature sub-folders shown inside each role folder, in this order.
 FEATURE_ORDER = [
-    "Auth & Session", "Watch Actions", "Public Portal", "Navigation", "Profile & Settings",
+    "Auth & Session", "Watch Actions", "Remote & Devices", "Public Portal", "Navigation", "Profile & Settings",
     "Appointments", "Care Journey", "Vitals & Risk", "Medications",
     "Diagnostics & Records", "AI Assistant", "Notifications", "Emergency & Alerts",
     "Family & Caregiver", "Billing & Insurance", "Feedback & Quality",
@@ -229,6 +233,7 @@ def feature_for(rel):
         ("Admin & Users", lambda: rel.startswith("admin/")),
         ("Reports & KPIs", lambda: rel.startswith("reports/")),
         ("Watch Actions", lambda: rel.startswith("me/actions")),
+        ("Remote & Devices", lambda: rel.startswith("me/devices") or rel.startswith("remote/")),
         ("Auth & Session", lambda: rel == "health" or rel.startswith("auth")),
         ("Public Portal", lambda: rel.startswith("public/")),
         ("Navigation", lambda: rel.startswith("nav/")),
@@ -253,7 +258,7 @@ def feature_for(rel):
 
 BODIES = {
     "POST auth/login": {"identifier": "k.adel@alamein.example", "password": "password"},
-    "POST auth/login/qr": {"qr_token": "QR-XXXXXXXXXX"},
+    "POST auth/login/qr": {"qr_token": "{{qrToken}}"},
     "POST patients/register": {"full_name": "New Patient", "national_id": "29001011234567", "date_of_birth": "1990-01-01", "gender": "M", "phone": "010-1234-5678", "city_district": "New Alamein", "preferred_language": "ar", "decision_maker": "self", "chronic_conditions": "", "password": "password"},
     "PUT patients/{serial}/preferences": {"preferred_language": "en", "decision_maker": "self", "phone": "010-0000-0001", "city_district": "Marsa Matrouh"},
     "POST patients/{serial}/cards": {"card_type": "arrival"},
@@ -308,6 +313,11 @@ BODIES = {
     # Per-user actions (mobile / watch shortcuts)
     "POST me/actions": {"action_key": "action_1", "label": "My Vitals", "route": "/vitals", "icon": "activity", "position": 1, "payload": {"tab": "today"}},
     "PUT me/actions/{id}": {"label": "My Vitals (renamed)", "route": "/vitals", "position": 2},
+
+    # Push devices + watch→phone remote control (FCM)
+    "POST me/devices": {"fcm_token": "<device-fcm-token>", "platform": "android"},
+    "DELETE me/devices": {"fcm_token": "<device-fcm-token>"},
+    "POST remote/open": {"route": "/diagnosis"},
 
     # Patient suggestions & overall rating
     "POST suggestions": {"area": "facilities", "suggestion_text": "Please improve restroom cleanliness on the second floor.", "ticket_no": "#ALM-20413"},
@@ -386,6 +396,16 @@ def make_request(method, rel, sig):
             "  console.log('Saved token for role: ' + d.data.user.role);",
             "}",
         ]}}]
+    # Reception issues a sign-in QR: capture its token so Shared › POST /auth/login/qr
+    # can use {{qrToken}} and the patient sign-in flow works end-to-end (FR1.1.2).
+    elif sig == "POST patients/{serial}/qr":
+        item["event"] = [{"listen": "test", "script": {"type": "text/javascript", "exec": [
+            "var d = pm.response.json();",
+            "if (d && d.data && d.data.qr_token) {",
+            "  pm.collectionVariables.set('qrToken', d.data.qr_token);",
+            "  console.log('Saved sign-in QR token: ' + d.data.qr_token);",
+            "}",
+        ]}}]
     return item
 
 
@@ -437,13 +457,16 @@ def main():
                            "so each team member uses only their folder. Shared read endpoints appear "
                            "under every role that consumes them. Run Shared › Login first to capture "
                            "the bearer token. Add ?lang=ar|ru|zh to any request for a localized response. "
-                           "Note: ticket_no's '#' is URL-encoded as %23 in example paths.",
+                           "Note: ticket_no's '#' is URL-encoded as %23 in example paths. "
+                           "QR sign-in: run Reception › POST /patients/{serial}/qr (it saves {{qrToken}}), "
+                           "then Shared › POST /auth/login/qr — no manual copy needed.",
             "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
         },
         "auth": {"type": "bearer", "bearer": [{"key": "token", "value": "{{token}}", "type": "string"}]},
         "variable": [
             {"key": "baseUrl", "value": "http://127.0.0.1:8000/api/v1"},
             {"key": "token", "value": ""},
+            {"key": "qrToken", "value": ""},
             {"key": "serial", "value": SERIAL},
             {"key": "ticket", "value": "#ALM-20413"},
         ],
@@ -455,6 +478,7 @@ def main():
         "values": [
             {"key": "baseUrl", "value": "http://127.0.0.1:8000/api/v1", "enabled": True},
             {"key": "token", "value": "", "enabled": True},
+            {"key": "qrToken", "value": "", "enabled": True},
         ],
         "_postman_variable_scope": "environment",
     }

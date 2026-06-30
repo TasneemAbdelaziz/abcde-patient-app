@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\BillingController;
 use App\Http\Controllers\Api\V1\CommitteeController;
 use App\Http\Controllers\Api\V1\ConsentController;
+use App\Http\Controllers\Api\V1\DeviceController;
 use App\Http\Controllers\Api\V1\DiagnosticsController;
 use App\Http\Controllers\Api\V1\EducationController;
 use App\Http\Controllers\Api\V1\EmergencyController;
@@ -20,6 +21,7 @@ use App\Http\Controllers\Api\V1\PatientController;
 use App\Http\Controllers\Api\V1\PublicController;
 use App\Http\Controllers\Api\V1\QualityController;
 use App\Http\Controllers\Api\V1\RatingController;
+use App\Http\Controllers\Api\V1\RemoteController;
 use App\Http\Controllers\Api\V1\ReportController;
 use App\Http\Controllers\Api\V1\SuggestionController;
 use App\Http\Controllers\Api\V1\TransportController;
@@ -87,6 +89,12 @@ Route::prefix('v1')->group(function () {
         Route::post('/me/actions/{id}/activate', [UserActionController::class, 'activate'])->whereNumber('id');
         Route::put('/me/actions/{id}', [UserActionController::class, 'update'])->whereNumber('id');
         Route::delete('/me/actions/{id}', [UserActionController::class, 'destroy'])->whereNumber('id');
+
+        // Push devices + watch→phone remote control (FCM). The phone registers its
+        // token; the watch (same user) asks the server to open a screen on it.
+        Route::post('/me/devices', [DeviceController::class, 'store']);
+        Route::delete('/me/devices', [DeviceController::class, 'destroy']);
+        Route::post('/remote/open', [RemoteController::class, 'open']);
 
         Route::get('/patients', [PatientController::class, 'index'])->middleware('role:staff');
         Route::get('/patients/{serial}', [PatientController::class, 'show']);

@@ -101,6 +101,10 @@
     "Action created.": "تم إنشاء الإجراء.",
     "Action updated.": "تم تحديث الإجراء.",
     "Action deleted.": "تم حذف الإجراء.",
+    "Device registered.": "تم تسجيل الجهاز.",
+    "Device removed.": "تمت إزالة الجهاز.",
+    "Remote open sent.": "تم إرسال أمر الفتح.",
+    "Opening on your phone…": "افتح على تليفونك…",
     "Action activated.": "تم تفعيل الإجراء.",
     "Active action cleared.": "تم مسح الإجراء النشط."
 }

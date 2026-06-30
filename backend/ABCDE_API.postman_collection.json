@@ -1,7 +1,7 @@
 {
   "info": {
     "name": "A.B.C.D.E Healthcare API (v1) — by Platform & Role",
-    "description": "Organised by platform (Mobile App / Web Dashboards) then by user role, so each team member uses only their folder. Shared read endpoints appear under every role that consumes them. Run Shared › Login first to capture the bearer token. Add ?lang=ar|ru|zh to any request for a localized response. Note: ticket_no's '#' is URL-encoded as %23 in example paths.",
+    "description": "Organised by platform (Mobile App / Web Dashboards) then by user role, so each team member uses only their folder. Shared read endpoints appear under every role that consumes them. Run Shared › Login first to capture the bearer token. Add ?lang=ar|ru|zh to any request for a localized response. Note: ticket_no's '#' is URL-encoded as %23 in example paths. QR sign-in: run Reception › POST /patients/{serial}/qr (it saves {{qrToken}}), then Shared › POST /auth/login/qr — no manual copy needed.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "auth": {
@@ -21,6 +21,10 @@
     },
     {
       "key": "token",
+      "value": ""
+    },
+    {
+      "key": "qrToken",
       "value": ""
     },
     {
@@ -111,7 +115,7 @@
                 },
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"qr_token\": \"QR-XXXXXXXXXX\"\n}",
+                  "raw": "{\n  \"qr_token\": \"{{qrToken}}\"\n}",
                   "options": {
                     "raw": {
                       "language": "json"
@@ -396,6 +400,111 @@
                     "actions",
                     "1",
                     "activate"
+                  ]
+                }
+              }
+            },
+            {
+              "name": "POST /me/devices",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"fcm_token\": \"<device-fcm-token>\",\n  \"platform\": \"android\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/me/devices",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "me",
+                    "devices"
+                  ]
+                }
+              }
+            },
+            {
+              "name": "DELETE /me/devices",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"fcm_token\": \"<device-fcm-token>\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/me/devices",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "me",
+                    "devices"
+                  ]
+                }
+              }
+            },
+            {
+              "name": "POST /remote/open",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"route\": \"/diagnosis\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/remote/open",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "remote",
+                    "open"
                   ]
                 }
               }
@@ -2226,7 +2335,22 @@
                         "qr"
                       ]
                     }
-                  }
+                  },
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "var d = pm.response.json();",
+                          "if (d && d.data && d.data.qr_token) {",
+                          "  pm.collectionVariables.set('qrToken', d.data.qr_token);",
+                          "  console.log('Saved sign-in QR token: ' + d.data.qr_token);",
+                          "}"
+                        ]
+                      }
+                    }
+                  ]
                 }
               ]
             },

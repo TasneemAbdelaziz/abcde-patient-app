@@ -5,6 +5,7 @@ namespace App\Models;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -12,7 +13,7 @@ use Laravel\Sanctum\HasApiTokens;
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable, HasApiTokens;
+    use HasApiTokens, HasFactory, Notifiable;
 
     /** All assignable system roles (FR1.3). */
     public const ROLES = [
@@ -54,6 +55,12 @@ class User extends Authenticatable
     public function patient(): BelongsTo
     {
         return $this->belongsTo(Patient::class, 'patient_serial', 'patient_serial');
+    }
+
+    /** Registered push (FCM) devices — the watch/phone pairing for remote-open. */
+    public function devices(): HasMany
+    {
+        return $this->hasMany(DeviceToken::class);
     }
 
     public function isStaff(): bool
