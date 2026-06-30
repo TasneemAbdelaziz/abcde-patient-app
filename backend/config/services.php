@@ -49,8 +49,12 @@ return [
     // file is absent, push is skipped gracefully. `project_id` is optional — it
     // is read from the JSON unless overridden here.
     'fcm' => [
-        'credentials' => env('FIREBASE_CREDENTIALS', storage_path('app/firebase/service-account.json')),
-        'project_id' => env('FIREBASE_PROJECT_ID'),
+        // `?:` (not env()'s 2nd arg) so an empty FIREBASE_CREDENTIALS= line in
+        // .env still falls back to the default path — otherwise an empty value
+        // resolves to '' and the service-account file at the default location is
+        // silently ignored.
+        'credentials' => env('FIREBASE_CREDENTIALS') ?: storage_path('app/firebase/service-account.json'),
+        'project_id' => env('FIREBASE_PROJECT_ID') ?: null,
     ],
 
 ];
