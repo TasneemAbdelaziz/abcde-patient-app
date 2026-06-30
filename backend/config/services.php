@@ -43,4 +43,14 @@ return [
         'key' => env('TRANSLATION_API_KEY'),
     ],
 
+    // Firebase Cloud Messaging — powers the watch→phone /remote/open push.
+    // `credentials` is the path to the service-account JSON (Firebase Console →
+    // Project settings → Service accounts → Generate new private key). When the
+    // file is absent, push is skipped gracefully. `project_id` is optional — it
+    // is read from the JSON unless overridden here.
+    'fcm' => [
+        'credentials' => env('FIREBASE_CREDENTIALS', storage_path('app/firebase/service-account.json')),
+        'project_id' => env('FIREBASE_PROJECT_ID'),
+    ],
+
 ];

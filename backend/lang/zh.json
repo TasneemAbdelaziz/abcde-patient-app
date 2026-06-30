@@ -101,6 +101,10 @@
     "Action created.": "操作已创建。",
     "Action updated.": "操作已更新。",
     "Action deleted.": "操作已删除。",
+    "Device registered.": "设备已注册。",
+    "Device removed.": "设备已移除。",
+    "Remote open sent.": "已发送打开指令。",
+    "Opening on your phone…": "正在您的手机上打开…",
     "Action activated.": "操作已激活。",
     "Active action cleared.": "已清除活动操作。"
 }

@@ -116,6 +116,38 @@ to records is additionally scoped to their own data in the controllers.
 
 `GET /api/v1/health` returns service status (no auth).
 
+### Push devices & watch → phone remote-open (FCM)
+
+Three authenticated endpoints let an Apple-Watch-style companion wake a screen on
+the user's phone. There is **no pairing step** — the watch and phone are linked
+purely by signing in as the **same user**, so `/remote/open` fans the push out to
+every device that user's phone registered.
+
+| Endpoint | Caller | Purpose |
+|----------|--------|---------|
+| `POST /me/devices` | phone (after login) | register/upsert the phone's FCM token (`{ fcm_token, platform }`) → `{ "registered": true }` |
+| `DELETE /me/devices` | phone (on logout) | unregister this token (or all of the user's, if none given) |
+| `POST /remote/open` | watch (button press) | push `{ route }` to the user's phones → `{ "sent_to": <n> }` |
+
+The server sends an FCM HTTP v1 message with both a `notification` (so a
+backgrounded app opens on tap) and a `data` payload the app reads — all `data`
+values are strings:
+
+```json
+{
+  "token": "<device fcm token>",
+  "notification": { "title": "Alamein", "body": "Opening on your phone…" },
+  "data": { "type": "open", "route": "/diagnosis" }
+}
+```
+
+**Setup:** drop the Firebase **service-account JSON** at
+`storage/app/firebase/service-account.json` (Firebase Console → Project settings →
+Service accounts → *Generate new private key*), or point `FIREBASE_CREDENTIALS` at
+it. It is git-ignored. Without it, push is skipped gracefully and `/remote/open`
+returns `sent_to: 0`. No extra Composer package is required — `App\Services\FcmService`
+mints the OAuth2 token from the service account itself.
+
 ## Multilingual API (en · ar · ru · zh)
 
 Every endpoint is localized. The active language is negotiated per request, in
